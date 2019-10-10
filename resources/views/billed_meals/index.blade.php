@@ -7,13 +7,11 @@
   <title>Document</title>
 </head>
 <body>
-  @foreach ($billed_meals as $billed_meal)
     @foreach ($billed_meal as $k => $v)
       @if ($v)
         {{$k}} :: {{$v}}
         <br>
       @endif
-    @endforeach
   @endforeach
   
 </body>

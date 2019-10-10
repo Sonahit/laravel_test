@@ -39,9 +39,9 @@ class BilledMealsController extends Controller
      */
     public function show(Billed_Meals $billed_Meals)
     {
-        //#TODO GET DATA BY MODEL
-        $billed_Meals;
-        return view('billed_meals.index', ['billed_meals' => $billed_Meals]);
+        //#TODO GET CERTAIN DATA BY MODEL
+        $billed_meal = Billed_Meals::find(1, $billed_Meals->getFillable())->getOriginal();
+        return view('billed_meals.index', ['billed_meal' => $billed_meal]);
     }   
 
 }
