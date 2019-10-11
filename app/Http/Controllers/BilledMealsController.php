@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class BilledMealsController extends Controller
 {
-
-
     /**
      * Display a listing of the resource.
      *
@@ -30,6 +28,7 @@ class BilledMealsController extends Controller
     {
         //
     }
+    
 
     /**
      * Display the specified resource.
@@ -37,11 +36,21 @@ class BilledMealsController extends Controller
      * @param  \App\Billed_Meals  $billed_Meals
      * @return \Illuminate\Http\Response
      */
-    public function show(Billed_Meals $billed_Meals)
+    public function show(Billed_Meals $billed_meals)
     {
-        //#TODO GET CERTAIN DATA BY MODEL
-        $billed_meal = Billed_Meals::find(1, $billed_Meals->getFillable())->getOriginal();
-        return view('billed_meals.index', ['billed_meal' => $billed_meal]);
+        $rows = ['flight_id',
+            'flight_date',
+            'type', 
+            'class',
+            'iata_code as code.fact',
+            'qty as qty.fact',
+            DB::raw('Round(price_per_one, 2) as `price.fact`')
+        ];
+        $billed_meals = $billed_meals->getBilledMeals(
+            $rows,
+            10, 
+            $billed_meals->where
+        );
+        return view('index')->with(compact('billed_meals'));
     }   
-
 }

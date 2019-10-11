@@ -1,41 +1,19 @@
-<?php
-
-namespace App;
-
-use Illuminate\Database\Eloquent\Model;
-
-class Billed_Meals extends Model
-{
-    #TODO DATA METHODS
-    protected $table = 'billed_meals';
-    protected $primaryKey = 'id';
-
-    public $from = '20170101';
-    public $to = '20170131';
-    public $where = [['type','=','Комплект'],['class','=','Бизнес']];
-    public const NO_LIMIT = -1;
-    
-    //#TODO RELATIONSHIPS
-    public function flight_load(){
-        return $this->hasOne('App\Flight_load');
-    }
-
-
-    /**
-     * @return \App\Billed_Meals  
-     */
-    public function getBilledMeals($rows = '*', $limit = 10, $where = ""){
-        return Billed_Meals::select($rows)
-        ->whereBetween('flight_date', [$this->from, $this->to])
-        ->where($where)
-        ->limit($limit)
-        ->orderBy('flight_id', 'asc')
-        ->orderBy('flight_date', 'asc')
-        ->get();
-    }
-
-    public function getReport($limit, $from, $to){
-        /*SELECT
+SELECT
+    sub.flight_id                                           AS 'Номер рейса',
+    sub.flight_date                                         AS 'Дата рейса',
+    sub.`type`                                              AS 'Тип номенклатуры',
+    sub.class                                               AS 'Класс',
+    IFNULL(sub.codes_planned, "NOT FOUND")                  AS 'Код.План',
+    IFNULL(sub.codes_fact, "NOT FOUND")                     AS 'Код.Факт',
+    IFNULL(SUM(sub.meal_planned), 0)                        AS 'Количество.План',
+    IFNULL(sub.meal_fact, 0)                                AS 'Количество.Факт',
+    Round(SUM(sub.price_planned), 2)                        AS 'Стоимость без НДС.План',
+    Round(sub.meal_fact * sub.price_fact, 2)                AS 'Стоимость без НДС.Факт',
+    Round(
+        SUM(sub.price_planned) -
+        sub.meal_fact * sub.price_fact,
+     2)   AS 'Дельта'                                            
+FROM (SELECT
         bms.flight_id AS flight_id,
         bms.flight_date AS flight_date,
         bms.`type` AS `type`,          
@@ -70,7 +48,6 @@ class Billed_Meals extends Model
             AND TIME(bms.flight_date) <=  '23:59:59'
             AND  bms.`type` = 'Комплект'
         GROUP BY bms.flight_id, bms.flight_date, nm.nomenclature
-        */
-        return ;
-    }
-}
+    ) AS sub
+    GROUP BY sub.flight_id, sub.flight_date
+    ORDER BY sub.flight_id, sub.flight_date;

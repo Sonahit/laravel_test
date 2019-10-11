@@ -11,12 +11,8 @@
 |
 */
 
-Route::get('/', function () {
-    return view('hello');
-});
+Route::get('/', 'BilledMealsController@show');
 
-Route::get('/public', function () {
+Route::get('/public', function () {     
     return view('welcome');
-});
-
-Route::get('/bms', 'BilledMealsController@show');
+}); 
