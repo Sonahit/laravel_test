@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Billed_Meals;
+use App\Flight_Load;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -46,11 +47,16 @@ class BilledMealsController extends Controller
             'qty as qty.fact',
             DB::raw('Round(price_per_one, 2) as `price.fact`')
         ];
-        $billed_meals = $billed_meals->getBilledMeals(
-            $rows,
-            10, 
-            $billed_meals->where
-        );
-        return view('index')->with(compact('billed_meals'));
+        $billed_meals = Billed_Meals::with(['flight_load', 'meal_rules'])
+        ->where($billed_meals->where)
+        ->where('flight_id', '=', 39)
+        ->limit(1);
+            //->where('flight_date', '=', '2017-01-06 12:05:00')
+        $data_bms=$billed_meals->where('flight_id', '=', 39)
+            //->where($billed_meals->where)
+            ->limit(1)
+            ->get();
+        $billed_meals->dump();
+        $data_bms->dump();
     }   
 }

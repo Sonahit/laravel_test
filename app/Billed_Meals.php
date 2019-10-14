@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Billed_Meals extends Model
 {
@@ -12,19 +13,51 @@ class Billed_Meals extends Model
 
     public $from = '20170101';
     public $to = '20170131';
-    public $where = [['type','=','Комплект'],['class','=','Бизнес']];
+    public $where = [['type', '=','Комплект'],['class', '=','Бизнес']];
     public const NO_LIMIT = -1;
     
     //#TODO RELATIONSHIPS
-    public function flight_load(){
-        return $this->hasOne('App\Flight_load');
+    public function flight_load()
+    {
+        return $this->hasOne('App\Flight_Load', 'id', 'flight_load_id');
     }
 
+    public function meal_rules()
+    {
+        $ml = $this->hasOneThrough(
+            'App\Meal_Rules',
+            'App\Billed_Meals',
+            'flight_date', // Billed_Meals
+            'iata_code', // Meal_Rules 
+            'flight_date', // Billed_Meals
+            'iata_code' // Meal_Rules 
+        )
+        ->where(DB::raw('WEEK(`billed_meals`.`flight_date`) % 2'), '=', DB::raw('`meal_rules`.weeknumber'))
+        ->groupby(DB::raw('meal_rules.iata_code'));
+        $ml->dump();
+        return $ml;
+    }
+
+    /*
+    
+    <!-- @foreach ($billed_meals as $billed_meal)
+          <tr>
+            <td>{{ $billed_meal['flight_id']}}</td>
+            <td>{{ $billed_meal['flight_date']}}</td>
+            <td>{{ $billed_meal['type']}}</td>
+            <td>{{ $billed_meal['class']}}</td> 
+            <td>{{ $billed_meal['code.fact']}}</td> 
+            <td>{{ $billed_meal['qty.fact']}}</td> 
+            <td>{{ $billed_meal['price.fact']}}</td>
+          </tr> 
+        @endforeach
+        -->
+    */
 
     /**
      * @return \App\Billed_Meals  
      */
-    public function getBilledMeals($rows = '*', $limit = 10, $where = ""){
+    public function getBilledMeals(String $rows, Integer $limit, Array $where){
         return Billed_Meals::select($rows)
         ->whereBetween('flight_date', [$this->from, $this->to])
         ->where($where)
@@ -34,43 +67,7 @@ class Billed_Meals extends Model
         ->get();
     }
 
-    public function getReport($limit, $from, $to){
-        /*SELECT
-        bms.flight_id AS flight_id,
-        bms.flight_date AS flight_date,
-        bms.`type` AS `type`,          
-        bms.class AS class ,
-        GROUP_CONCAT(DISTINCT nm.iata_code SEPARATOR ', ') AS codes_planned,
-        GROUP_CONCAT(DISTINCT bm.iata_code SEPARATOR ', ') AS codes_fact,
-        nm.meal_qty AS meal_planned,
-        nm.meal_qty * bmp.price AS price_planned,
-        SUM(DISTINCT bm.qty) AS meal_fact,
-        bms.price_per_one * 1.14 * 1.04 AS price_fact
-        FROM billed_meals AS bms
-        INNER JOIN (flight_load AS fload) ON
-            fload.id = bms.flight_load_id    
-        INNER JOIN billed_meals AS bm ON
-            bm.flight_id = bms.flight_id  
-            AND bm.flight_date = bms.flight_date
-            AND bm.class = bms.class
-            AND bm.`type` = bms.`type`
-            AND bm.iata_code <> 'ALC'
-        INNER JOIN meal_rules AS ml ON
-            ml.iata_code = bms.iata_code
-            AND WEEK(bms.flight_date) % 2 = ml.weeknumber
-        INNER JOIN (new_matrix AS nm, business_meal_prices AS bmp) ON
-            nm.iata_code = ml.iata_code
-            AND nm.passenger_amount = fload.business
-            AND bmp.nomenclature = nm.nomenclature
-        WHERE
-            bms.class = 'Бизнес'
-            AND DATE(bms.flight_date) >= '20170101'
-            AND DATE(bms.flight_date) <= '20170131'
-            AND TIME(bms.flight_date) >=  '00:00:00'
-            AND TIME(bms.flight_date) <=  '23:59:59'
-            AND  bms.`type` = 'Комплект'
-        GROUP BY bms.flight_id, bms.flight_date, nm.nomenclature
-        */
+    public function getReport(Integer $limit, Integer $from, Integer $to){
         return ;
     }
 }

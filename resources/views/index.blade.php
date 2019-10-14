@@ -20,17 +20,8 @@
         </tr>
       </thead>
       <tbody> 
-        @foreach ($billed_meals as $billed_meal)
-          <tr>
-            <td>{{ $billed_meal['flight_id']}}</td>
-            <td>{{ $billed_meal['flight_date']}}</td>
-            <td>{{ $billed_meal['type']}}</td>
-            <td>{{ $billed_meal['class']}}</td> 
-            <td>{{ $billed_meal['code.fact']}}</td> 
-            <td>{{ $billed_meal['qty.fact']}}</td> 
-            <td>{{ $billed_meal['price.fact']}}</td>
-          </tr> 
-        @endforeach
+        
+        {{ $billed_meals }}
       </tbody>
     </table>
 </body>
