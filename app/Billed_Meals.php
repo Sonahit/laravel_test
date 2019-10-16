@@ -13,7 +13,7 @@ class Billed_Meals extends Model
 
     public $from = '20170101';
     public $to = '20170131';
-    public $where = [['type', '=','Комплект'],['class', '=','Бизнес']];
+    public $where = [['type', '=','Комплект'],['class', '=','Бизнес'], ['iata_code', '<>', 'ALC']];
     public const NO_LIMIT = -1;
     
     //#TODO RELATIONSHIPS
@@ -24,18 +24,40 @@ class Billed_Meals extends Model
 
     public function meal_rules()
     {
-        $ml = $this->hasOneThrough(
+        return $this->hasOneThrough(
             'App\Meal_Rules',
             'App\Billed_Meals',
-            'flight_date', // Billed_Meals
-            'iata_code', // Meal_Rules 
-            'flight_date', // Billed_Meals
-            'iata_code' // Meal_Rules 
+            'flight_date', // out from Billed_Meals
+            'iata_code', // out from Meal_Rules 
+            'flight_date', // local to Billed_Meals
+            'iata_code' // local to Meal_Rules 
         )
         ->where(DB::raw('WEEK(`billed_meals`.`flight_date`) % 2'), '=', DB::raw('`meal_rules`.weeknumber'))
         ->groupby(DB::raw('meal_rules.iata_code'));
-        $ml->dump();
-        return $ml;
+    }
+
+    public function new_matrix(){
+        return $this->hasMany('');
+    }
+
+    public function businnes_meal_prices(){
+        return $this;
+    }
+
+    protected static function getChildren(int $flight_id, String $flight_date){
+        $children = DB::table('billed_meals as child')
+            ->select('child.*')
+            ->where('child.flight_id', '=', $flight_id)
+            ->where('child.flight_date', '=', $flight_date)
+            ->where('child.class', '=', 'Бизнес')
+            ->where('child.type', '=', 'Комплект')
+            ->where('child.iata_code', '<>', 'ALC');
+        return $children;
+    }
+
+    public static function getAssociatedChildren(int $id, int $flight_id, String $flight_date){
+        $collection = collect($this->getChildren($flight_id, $flight_date)->get());
+
     }
 
     /*

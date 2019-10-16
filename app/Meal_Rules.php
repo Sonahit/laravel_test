@@ -10,6 +10,6 @@ class Meal_Rules extends Model
     protected $primaryKey = 'id';
 
     public function new_matrix(){
-        return $this -> hasMany('App\New_Matrix');
+        return $this -> hasMany('App\New_Matrix', 'iata_code', 'iata_code');
     }
 }
