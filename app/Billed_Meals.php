@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class Billed_Meals extends Model
@@ -13,9 +14,20 @@ class Billed_Meals extends Model
 
     public $from = '20170101';
     public $to = '20170131';
-    public $where = [['type', '=','Комплект'],['class', '=','Бизнес'], ['iata_code', '<>', 'ALC']];
     public const NO_LIMIT = -1;
     
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope('january_business', function(Builder $b){
+            $b->whereBetween('flight_date', ['20170101', '20170131'])
+            ->where([
+                ['type', '=','Комплект'],
+                ['class', '=','Бизнес'],
+                ['iata_code', '<>', 'ALC']
+            ]);
+        });
+    }
     //#TODO RELATIONSHIPS
     public function flight_load()
     {
@@ -36,29 +48,7 @@ class Billed_Meals extends Model
         ->groupby(DB::raw('meal_rules.iata_code'));
     }
 
-    public function new_matrix(){
-        return $this->hasMany('');
-    }
 
-    public function businnes_meal_prices(){
-        return $this;
-    }
-
-    protected static function getChildren(int $flight_id, String $flight_date){
-        $children = DB::table('billed_meals as child')
-            ->select('child.*')
-            ->where('child.flight_id', '=', $flight_id)
-            ->where('child.flight_date', '=', $flight_date)
-            ->where('child.class', '=', 'Бизнес')
-            ->where('child.type', '=', 'Комплект')
-            ->where('child.iata_code', '<>', 'ALC');
-        return $children;
-    }
-
-    public static function getAssociatedChildren(int $id, int $flight_id, String $flight_date){
-        $collection = collect($this->getChildren($flight_id, $flight_date)->get());
-
-    }
 
     /*
     

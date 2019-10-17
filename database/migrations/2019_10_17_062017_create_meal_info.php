@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddFlightLoad extends Migration
+class CreateMealInfo extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,12 @@ class AddFlightLoad extends Migration
      */
     public function up()
     {
-        Schema::table('billed_meals', function (Blueprint $table) {
-
-
+        //#TODO Normalize DB
+        Schema::create('meal_info', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->integer('meal_id')->unique();
+            $table->char('meal_type',1);
+            $table->char('nomenclature', 11);
         });
     }
 
@@ -26,8 +29,6 @@ class AddFlightLoad extends Migration
      */
     public function down()
     {
-        Schema::table('billed_meals', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('meal_info');
     }
 }

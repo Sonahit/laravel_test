@@ -51,3 +51,27 @@ FROM (SELECT
     ) AS sub
     GROUP BY sub.flight_id, sub.flight_date
     ORDER BY sub.flight_id, sub.flight_date;
+
+
+/*
+    Normalization queries (tables)
+*/
+
+/* table meal_info*/
+SELECT 
+meal_id, nomenclature, meal_type
+FROM new_matrix
+GROUP BY meal_id;
+
+/* table billed_meals by nomenclature, name, type, class? */
+SELECT nomenclature, `type`, class, `name` FROM billed_meals
+GROUP BY `name`, nomenclature, class, `type`
+ORDER BY id;
+
+/* table billed_meals_price*/
+SELECT `name`, qty, price_per_one, total, total_novat_discounted FROM billed_meals
+GROUP BY nomenclature, price_per_one;
+
+/* dunno */
+SELECT id AS billed_meals_id, delivery_number, bortnumber FROM billed_meals AS bm
+GROUP BY delivery_number, bortnumber;

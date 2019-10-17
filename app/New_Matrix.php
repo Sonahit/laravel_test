@@ -11,6 +11,14 @@ class New_Matrix extends Model
 
     public function meal_rules()
     {
-        return $this;
+        return $this->belongsTo('App\Meal_Rules', 'iata_code', 'iata_code');
+    }
+
+    public function flight_load(){
+        return $this->belongsTo('App\Flight_Load','business', 'passenger_amount');
+    }
+
+    public function businness_meal_prices(){
+        return $this->hasOne('App\Business_Meal_Prices', 'nomenclature', 'nomenclature');
     }
 }
