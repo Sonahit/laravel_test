@@ -13,7 +13,6 @@ class CreateMealInfo extends Migration
      */
     public function up()
     {
-        //#TODO Normalize DB
         Schema::create('meal_info', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('meal_id')->unique();

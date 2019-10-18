@@ -11,6 +11,7 @@ class Billed_Meals extends Model
     #TODO DATA METHODS
     protected $table = 'billed_meals';
     protected $primaryKey = 'id';
+    protected $perPage = 10;
 
     public $from = '20170101';
     public $to = '20170131';
@@ -20,32 +21,48 @@ class Billed_Meals extends Model
     {
         parent::boot();
         static::addGlobalScope('january_business', function(Builder $b){
-            $b->whereBetween('flight_date', ['20170101', '20170131'])
-            ->where([
-                ['type', '=','Комплект'],
-                ['class', '=','Бизнес'],
-                ['iata_code', '<>', 'ALC']
-            ]);
+            $b->whereBetween('flight_date', ['20170101', '20170131']);
         });
     }
-    //#TODO RELATIONSHIPS
+
+    public static function scopeSort($q){
+        return $q->orderBy('flight_id', 'asc')->orderBy('flight_date', 'asc');
+    }
+
     public function flight_load()
     {
-        return $this->hasOne('App\Flight_Load', 'id', 'flight_load_id');
+        return $this->belongsTo('App\Flight_Load', 'flight_load_id', 'id');
+    }
+
+    public function billed_meals_info()
+    {
+        return $this->hasOne('App\Billed_Meals_Info', 'name', 'name');
+    }
+
+    public function billed_meals_price()
+    {
+        return $this->hasOne('App\Billed_Meals_Prices', 'delivery_number', 'delivery_number')
+            ->where('name', $this->billed_meals_info()->name);
     }
 
     public function meal_rules()
     {
-        return $this->hasOneThrough(
-            'App\Meal_Rules',
-            'App\Billed_Meals',
-            'flight_date', // out from Billed_Meals
-            'iata_code', // out from Meal_Rules 
-            'flight_date', // local to Billed_Meals
-            'iata_code' // local to Meal_Rules 
-        )
-        ->where(DB::raw('WEEK(`billed_meals`.`flight_date`) % 2'), '=', DB::raw('`meal_rules`.weeknumber'))
-        ->groupby(DB::raw('meal_rules.iata_code'));
+        return $this->hasOne('App\Meal_Rules', 'flight_id', 'flight_id')
+            ->where("class", '=', 'Бизнес')
+            ->where("iata_code", '=', "{$this->billed_meals_info->iata_code}")
+            ->where("weeknumber", '=', DB::raw("WEEK('{$this->flight_date}') % 2"));
+    }
+
+    public function new_matrix()
+    {
+        return $this->hasManyThrough(
+        'App\New_Matrix',
+        'App\Meals_Price',
+         'iata_code',
+         'nomenclature',
+         'iata_code',
+         'nomenclature'
+        )->where('`new_matrix`.`passenger_amount`', $this->flight_load->business);
     }
 
 
