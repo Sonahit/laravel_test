@@ -28,3 +28,7 @@ yarn-error.log
 #keys
 
 git_dev*
+
+#vscode
+
+.vscode
