@@ -57,7 +57,7 @@ class Billed_Meals extends Model
     public function billed_meals_prices()
     {
         return $this->hasOne('App\Billed_Meals_Prices', 'delivery_number', 'delivery_number')
-            ->where('name', $this->billed_meals_info->name);
+                    ->where('name', $this->billed_meals_info->name);
     }
 
     public function meal_rules()
@@ -81,7 +81,7 @@ class Billed_Meals extends Model
         'name',
         'iata_code'
         )
-        ->where('passenger_amount', $this->flight_load->business);
+            ->where('passenger_amount', $this->flight_load->business);
     }
 
 
@@ -107,12 +107,12 @@ class Billed_Meals extends Model
      */
     public function getBilledMeals(String $rows, Integer $limit, Array $where){
         return Billed_Meals::select($rows)
-        ->whereBetween('flight_date', [$this->from, $this->to])
-        ->where($where)
-        ->limit($limit)
-        ->orderBy('flight_id', 'asc')
-        ->orderBy('flight_date', 'asc')
-        ->get();
+                ->whereBetween('flight_date', [$this->from, $this->to])
+                ->where($where)
+                ->limit($limit)
+                ->orderBy('flight_id', 'asc')
+                ->orderBy('flight_date', 'asc')
+                ->get();
     }
 
     public function getReport(Integer $limit, Integer $from, Integer $to){
