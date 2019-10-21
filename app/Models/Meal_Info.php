@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,6 +10,6 @@ class Meal_Info extends Model
 
     public function new_matrix()
     {
-        return $this->belongsToMany('App\New_Matrix', 'new_matrix','meal_id', 'meal_id');
+        return $this->belongsToMany('App\New_Matrix', 'new_matrix', 'meal_id', 'meal_id');
     }
 }

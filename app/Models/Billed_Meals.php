@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,33 +16,48 @@ class Billed_Meals extends Model
     public $from = '20170101';
     public $to = '20170131';
     public const NO_LIMIT = -1;
-    
+    /**
+     * id
+     * flight_id
+     * flight_load_id
+     * flight_date
+     * name
+     * delivery_code
+     * class
+     * type
+     * airport
+     * invoice
+     */
     protected static function boot()
     {
         parent::boot();
         static::addGlobalScope('january_business', function(Builder $b){
-            $b->whereBetween('flight_date', ['20170101', '20170131']);
+            $b  ->whereBetween('flight_date', ['20170101', '20170131'])
+                ->where('class', 'Бизнес')
+                ->where('type', 'Комплект');
         });
     }
 
     public static function scopeSort($q){
-        return $q->orderBy('flight_id', 'asc')->orderBy('flight_date', 'asc');
+        return $q
+                ->orderBy('flight_id', 'asc')
+                ->orderBy('flight_date', 'asc');
     }
 
     public function flight_load()
     {
-        return $this->belongsTo('App\Flight_Load', 'flight_load_id', 'id');
+        return $this->hasOne('App\Flight_Load', 'id', 'flight_load_id');
     }
 
     public function billed_meals_info()
     {
-        return $this->hasOne('App\Billed_Meals_Info', 'name', 'name');
+        return $this->belongsTo('App\Billed_Meals_Info', 'name', 'name');
     }
 
-    public function billed_meals_price()
+    public function billed_meals_prices()
     {
         return $this->hasOne('App\Billed_Meals_Prices', 'delivery_number', 'delivery_number')
-            ->where('name', $this->billed_meals_info()->name);
+            ->where('name', $this->billed_meals_info->name);
     }
 
     public function meal_rules()
@@ -53,16 +68,20 @@ class Billed_Meals extends Model
             ->where("weeknumber", '=', DB::raw("WEEK('{$this->flight_date}') % 2"));
     }
 
+    public function withNewMatrix()
+    {
+        return;
+    }
+
     public function new_matrix()
     {
-        return $this->hasManyThrough(
-        'App\New_Matrix',
-        'App\Meals_Price',
-         'iata_code',
-         'nomenclature',
-         'iata_code',
-         'nomenclature'
-        )->where('`new_matrix`.`passenger_amount`', $this->flight_load->business);
+        return $this->hasManyThrough('App\New_Matrix', 'App\Billed_Meals_Info',
+        'name',
+        'iata_code',
+        'name',
+        'iata_code'
+        )
+        ->where('passenger_amount', $this->flight_load->business);
     }
 
 

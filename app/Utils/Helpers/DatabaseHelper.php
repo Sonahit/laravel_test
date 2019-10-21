@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseHelper{
 
-
   public static function updateOrInsert($tableName, $columns, $rows){
     foreach($columns as $column){
       $insert = [];

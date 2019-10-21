@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Billed_Meals;
-// #TODO Get rid of it in near future
-use App\New_Matrix;
+use App\Models\Billed_Meals;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -50,11 +48,11 @@ class BilledMealsController extends Controller
         ];
         $billed_meals_collect = $billed_meals
             ->sort()
-            ->with(['flight_load', 'meal_rules','billed_meals_info'])
-            ->with(['billed_meals_price'])
-            ->with(['new_matrix'])
-            ->paginate();
-        $billed_meals_collect->new_matrix->business_meal_prices;
+            ->with(['flight_load'])
+            ->paginate()
+            ->withNew_Matrix();    
+        // $billed_meals->billed_meals_price;
+        // $billed_meals->new_matrix;
         $billed_meals_collect->dump();
     }   
 }
