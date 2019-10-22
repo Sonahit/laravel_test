@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Collections\New_Matrix_Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class New_Matrix extends Model
@@ -9,16 +10,19 @@ class New_Matrix extends Model
     protected $table = 'new_matrix';
     protected $primaryKey = 'id';
 
-    public function meal_rules()
+    public function newCollection(array $models = [])
+    {   
+        return new New_Matrix_Collection($models);
+    }
+
+    public function meal_info()
     {
-        return $this->belongsTo('App\Meal_Rules', 'iata_code', 'iata_code');
+        return $this->hasOne('App\Models\Meal_Info','meal_id','meal_id');
     }
 
-    public function flight_load(){
-        return $this->belongsTo('App\Flight_Load','business', 'passenger_amount');
-    }
-
-    public function businness_meal_prices(){
-        return $this->hasOne('App\Business_Meal_Prices', 'nomenclature', 'nomenclature');
+    public function withBusinessPrices()
+    {
+        $this->meal_info->business_meal_prices;
+        return $this;
     }
 }

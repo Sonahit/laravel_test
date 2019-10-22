@@ -10,11 +10,11 @@ class Billed_Meals_Info extends Model
 
     public function billed_meals()
     {
-        return $this->hasMany('App\Billed_Meals', 'name', 'name');
+        return $this->hasMany('App\Models\Billed_Meals', 'name', 'name');
     }
 
     public function billed_meals_info()
     {
-        return $this->belongsToMany('App\Billed_Meals_Prices','billed_meals_prices', 'name', 'name');
+        return $this->belongsToMany('App\Models\Billed_Meals_Prices','billed_meals_prices', 'name', 'name');
     }
 }

@@ -8,8 +8,8 @@ class Meal_Info extends Model
 {
     protected $table = "meal_info";
 
-    public function new_matrix()
+    public function business_meal_prices()
     {
-        return $this->belongsToMany('App\New_Matrix', 'new_matrix', 'meal_id', 'meal_id');
+        return $this->hasOne('App\Models\Business_Meal_Prices','nomenclature', 'nomenclature');
     }
 }

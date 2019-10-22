@@ -1,6 +1,6 @@
 <?php
 
-use App\Billed_Meals;
+use App\Models\Billed_Meals;
 use App\Utils\Helpers\DatabaseHelper;
 use Illuminate\Database\Seeder;
 

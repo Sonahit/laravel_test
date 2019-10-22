@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Collections\Billed_Meals_Collection;
 use App\Models\Billed_Meals;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class BilledMealsController extends Controller
 {
@@ -29,7 +29,7 @@ class BilledMealsController extends Controller
         //
     }
     
-
+    
     /**
      * Display the specified resource.
      *
@@ -42,17 +42,21 @@ class BilledMealsController extends Controller
             'flight_date',
             'type', 
             'class',
-            'iata_code as code.fact',
-            'qty as qty.fact',
-            DB::raw('Round(price_per_one, 2) as `price.fact`')
+            'name',
+            'delivery_number'
+        ];
+        $relations = [
+            'flight_load:id,business',
+            'billed_meals_info:name,iata_code',
+            'billed_meals_prices:billed_meals_prices.qty,billed_meals_prices.price_per_one,billed_meals_prices.total,billed_meals_prices.total_novat_discounted'
         ];
         $billed_meals_collect = $billed_meals
+            ->januaryBusiness()
             ->sort()
-            ->with(['flight_load'])
+            ->with($relations)
             ->paginate()
-            ->withNew_Matrix();    
-        // $billed_meals->billed_meals_price;
-        // $billed_meals->new_matrix;
+            ->withNewMatrix()
+            ->flatCollection();
         $billed_meals_collect->dump();
     }   
 }

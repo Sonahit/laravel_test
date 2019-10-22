@@ -11,6 +11,6 @@ class Flight_Load extends Model
 
     public function billed_meals()
     {
-        return $this->hasMany('App\Billed_Meals', 'flight_load_id', 'id');
+        return $this->hasMany('App\Models\Billed_Meals', 'flight_load_id', 'id');
     }
 }

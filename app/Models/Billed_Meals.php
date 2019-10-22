@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Collections\Billed_Meals_Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,7 @@ class Billed_Meals extends Model
     protected $table = 'billed_meals';
     protected $primaryKey = 'id';
     protected $perPage = 10;
-
+    
     public $from = '20170101';
     public $to = '20170131';
     public const NO_LIMIT = -1;
@@ -28,60 +29,72 @@ class Billed_Meals extends Model
      * airport
      * invoice
      */
-    protected static function boot()
-    {
-        parent::boot();
-        static::addGlobalScope('january_business', function(Builder $b){
-            $b  ->whereBetween('flight_date', ['20170101', '20170131'])
-                ->where('class', 'Бизнес')
-                ->where('type', 'Комплект');
-        });
+
+    public static function scopeJanuaryBusiness($q){
+        return $q 
+            -> whereBetween('flight_date', ['20170101', '20170131'])
+            ->where('class', 'Бизнес')
+            ->where('type', 'Комплект');
+    }
+
+    public function newCollection(array $models = [])
+    {   
+        return new Billed_Meals_Collection($models);
     }
 
     public static function scopeSort($q){
         return $q
-                ->orderBy('flight_id', 'asc')
+                ->select(
+                    'flight_id',
+                    'flight_date',
+                    'flight_load_id',
+                    'name',
+                    'delivery_number',
+                    'class',
+                    'type'
+                )->orderBy('flight_id', 'asc')
                 ->orderBy('flight_date', 'asc');
     }
 
+    //TODO: No alc scope
+
     public function flight_load()
     {
-        return $this->hasOne('App\Flight_Load', 'id', 'flight_load_id');
+        return $this->hasOne('App\Models\Flight_Load', 'id', 'flight_load_id');
     }
 
     public function billed_meals_info()
     {
-        return $this->belongsTo('App\Billed_Meals_Info', 'name', 'name');
+        return $this->belongsTo('App\Models\Billed_Meals_Info', 'name', 'name');
     }
 
     public function billed_meals_prices()
     {
-        return $this->hasOne('App\Billed_Meals_Prices', 'delivery_number', 'delivery_number')
-                    ->where('name', $this->billed_meals_info->name);
+        return $this->hasOneThrough(
+            'App\Models\Billed_Meals_Prices',
+            'App\Models\Billed_Meals',
+            'name',
+            'delivery_number',
+            'name',
+            'delivery_number');
     }
 
     public function meal_rules()
     {
-        return $this->hasOne('App\Meal_Rules', 'flight_id', 'flight_id')
-            ->where("class", '=', 'Бизнес')
+        return $this->hasOne('App\Models\Meal_Rules', 'flight_id', 'flight_id')
             ->where("iata_code", '=', "{$this->billed_meals_info->iata_code}")
             ->where("weeknumber", '=', DB::raw("WEEK('{$this->flight_date}') % 2"));
     }
 
     public function withNewMatrix()
     {
-        return;
-    }
-
-    public function new_matrix()
-    {
-        return $this->hasManyThrough('App\New_Matrix', 'App\Billed_Meals_Info',
-        'name',
-        'iata_code',
-        'name',
-        'iata_code'
-        )
-            ->where('passenger_amount', $this->flight_load->business);
+        if($mr = $this->meal_rules){
+            $business = $this->flight_load->business;
+            $nm = $mr->new_matrix()->where('passenger_amount', $business)->get();
+            $nm->withBusinessPrices();
+            $mr->setRelation('new_matrix',$nm);
+        }
+        return $this;
     }
 
 
@@ -101,21 +114,4 @@ class Billed_Meals extends Model
         @endforeach
         -->
     */
-
-    /**
-     * @return \App\Billed_Meals  
-     */
-    public function getBilledMeals(String $rows, Integer $limit, Array $where){
-        return Billed_Meals::select($rows)
-                ->whereBetween('flight_date', [$this->from, $this->to])
-                ->where($where)
-                ->limit($limit)
-                ->orderBy('flight_id', 'asc')
-                ->orderBy('flight_date', 'asc')
-                ->get();
-    }
-
-    public function getReport(Integer $limit, Integer $from, Integer $to){
-        return ;
-    }
 }

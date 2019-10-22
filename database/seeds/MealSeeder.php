@@ -1,6 +1,6 @@
 <?php
 
-use App\New_Matrix;
+use App\Models\New_Matrix;
 use Illuminate\Database\Seeder;
 use App\Utils\Helpers\DatabaseHelper;
 
