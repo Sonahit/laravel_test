@@ -9,7 +9,10 @@ class Meal_Rules extends Model
     protected $table = 'meal_rules';
     protected $primaryKey = 'id';
 
-    public function new_matrix(){
-        return $this->hasMany('App\Models\New_Matrix', 'iata_code', 'iata_code');
+    public function new_matrix(int $passenger_amount = 0){
+        return $this
+            ->hasMany('App\Models\New_Matrix','iata_code', 'iata_code')
+            ->with('meal_info.business_meal_prices')
+            ->where('passenger_amount', $passenger_amount);
     }
 }

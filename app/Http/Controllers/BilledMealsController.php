@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Collections\Billed_Meals_Collection;
 use App\Models\Billed_Meals;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class BilledMealsController extends Controller
@@ -38,25 +38,22 @@ class BilledMealsController extends Controller
      */
     public function show(Billed_Meals $billed_meals)
     {
-        $rows = ['flight_id',
-            'flight_date',
-            'type', 
-            'class',
-            'name',
-            'delivery_number'
-        ];
         $relations = [
             'flight_load:id,business',
-            'billed_meals_info:name,iata_code',
-            'billed_meals_prices:billed_meals_prices.qty,billed_meals_prices.price_per_one,billed_meals_prices.total,billed_meals_prices.total_novat_discounted'
+            'billed_meals_info:name,iata_code'
         ];
-        $billed_meals_collect = $billed_meals
-            ->januaryBusiness()
+        $billed_meals_base_collect = $billed_meals->januaryBusiness()
             ->sort()
+            ->whereDoesntHave('billed_meals_info', function($q){
+                $q->where('iata_code', 'ALC');
+            })
             ->with($relations)
-            ->paginate()
-            ->withNewMatrix()
-            ->flatCollection();
-        $billed_meals_collect->dump();
+            ->paginate();
+        $billed_meals_collect = $billed_meals_base_collect->withPrices()
+            ->withNewMatrix();
+        return view('index', [
+            'billed_meals_collect' => $billed_meals_collect,
+            'links'=> $billed_meals_base_collect->links()
+         ]);
     }   
 }

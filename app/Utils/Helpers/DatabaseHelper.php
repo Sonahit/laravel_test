@@ -12,7 +12,10 @@ class DatabaseHelper{
       foreach ($rows as $row) {
         $insert[$row] = $column->$row;
       }
-      DB::table($tableName)->updateOrInsert($insert);
+      //TODO: Test me
+      //if(!DB::table($tableName)->whereExists($insert)){
+        DB::table($tableName)->updateOrInsert($insert);
+      //}
     }
   }
 
