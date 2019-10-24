@@ -15,7 +15,7 @@ class CreateBilledMealsPrices extends Migration
     {
         Schema::create('billed_meals_prices', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->char('name', 150)->index();
+            $table->bigInteger('billed_meals_id')->unique();
             $table->integer('delivery_number');
             $table->integer('qty')->nullable();
             $table->float('price_per_one')->nullable();

@@ -10,8 +10,9 @@ class Billed_Meals_Prices extends Model
 
     public function billed_meals()
     {
-        return $this->hasMany('App\Models\Billed_Meals', 'delivery_number', 'delivery_number')
-            ->where('name', $this->billed_meals_info()->name);
+        return $this->belongsToMany('App\Models\Billed_Meals','billed_meals',
+            'delivery_number',
+            'name');
     }
 
     public function billed_meals_info()

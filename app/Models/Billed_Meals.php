@@ -9,14 +9,13 @@ use Illuminate\Support\Facades\DB;
 class Billed_Meals extends Model
 {
     protected $table = 'billed_meals';
-    protected $primaryKey = 'id';
     protected $perPage = 10;
 
     public const NO_LIMIT = -1;
 
     public static function scopeJanuaryBusiness($q){
         return $q 
-            -> whereBetween('flight_date', ['20170101', '20170131'])
+            ->whereBetween('flight_date', ['20170101', '20170131'])
             ->where('class', 'Бизнес')
             ->where('type', 'Комплект');
     }
@@ -29,6 +28,7 @@ class Billed_Meals extends Model
     public static function scopeSort($q){
         return $q
                 ->select(
+                    'id',
                     'flight_id',
                     'flight_date',
                     'flight_load_id',
@@ -52,59 +52,20 @@ class Billed_Meals extends Model
 
     public function billed_meals_prices()
     {
-        //Doesnt work because of seeding
-        // $this->belongsTo(
-        //     'App\Models\Billed_Meals_Prices',
-        //     'delivery_number',
-        //     'delivery_number')
-        //         ->where('name', $this->name);
-        return DB::table($this->getTable())->select(['name', 'delivery_number', 'qty', 'price_per_one'])
-                    ->where('name', $this->name)
-                    ->where('delivery_number', $this->delivery_number);
-    }
-
-    public function meal_rules()
-    {
-        return $this->hasOne('App\Models\Meal_Rules', 'flight_id', 'flight_id')
-            ->where("iata_code", "{$this->billed_meals_info->iata_code}")
-            ->where("weeknumber", DB::raw("IF(WEEK('{$this->flight_date}') % 2 = 0, 1, 2)"));
-    }
-
-    public function withPrices()
-    {
-        if($this->name){
-            //$this->billed_meals_prices;
-            $bmp = $this->billed_meals_prices()->get()->toArray();
-            $this->setRelation('billed_meals_prices', $bmp[0]);
-        }
-        return $this;
-    }
-
-    public function withNewMatrix()
-    {
-        if($this->flight_load){
-            $mr = $this->meal_rules;
-            if ($mr){
-                $business = $this->flight_load->business;
-                $nm = $mr->new_matrix($business)->get();
-                $mr->setRelation('new_matrix', $nm);
-            } else {
-                $this->new_matrix;
-            }
-        }
-        return $this;
+        return $this->hasOne('App\Models\Billed_Meals_Prices', 'billed_meals_id');
     }
 
     public function new_matrix(){
-        return $this->belongsToMany(
+        return $this->hasManyThrough(
             'App\Models\New_Matrix',
-            'App\Models\Billed_Meals_Info',
-            'name',
+            'App\Models\Billed_Meals',
+            'id',
             'iata_code',
-            'name',
+            'id',
             'iata_code')
+        ->join('flight_load as fload', 'fload.id', '=', 'billed_meals.flight_load_id')
         ->with('meal_info.business_meal_prices')
-        ->where('passenger_amount', $this->flight_load->business);
+        ->where('new_matrix.passenger_amount', DB::raw("`fload`.`business`"));
     }
 
 

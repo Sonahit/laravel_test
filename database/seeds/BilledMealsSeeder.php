@@ -19,6 +19,16 @@ class BilledMealsSeeder extends Seeder
             ->select($rows)
             ->groupBy('nomenclature')
             ->get();
+            /*
+            INSERT INTO billed_meals_prices (billed_meals_id, delivery_number, qty, price_per_one, total, total_novat_discounted)
+SELECT bm.id AS billed_meals_id,
+	bm.delivery_number AS delivery_number,
+	bm.qty AS qty,
+	bm.price_per_one AS price_per_one,
+	bm.total AS total,
+	bm.total_novat_discounted AS total_novat_discounted
+FROM billed_meals AS bm;
+            */
         DatabaseHelper::updateOrInsert('billed_meals_info', $billed_meals_info, $rows);
         info('Done');
         info('Started seeding billed_meals_prices');

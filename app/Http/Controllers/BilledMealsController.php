@@ -39,21 +39,22 @@ class BilledMealsController extends Controller
     public function show(Billed_Meals $billed_meals)
     {
         $relations = [
-            'flight_load:id,business',
-            'billed_meals_info:name,iata_code'
+            'flight_load',
+            'billed_meals_info',
+            'billed_meals_prices',
+            'new_matrix'
         ];
-        $billed_meals_base_collect = $billed_meals->januaryBusiness()
+        $billed_meals_collect = $billed_meals->januaryBusiness()
             ->sort()
             ->whereDoesntHave('billed_meals_info', function($q){
                 $q->where('iata_code', 'ALC');
             })
             ->with($relations)
             ->paginate();
-        $billed_meals_collect = $billed_meals_base_collect->withPrices()
-            ->withNewMatrix();
+        // echo $billed_meals_base_collect;
         return view('index', [
             'billed_meals_collect' => $billed_meals_collect,
-            'links'=> $billed_meals_base_collect->links()
+            'links'=> $billed_meals_collect->links()
          ]);
     }   
 }
