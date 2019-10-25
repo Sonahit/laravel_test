@@ -92,8 +92,9 @@ function get_params(Request $request, ...$params){
     }
     return $query;
 }
-// groupByKey(flattenBilled($billed_meals_collect), $do_group, 'date')
 
+
+//To helper functions
 
 function flattenBilled($billed_meals_collection){
   $billed_meals = array();
