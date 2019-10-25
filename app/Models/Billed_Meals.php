@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class Billed_Meals extends Model
 {
     protected $table = 'billed_meals';
-    protected $perPage = 10;
+    protected $perPage = 20;
 
     public const NO_LIMIT = -1;
 
@@ -25,9 +25,8 @@ class Billed_Meals extends Model
         return new Billed_Meals_Collection($models);
     }
 
-    public static function scopeSort($q){
-        return $q
-                ->select(
+    public static function selectDefault($q){
+        return $q ->select(
                     'id',
                     'flight_id',
                     'flight_date',
@@ -36,8 +35,16 @@ class Billed_Meals extends Model
                     'delivery_number',
                     'class',
                     'type'
-                )->orderBy('flight_id', 'asc')
-                ->orderBy('flight_date', 'asc');
+        );
+    }
+    public static function scopeSort($q, $sort, $asc){
+        $q = Billed_Meals::selectDefault($q)->orderBy('flight_id', $asc ? 'asc' : 'desc');
+        switch ($sort) {
+            case 'qty':
+                return $q->orderBy('qty', $asc ? 'asc' : 'desc');
+            default:
+                return $q->orderBy('flight_date', $asc ? 'asc' : 'desc');
+        }
     }
 
     public function flight_load()

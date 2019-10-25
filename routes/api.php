@@ -12,20 +12,14 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-use App\Http\Controllers\BilledMealsController;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('api')->get('/billed_meals', function(Request $request){
-        #TODO PAGING WITH API
-        $controller = new BilledMealsController;
-        $data = $controller->show(new App\Billed_Meals);
-        return response()->json([
-            'data' => json_encode($data, JSON_UNESCAPED_UNICODE),
-            'code' => '200'
-        ]);
-});
+Route::group(['middleware' => 'api'], function(){
+    
+    Route::middleware('api')->get('/billed_meals', "BilledMealsController@index");
 
+});
 

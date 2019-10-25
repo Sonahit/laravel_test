@@ -19,10 +19,4 @@ class New_Matrix extends Model
     {
         return $this->hasOne('App\Models\Meal_Info','meal_id','meal_id');
     }
-
-    public function withBusinessPrices()
-    {
-        $this->meal_info->business_meal_prices;
-        return $this;
-    }
 }
