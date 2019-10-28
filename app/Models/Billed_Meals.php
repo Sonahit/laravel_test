@@ -37,14 +37,10 @@ class Billed_Meals extends Model
                     'type'
         );
     }
-    public static function scopeSort($q, $sort, $asc){
-        $q = Billed_Meals::selectDefault($q)->orderBy('flight_id', $asc ? 'asc' : 'desc');
-        switch ($sort) {
-            case 'qty':
-                return $q->orderBy('qty', $asc ? 'asc' : 'desc');
-            default:
-                return $q->orderBy('flight_date', $asc ? 'asc' : 'desc');
-        }
+    public static function scopeSort($q, $asc){
+       return Billed_Meals::selectDefault($q)
+                            ->orderBy('flight_id', $asc ? 'asc' : 'desc')
+                            ->orderBy('flight_date', $asc ? 'asc' : 'desc');
     }
 
     public function flight_load()
@@ -74,22 +70,4 @@ class Billed_Meals extends Model
         ->with('meal_info.business_meal_prices')
         ->where('new_matrix.passenger_amount', DB::raw("`fload`.`business`"));
     }
-
-
-
-    /*
-    
-    <!-- @foreach ($billed_meals as $billed_meal)
-          <tr>
-            <td>{{ $billed_meal['flight_id']}}</td>
-            <td>{{ $billed_meal['flight_date']}}</td>
-            <td>{{ $billed_meal['type']}}</td>
-            <td>{{ $billed_meal['class']}}</td> 
-            <td>{{ $billed_meal['code.fact']}}</td> 
-            <td>{{ $billed_meal['qty.fact']}}</td> 
-            <td>{{ $billed_meal['price.fact']}}</td>
-          </tr> 
-        @endforeach
-        -->
-    */
 }

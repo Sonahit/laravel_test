@@ -1,0 +1,74 @@
+@mixin colorBack($color, $background-color){
+    background-color: $background-color;
+    color: $color;
+}
+
+$arrow-right: -45;
+$arrow-left: 135;
+$arrow-down: 45;
+$arrow-up: -135;
+
+@mixin arrow($direction : 0, $color: black){
+    border: solid $color;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(#{$direction}deg);
+    -webkit-transform: rotate(#{$direction}deg);
+}
+
+.main-table{
+    border-collapse: collapse;
+    &__th{
+        padding: 10px;
+        @include colorBack(white, green);
+        &--sortable{
+            padding: 2px;
+            margin: 10px;
+            @include colorBack(white, green);
+            user-select: none;
+            transition: 0.5s all ease;
+            cursor: pointer;
+            &:hover{
+                background-color: rgb(0, 217, 255);
+            }
+            & span {
+                &.asc.active{
+                    &::after{
+                        content: "";
+                        margin: 0 5px 0 5px;
+                        @include arrow($arrow-down);
+                    }
+                    
+                }
+                &.desc.active{
+                    &::after{
+                        content: "";
+                        margin: 0 5px 0 5px;
+                        @include arrow($arrow-up);
+                    }
+                }
+
+                &.asc, &.desc{
+                    &::after{
+                        content: "";
+                        margin: 0 5px 0 5px;
+                        @include arrow($arrow-down, green);
+                    }
+                }
+            }           
+            
+        }
+    }
+    &__td{
+        padding: 10px 15px;
+    }
+    &__tr{
+        padding: 5px;
+    }
+    &__tbody{
+        tr {
+            border-bottom: 1px solid black;
+        }
+    }
+}

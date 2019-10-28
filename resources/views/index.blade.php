@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/index.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/nav.css') }}">
   <title>S7</title>
 </head>
 <script>
@@ -35,49 +37,60 @@ function downloadCSV(){
 
 </script>
 <body>
-    @if($billed_meals_collection->links())
+    @if(method_exists($billed_meals_collection, 'links'))
       {!! $billed_meals_collection->links() !!}
     @endif
     <main>
-      <button onclick="downloadCSV()">clickme</button>
-      <table id="main-table">
-        <thead>
-            <tr>
-                <th rowSpan="2">Номер полёта</th>
-                <th rowSpan="2">Дата полёта</th>
-                <th rowSpan="2">Класс</th>
-                <th rowSpan="2">Тип номенклатуры</th>
-                <th colSpan="2">Код</th>
-                <th colSpan="2">Количество</th>
-                <th colSpan="2">Цена</th>
-                <th colSpan="2">Дельта</th>
+      <section id="options">
+        <section class="options_download">
+          <button class="options__download__pdf" onclick="downloadPDF()">Download PDF</button>
+          <button class="options__download__xml"onclick="downloadXML()">Download XML</button>
+          <button class="options__download__csv"onclick="downloadCSV()">Download CSV</button>
+        </section>
+        <section class="options_getData">
+          <label>Отобразить количество позиций на одну страницу</label>
+          <input id="input_getData" type="text" name="page" placeholder="Per page">  
+          <button onclick="Database.getMoreData()">Отобразить</button>
+        </section>
+      </section>
+      <table class="main-table">
+        <thead class="main-table__thead">
+            <tr class="main-table__tr">
+                <th class="main-table__th--sortable" data-sort="flight_id" rowSpan="2"><span class="asc">Номер полёта</span></th>
+                <th class="main-table__th--sortable" data-sort="flight_date" rowSpan="2"><span class="asc">Дата полёта</span></th>
+                <th class="main-table__th" rowSpan="2"><span>Класс</span></th>
+                <th class="main-table__th" rowSpan="2"><span>Тип номенклатуры</span></th>
+                <th class="main-table__th" colSpan="2"><span>Код</span></th>
+                <th class="main-table__th" colSpan="2"><span>Количество</span></th>
+                <th class="main-table__th" colSpan="2"><span>Цена</span></th>
+                <th class="main-table__th--sortable" data-sort="delta" rowSpan="2"><span class="asc">Дельта</span></th>
             </tr>
-            <tr>
-                <th>План</th>
-                <th>Факт</th>
+            <tr class="main-table__tr">
+                <th class="main-table__th--sortable" data-sort="plan_code"><span class="asc">План</span></th>
+                <th class="main-table__th--sortable" data-sort="fact_code"><span class="asc">Факт</span></th>
 
-                <th>План</th>
-                <th>Факт</th>
+                <th class="main-table__th--sortable" data-sort="plan_qty"><span class="asc">План</span></th>
+                <th class="main-table__th--sortable" data-sort="fact_qty"><span class="asc">Факт</span></th>
 
-                <th>План</th>
-                <th>Факт</th>
+                <th class="main-table__th--sortable" data-sort="plan_price"><span class="asc">План</span></th>
+                <th class="main-table__th--sortable" data-sort="fact_price"><span class="asc">Факт</span></th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="main-table__tbody">
         @foreach ($billed_meals_collection as $key => $billed_meal)
           @if ($billed_meal)
-            <tr>
-                <td>  {{ $billed_meal['id']}} </td>
-                <td>  {{ $billed_meal['date'] }}</td>
-                <td>  {{ $billed_meal['class'] }}</td>
-                <td>  {{ $billed_meal['type'] }}</td>
-                <td>  {{ if_data(implode(", ",$billed_meal['plan_attributes']['codes']))}}</td>
-                <td>  {{ implode(", ",$billed_meal['fact_attributes']['codes'])}}</td>
-                <td>  {{ if_data($billed_meal['plan_attributes']['qty'], 0)  }}</td>
-                <td>  {{ $billed_meal['fact_attributes']['qty']  }}</td>
-                <td>  {{ round(if_data($billed_meal['plan_attributes']['price'], 0), 2) }}</td>
-                <td>  {{ round($billed_meal['fact_attributes']['price'], 2) }}</td>
-                <td>  {{ round($billed_meal['fact_attributes']['price'] - if_data($billed_meal['plan_attributes']['price'], 0), 2) }}</td>
+            <tr class="main-table__tr">
+                <td class="main-table__td">  {{ $billed_meal['id']}} </td>
+                <td class="main-table__td">  {{ $billed_meal['date'] }}</td>
+                <td class="main-table__td">  {{ $billed_meal['class'] }}</td>
+                <td class="main-table__td">  {{ $billed_meal['type'] }}</td>
+                <td class="main-table__td">  {{ if_data(implode(", ",$billed_meal['plan_attributes']['codes']))}}</td>
+                <td class="main-table__td">  {{ implode(", ",$billed_meal['fact_attributes']['codes'])}}</td>
+                <td class="main-table__td">  {{ if_data($billed_meal['plan_attributes']['qty'], 0)  }}</td>
+                <td class="main-table__td">  {{ $billed_meal['fact_attributes']['qty']  }}</td>
+                <td class="main-table__td">  {{ round(if_data($billed_meal['plan_attributes']['price'], 0), 2) }}</td>
+                <td class="main-table__td">  {{ round($billed_meal['fact_attributes']['price'], 2) }}</td>
+                <td class="main-table__td">  {{ round($billed_meal['fact_attributes']['price'] - if_data($billed_meal['plan_attributes']['price'], 0), 2) }}</td>
             </tr>
           @endif
         @endforeach
