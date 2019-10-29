@@ -9,33 +9,6 @@
   <link rel="stylesheet" type="text/css" href="{{ asset('css/nav.css') }}">
   <title>S7</title>
 </head>
-<script>
-
-function downloadCSV(){
-  //TODO: sub column csv problem
-  const table = document.getElementById('main-table');
-  const items = [].reduce.call(table.rows, function(res, row) {
-      res[row.cells[0].textContent.slice(0,-1)] = row.cells[1].textContent;
-      return res;
-    }, {});
-  const replacer = (key, value) => value === null ? "NO DATA" : value; // specify how you want to handle null values here
-  const header = Object.keys(items[0]);
-  let csv = items
-    .map(row => header.map( fieldName => JSON.stringify(row[fieldName], replacer)).join(','));
-  csv.unshift(header.join(','));
-  csv = csv.join('\r\n');
-  const downloadLink = document.createElement("a");
-  const blob = new Blob(["\ufeff", csv]);
-  const url = URL.createObjectURL(blob);
-  downloadLink.href = url;
-  downloadLink.download = "data.csv";
-
-  document.body.appendChild(downloadLink);
-  downloadLink.click();
-  document.body.removeChild(downloadLink);
-}
-
-</script>
 <body>
     @if(method_exists($billed_meals_collection, 'links'))
       {!! $billed_meals_collection->links() !!}
@@ -43,9 +16,9 @@ function downloadCSV(){
     <main>
       <section id="options">
         <section class="options_download">
-          <button class="options__download__pdf" onclick="downloadPDF()">Download PDF</button>
-          <button class="options__download__xml"onclick="downloadXML()">Download XML</button>
-          <button class="options__download__csv"onclick="downloadCSV()">Download CSV</button>
+          <button class="options__download__pdf" onclick="Database.downloadPDF()">Download PDF</button>
+          <button class="options__download__xml" onclick="Database.downloadXML()">Download XML</button>
+          <button class="options__download__csv" onclick="Database.downloadCSV()">Download CSV</button>
         </section>
         <section class="options_getData">
           <label>Отобразить количество позиций на одну страницу</label>
