@@ -6,7 +6,6 @@ use App\Collections\Billed_Meals_Collection;
 use App\Models\Billed_Meals;
 use App\Utils\Helpers\DatabaseHelper;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 class BilledMealsController extends Controller
 {
@@ -89,7 +88,6 @@ function get_params_as_array(Request $request, ...$params){
     foreach ($params as $param) {
         $query[$param] = $request->query($param);
     }
-    $paginate = $_COOKIE['paginate'];
-    if($paginate) $query['paginate'] = intval($paginate);
+    if(isset($_COOKIE['paginate'])) $query['paginate'] = intval($_COOKIE['paginate']);
     return $query;
 }

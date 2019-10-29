@@ -19,7 +19,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::group(['middleware' => 'api'], function(){
     
-    Route::middleware('api')->get('/billed_meals', "BilledMealsController@index");
+    Route::get('/billed_meals', "BilledMealsController@index");
+    Route::get('/pdf', 'ConverterController@index');
+    Route::post('/pdf', 'ConverterController@pdf');
 
 });
 
