@@ -18,7 +18,9 @@ $arrow-up: -135;
 }
 
 .main-table{
+    width: 100%;
     border-collapse: collapse;
+
     &__th{
         padding: 10px;
         @include colorBack(white, green);
@@ -29,11 +31,15 @@ $arrow-up: -135;
             user-select: none;
             transition: 0.5s all ease;
             cursor: pointer;
+
             &:hover{
                 background-color: rgb(0, 217, 255);
             }
+
             & span {
+
                 &.asc.active{
+
                     &::after{
                         content: "";
                         margin: 0 5px 0 5px;
@@ -42,33 +48,53 @@ $arrow-up: -135;
                     
                 }
                 &.desc.active{
+
                     &::after{
                         content: "";
                         margin: 0 5px 0 5px;
                         @include arrow($arrow-up);
                     }
+
                 }
 
-                &.asc, &.desc{
+                &.asc{
+
                     &::after{
                         content: "";
                         margin: 0 5px 0 5px;
                         @include arrow($arrow-down, green);
                     }
+
+                }
+                &.desc{
+
+                    &::after{
+                        content: "";
+                        margin: 0 5px 0 5px;
+                        @include arrow($arrow-up, green);
+                    }
+
                 }
             }           
             
         }
     }
+
     &__td{
         padding: 10px 15px;
     }
+
     &__tr{
         padding: 5px;
     }
+
     &__tbody{
         tr {
             border-bottom: 1px solid black;
+            &:hover{
+                background-color: #cfcfcf;
+            }
         }
     }
+    
 }
