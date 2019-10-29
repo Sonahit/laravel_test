@@ -22,7 +22,7 @@ import _ from './helpers/TableHelper.js';
 
 window.Database = new Database();
 
-const intInputValue = (input) => parseInt(input.value);
+const int = (v) => parseInt(v);
 
 window.onload = () => {
     const inputData = document.getElementById('input_getData');
@@ -45,9 +45,10 @@ window.onload = () => {
     }
 }
 
-window.onbeforeunload = () => {
-    //If user forgot to press send button
-    const paginate = intInputValue(document.getElementById('input_getData'));
-    sessionStorage.setItem('paginate', paginate);
-    cookie.set('paginate', paginate);
-};
+document.getElementById('input_getData').addEventListener('input', (e) => {
+    const paginate = int(e.currentTarget.value);
+    if(paginate){
+        sessionStorage.setItem('paginate', paginate);
+        cookie.set('paginate', paginate);
+    }
+})
