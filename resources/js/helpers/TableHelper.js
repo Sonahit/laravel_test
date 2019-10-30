@@ -79,7 +79,7 @@ export default class TableHelper{
             .forEach(tr => table.tBodies[0].appendChild(tr));
     }
 
-    flattTHead(table) {return Array.from(table.tHead.rows).map(thead => Array.from(thead.children).map(tr => tr)).flat()};
+    flatTHead(table) {return Array.from(table.tHead.rows).map(thead => Array.from(thead.children).map(tr => tr)).flat()};
 
     th(table, key) {return this.flatTHead(table).find(th => th.getAttribute('data-sort') === key)};
 

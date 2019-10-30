@@ -6,7 +6,9 @@ export default class Database{
 
     downloadCSV(){
         const table = document.getElementsByClassName('main-table')[0];
+        //If no table return
         if(!table) return;
+
         const tHead = Array.from(table.rows).filter(v => v.rowIndex <= 1);
         const tBody = Array.from(table.rows).filter(v => v.rowIndex > 1);
         const [main, sub] = [Array.from(tHead[0].children), Array.from(tHead[1].children)];
@@ -23,22 +25,25 @@ export default class Database{
             raw.forEach((v, i) => {
                 row[i] = [];
                 if(v.cells){
+                    //For body
                     Array.from(v.cells).forEach(cell => row[i].push(cell.innerText));
                 } else {
+                    //For headers
                     Array.from(v).forEach(h => row[i].push(h.innerText || h));
                 }
             });
             return row;
-        }
+        };
         const toCsv = (rawHead, rawBody) => {
             const head = [];
             const body = [];
             rawHead.forEach(h => head.push(h.join(';')));
             rawBody.forEach(b => body.push(b.join(';')));
             return head.concat(body).join('\n');
-        }
+        };
         const csv = toCsv(values([main, sub]), values(tBody));
-        this.download(csv, 'csv.csv', `data:text/csv;charset=${getOS().toLowerCase().includes('windows') ?'windows-1251':'utf-8'}`)
+        const charset = getOS().toLowerCase().includes('windows') ? 'windows-1251' : 'utf-8';
+        this.download(csv, 'csv.csv', `data:text/csv;charset=${charset}`);
     }
 
     downloadPDF(){
