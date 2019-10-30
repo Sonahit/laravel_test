@@ -18,10 +18,12 @@ require("./components/BilledMealsTable");
 // Pre-load tasks
 import Database from './database.js';
 import cookie from 'js-cookie';
-import _ from './helpers/TableHelper.js';
+import TableHelper from './helpers/TableHelper.js';
 
 window.Database = new Database();
 
+const tableHelper = new TableHelper();
+tableHelper.listenToChangeSorting();
 const int = (v) => parseInt(v);
 
 window.onload = () => {
@@ -51,4 +53,4 @@ document.getElementById('input_getData').addEventListener('input', (e) => {
         sessionStorage.setItem('paginate', paginate);
         cookie.set('paginate', paginate);
     }
-})
+});

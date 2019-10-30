@@ -1,4 +1,4 @@
-class TableHelper{
+export default class TableHelper{
     listenToChangeSorting(){
         const thead = document.getElementsByClassName("main-table__thead")[0];
         thead.addEventListener('click', (e) => {
@@ -63,21 +63,26 @@ class TableHelper{
     }
 
     sortTable(table, sortBy){
-            const isAsc = sortBy.includes('asc');
-            const key = isAsc ? sortBy.split('_asc')[0] : sortBy.split('_desc')[0];
-            const flatTHead = (table) => Array.from(table.tHead.rows).map(thead => Array.from(thead.children).map(tr => tr)).flat();
-            const th = (table, key) => flatTHead(table).find(th => th.getAttribute('data-sort') === key);
-            const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
-            const comparer = (idx, asc) => (a, b) => ((v1, v2) => 
-                v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
-                )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
-            //Sort table by key
-            Array
-                .from(table.rows)
-                .filter(v => {if(v.rowIndex > 1) return v})
-                .sort(comparer(this.getSortIndex(flatTHead(table).indexOf(th(table, key))), isAsc))
-                .forEach(tr => table.tBodies[0].appendChild(tr));
+        const isAsc = sortBy.includes('asc');
+        const key = isAsc ? sortBy.split('_asc')[0] : sortBy.split('_desc')[0];
+        const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+        const comparer = (idx, asc) => (a, b) => ((v1, v2) => 
+            v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+            )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+        //Sort table by key
+        const index = this.getSortIndex(this.flatTHead(table).indexOf(this.th(table, key)));
+        if(index === 9999) return;
+        Array
+            .from(table.rows)
+            .filter(v => {if(v.rowIndex > 1) return v})
+            .sort(comparer(index, isAsc))
+            .forEach(tr => table.tBodies[0].appendChild(tr));
     }
+
+    flattTHead(table) {return Array.from(table.tHead.rows).map(thead => Array.from(thead.children).map(tr => tr)).flat()};
+
+    th(table, key) {return this.flatTHead(table).find(th => th.getAttribute('data-sort') === key)};
+
     getSortIndex(index){
         //table rows
         const   FLIGHTID_R = 0,
@@ -137,8 +142,3 @@ function toDesc(node){
     node.classList.remove('asc');
     node.classList.add('desc');
 }
-
-const instance = new TableHelper();
-instance.listenToChangeSorting();
-
-export default instance;
