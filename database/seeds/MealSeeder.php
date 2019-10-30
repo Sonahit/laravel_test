@@ -13,6 +13,7 @@ class MealSeeder extends Seeder
      */
     public function run()
     {
+        //TODO: simulate query without get
         $meal_infos = New_Matrix::groupBy('meal_id')
             ->get();
         DatabaseHelper::updateOrInsert('meal_info',$meal_infos,[

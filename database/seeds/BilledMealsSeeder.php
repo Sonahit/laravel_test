@@ -13,6 +13,7 @@ class BilledMealsSeeder extends Seeder
      */
     public function run()
     {
+        //TODO: simulate query without get
         info('Started seeding billed_meals_info');
         $rows = ['nomenclature', 'name', 'iata_code', 'type', 'class'];
         $billed_meals_info = Billed_Meals::withoutGlobalScope('january_business')
@@ -20,6 +21,7 @@ class BilledMealsSeeder extends Seeder
             ->groupBy('nomenclature')
             ->get();
             /*
+            TODO: simulate this query
             INSERT INTO billed_meals_prices (billed_meals_id, delivery_number, qty, price_per_one, total, total_novat_discounted)
 SELECT bm.id AS billed_meals_id,
 	bm.delivery_number AS delivery_number,

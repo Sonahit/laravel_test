@@ -13,9 +13,7 @@ class DatabaseHelper{
         $insert[$row] = $column->$row;
       }
       //TODO: Test me
-      //if(!DB::table($tableName)->whereExists($insert)){
-        DB::table($tableName)->updateOrInsert($insert);
-      //}
+      DB::table($tableName)->updateOrInsert($insert);
     }
   }
 
