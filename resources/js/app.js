@@ -12,45 +12,45 @@ require("./bootstrap");
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-require("./components/BilledMealsTable");
-
+require("./components/DatePicker.js");
 
 // Pre-load tasks
-import Database from './database.js';
-import cookie from 'js-cookie';
-import TableHelper from './helpers/TableHelper.js';
+import Database from "./database.js";
+import cookie from "js-cookie";
+import TableHelper from "./helpers/TableHelper.js";
+export const input = id => document.getElementById(id);
 
 window.Database = new Database();
 
 const tableHelper = new TableHelper();
-tableHelper.listenToChangeSorting();
-const int = (v) => parseInt(v);
+tableHelper.listenToChangeSorting().listenFiltering();
+const int = v => parseInt(v);
 
 window.onload = () => {
-    const inputData = document.getElementById('input_getData');
+    const inputData = input("input_get-data");
     const url = new URL(location.href);
-    const page = url.searchParams.get('page') || sessionStorage.getItem('page');
-    const paginate = url.searchParams.get('paginate') || sessionStorage.getItem('paginate');
-    cookie.set('paginate', paginate);
-    if(page){
-        sessionStorage.setItem('page', page);
+    const page = url.searchParams.get("page") || sessionStorage.getItem("page");
+    const paginate = url.searchParams.get("paginate") || sessionStorage.getItem("paginate");
+    cookie.set("paginate", paginate);
+    if (page) {
+        sessionStorage.setItem("page", page);
     }
-    if (paginate){
+    if (paginate) {
         inputData.value = paginate;
-        sessionStorage.setItem('paginate', paginate);
+        sessionStorage.setItem("paginate", paginate);
     } else {
         inputData.value = 20;
-        sessionStorage.setItem('paginate', 20);
+        sessionStorage.setItem("paginate", 20);
     }
-    if(window.history && page && paginate){
-        history.pushState(null, '',`?page=${page}&paginate=${paginate}`);
+    if (window.history && page && paginate) {
+        history.pushState(null, "", `?page=${page}&paginate=${paginate}`);
     }
-}
+};
 
-document.getElementById('input_getData').addEventListener('input', (e) => {
+input("input_get-data").addEventListener("input", e => {
     const paginate = int(e.currentTarget.value);
-    if(paginate){
-        sessionStorage.setItem('paginate', paginate);
-        cookie.set('paginate', paginate);
+    if (paginate) {
+        sessionStorage.setItem("paginate", paginate);
+        cookie.set("paginate", paginate);
     }
 });

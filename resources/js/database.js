@@ -1,30 +1,28 @@
-import cookie from 'js-cookie';
-import TableHelper from './helpers/TableHelper';
-const tableHelper = new TableHelper();
+import cookie from "js-cookie";
+import { input } from "./app.js";
 
-export default class Database{
-
-    downloadCSV(){
-        const table = document.getElementsByClassName('main-table')[0];
+export default class Database {
+    downloadCSV() {
+        const table = document.getElementsByClassName("main-table")[0];
         //If no table return
-        if(!table) return;
+        if (!table) return;
 
         const tHead = Array.from(table.rows).filter(v => v.rowIndex <= 1);
         const tBody = Array.from(table.rows).filter(v => v.rowIndex > 1);
         const [main, sub] = [Array.from(tHead[0].children), Array.from(tHead[1].children)];
         for (let i = 0; i < main.length - 1; i++) {
-            if(main[i].rowSpan === 2){
-                sub.unshift('');
+            if (main[i].rowSpan === 2) {
+                sub.unshift("");
             }
-            if(main[i].colSpan === 2){
-                main.splice(i + 1, 0, '');
+            if (main[i].colSpan === 2) {
+                main.splice(i + 1, 0, "");
             }
         }
-        const values = (raw) => {
+        const values = raw => {
             const row = [];
             raw.forEach((v, i) => {
                 row[i] = [];
-                if(v.cells){
+                if (v.cells) {
                     //For body
                     Array.from(v.cells).forEach(cell => row[i].push(cell.innerText));
                 } else {
@@ -37,35 +35,37 @@ export default class Database{
         const toCsv = (rawHead, rawBody) => {
             const head = [];
             const body = [];
-            rawHead.forEach(h => head.push(h.join(';')));
-            rawBody.forEach(b => body.push(b.join(';')));
-            return head.concat(body).join('\n');
+            rawHead.forEach(h => head.push(h.join(";")));
+            rawBody.forEach(b => body.push(b.join(";")));
+            return head.concat(body).join("\n");
         };
         const csv = toCsv(values([main, sub]), values(tBody));
-        const charset = getOS().toLowerCase().includes('windows') ? 'windows-1251' : 'utf-8';
-        this.download(csv, 'csv.csv', `data:text/csv;charset=${charset}`);
+        const charset = getOS()
+            .toLowerCase()
+            .includes("windows")
+            ? "windows-1251"
+            : "utf-8";
+        this.download(csv, "csv.csv", `data:text/csv;charset=${charset}`);
     }
 
-    downloadPDF(){
-        const table = document.getElementsByClassName('main-table')[0].outerHTML;
-        fetch('/api/v1/pdf', {
+    downloadPDF() {
+        const table = document.getElementsByClassName("main-table")[0].outerHTML;
+        fetch("/api/v1/pdf", {
             method: "POST",
             body: JSON.stringify(table)
-        })
-        .catch(err => {
+        }).catch(err => {
             throw err;
         });
-
     }
-    downloadXML(){
-        const table = document.getElementsByClassName('main-table')[0];
+    downloadXML() {
+        const table = document.getElementsByClassName("main-table")[0];
         const xml = new XMLSerializer();
         const xmlTable = xml.serializeToString(table);
         this.download(xmlTable, "xml", "data:text/xml");
     }
-    download(data, name, type){
-        const download = document.createElement('a');
-        download.style.display = 'none';
+    download(data, name, type) {
+        const download = document.createElement("a");
+        download.style.display = "none";
         download.download = name;
         document.body.appendChild(download);
         download.href = `${type},${data}`;
@@ -73,15 +73,15 @@ export default class Database{
         document.body.removeChild(download);
     }
     getMoreData() {
-        const paginate = document.getElementById('input_getData').value;
+        const paginate = input("input_get-data").value;
         const url = new URL(location.href);
-        const page = url.searchParams.get('page');
-        if(page){
-            url.searchParams.set('page', page);
+        const page = url.searchParams.get("page");
+        if (page) {
+            url.searchParams.set("page", page);
         }
-        url.searchParams.set('paginate', paginate);
-        sessionStorage.setItem('paginate', paginate);
-        cookie.set('paginate', paginate);
+        url.searchParams.set("paginate", paginate);
+        sessionStorage.setItem("paginate", paginate);
+        cookie.set("paginate", paginate);
         location.replace(url);
     }
 }
@@ -89,22 +89,22 @@ export default class Database{
 function getOS() {
     let userAgent = window.navigator.userAgent,
         platform = window.navigator.platform,
-        macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
-        windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
-        iosPlatforms = ['iPhone', 'iPad', 'iPod'],
+        macosPlatforms = ["Macintosh", "MacIntel", "MacPPC", "Mac68K"],
+        windowsPlatforms = ["Win32", "Win64", "Windows", "WinCE"],
+        iosPlatforms = ["iPhone", "iPad", "iPod"],
         os = null;
-  
+
     if (macosPlatforms.indexOf(platform) !== -1) {
-      os = 'Mac OS';
+        os = "Mac OS";
     } else if (iosPlatforms.indexOf(platform) !== -1) {
-      os = 'iOS';
+        os = "iOS";
     } else if (windowsPlatforms.indexOf(platform) !== -1) {
-      os = 'Windows';
+        os = "Windows";
     } else if (/Android/.test(userAgent)) {
-      os = 'Android';
+        os = "Android";
     } else if (!os && /Linux/.test(platform)) {
-      os = 'Linux';
+        os = "Linux";
     }
-  
+
     return os;
 }

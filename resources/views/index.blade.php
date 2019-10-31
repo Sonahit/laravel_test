@@ -14,15 +14,18 @@
       {!! $billed_meals_collection->links() !!}
     @endif
     <main>
-      <section id="options">
-        <section class="options_download">
+      <section class="options">
+        <section class="options__download">
           <button class="options__download__pdf" onclick="Database.downloadPDF()">Download PDF</button>
           <button class="options__download__xml" onclick="Database.downloadXML()">Download XML</button>
           <button class="options__download__csv" onclick="Database.downloadCSV()">Download CSV</button>
         </section>
-        <section class="options_getData">
+        <section class="options__datepicker">
+          {{-- REACT --}}
+        </section>
+        <section class="options__get-data">
           <label>Отобразить количество позиций на одну страницу</label>
-          <input id="input_getData" type="text" name="page" placeholder="Per page">  
+          <input id="input_get-data" type="text" name="page" placeholder="Per page">  
           <button onclick="Database.getMoreData()">Отобразить</button>
         </section>
       </section>

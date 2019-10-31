@@ -23,11 +23,13 @@ $arrow-up: -135;
 
     &__th{
         padding: 10px;
+        border: 1px solid black;
         @include colorBack(white, green);
         &--sortable{
             padding: 2px;
             margin: 10px;
-            @include colorBack(white, green);
+            border: 1px solid black;
+            @include colorBack(white, rgb(0, 128, 70));
             user-select: none;
             transition: 0.5s all ease;
             cursor: pointer;
@@ -96,5 +98,40 @@ $arrow-up: -135;
             }
         }
     }
-    
+}
+
+
+@mixin flex($flex-direction: row, $flex-wrap: nowrap, $flex: 0 1 auto){
+    display: flex;
+    flex-flow: $flex-direction $flex-wrap;
+    flex: $flex;
+}
+
+.options{
+    @include flex();
+    justify-content: space-between;
+    margin: 20px 20px 0px 20px;
+    &__get-data{
+        @include flex(column);
+        align-self: flex-end;
+    }
+
+    &__download{
+        @include flex();
+        align-self: flex-end;
+    }
+}
+
+#input{
+    &_get-data{
+        text-align: center;
+    }
+}
+
+
+.options__datepicker__render{
+    @include flex(column);
+    *{
+        padding: 3px 0px;
+    }
 }
