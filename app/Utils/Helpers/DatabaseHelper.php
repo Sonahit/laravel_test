@@ -33,10 +33,9 @@ class DatabaseHelper{
     }
   }
 
-public static function flattenBilled($billed_meals_collection){
+public static function flattenBilled($billed_meal){
   $billed_meals = array();
-  foreach ($billed_meals_collection as $billed_meal) {
-    $billed_prices = $billed_meal->billed_meals_prices;
+  $billed_prices = $billed_meal->billed_meals_prices;
     $billed_info = $billed_meal->billed_meals_info;
     $planned = [
       'codes' => array(),
@@ -68,7 +67,6 @@ public static function flattenBilled($billed_meals_collection){
         "plan_attributes" => $planned,
         "fact_attributes" => $fact
       ]);
-  };
   return $billed_meals;
 }
 

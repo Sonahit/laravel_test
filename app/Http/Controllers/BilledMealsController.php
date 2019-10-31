@@ -18,22 +18,34 @@ class BilledMealsController extends Controller
     {
         $query = get_params_as_array($request, 'paginate', 'sort', 'asc');
         $billed_meals_collection = $this->getData($billed_meals, $query);
-        if($billed_meals_collection instanceof Billed_Meals_Collection) {
-          return DatabaseHelper::groupByKey(DatabaseHelper::flattenBilled($billed_meals_collection), true, 'date');
-        }
-        $billed_meals_transformed = DatabaseHelper::groupByKey(DatabaseHelper::flattenBilled($billed_meals_collection), true, 'date');
-        $pages = new \Illuminate\Pagination\LengthAwarePaginator(
-            $billed_meals_transformed,
-            $billed_meals_collection->total(),
-            $billed_meals_collection->perPage(),
-            $billed_meals_collection->currentPage(), [
-                'path' => \Request::url(),
-                'query' => [
-                    'page' => $billed_meals_collection->currentPage()
-                ]
-            ]
-        );
-        return $pages;
+        // if($billed_meals_collection instanceof Billed_Meals_Collection) {
+        //   return DatabaseHelper::groupByKey(DatabaseHelper::flattenBilled($billed_meals_collection), true, 'date');
+        // }
+        // $billed_meals_transformed = DatabaseHelper::groupByKey(DatabaseHelper::flattenBilled($billed_meals_collection), true, 'date');
+        
+        //TODO: Refactor Database helpers methods
+        $billed_meals_transformed = $billed_meals_collection
+                ->groupBy('flight_id')
+                ->flatMap(function($items){
+                    foreach($items as $item){
+                        $nm = $items->new_matrix;
+                        return $nm;
+                    }
+                    return $items;
+                });
+        return $billed_meals_transformed;
+        // $pages = new \Illuminate\Pagination\LengthAwarePaginator(
+        //     $billed_meals_transformed,
+        //     $billed_meals_collection->total(),
+        //     $billed_meals_collection->perPage(),
+        //     $billed_meals_collection->currentPage(), [
+        //         'path' => \Request::url(),
+        //         'query' => [
+        //             'page' => $billed_meals_collection->currentPage()
+        //         ]
+        //     ]
+        // );
+        // return $pages;
     }
     
     public function getData(Billed_Meals $billed_meals, array $query)
@@ -48,13 +60,22 @@ class BilledMealsController extends Controller
               $q -> select('business');
             },
             'billed_meals_info' => function ($q){
-              $q -> select('name', 'iata_code');
+              $q -> select(
+                "name",
+               "iata_code");
             },
             'billed_meals_prices' => function($q){
-              $q -> select('billed_meals_id', 'qty', 'price_per_one');
+              $q -> select('billed_meals_id', 
+              "qty", 
+              'price_per_one');
             },
             'new_matrix' => function($q){
-              $q -> select('new_matrix.meal_id', 'new_matrix.iata_code', 'new_matrix.passenger_amount', 'new_matrix.meal_qty');
+              $q -> select(
+                'new_matrix.meal_id',
+                'new_matrix.iata_code',
+                'new_matrix.meal_qty',
+                'new_matrix.passenger_amount',
+              );
             }
         ];
 
