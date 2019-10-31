@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Meal_Info;
 use App\Models\New_Matrix;
 use Illuminate\Database\Seeder;
 use App\Utils\Helpers\DatabaseHelper;
@@ -13,13 +14,7 @@ class MealSeeder extends Seeder
      */
     public function run()
     {
-        //TODO: simulate query without get
-        $meal_infos = New_Matrix::groupBy('meal_id')
-            ->get();
-        DatabaseHelper::updateOrInsert('meal_info',$meal_infos,[
-            'meal_id',
-            'meal_type',
-            'nomenclature'
-        ]);
+        $select = New_Matrix::select('*')->groupBy('meal_id');
+        Meal_Info::insertUsing('*', $select);
     }
 }

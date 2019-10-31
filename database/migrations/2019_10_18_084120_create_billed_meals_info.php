@@ -13,6 +13,7 @@ class CreateBilledMealsInfo extends Migration
      */
     public function up()
     {
+        if(Schema::hasTable('billed_meals_info')) return;
         Schema::create('billed_meals_info', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->char('name', 150);

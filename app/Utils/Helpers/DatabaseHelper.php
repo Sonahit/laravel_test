@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseHelper{
 
+  /**
+   * @deprecated
+   */
   public static function updateOrInsert($tableName, $columns, $rows){
     foreach($columns as $column){
       $insert = [];
@@ -17,6 +20,9 @@ class DatabaseHelper{
     }
   }
 
+  /**
+   * @deprecated
+   */
   public static function insert($tableName, $columns, $rows){
     foreach($columns as $column){
       $insert = [];
@@ -65,6 +71,7 @@ public static function flattenBilled($billed_meals_collection){
   };
   return $billed_meals;
 }
+
 public static function groupByKey($billed_meals_collection, $do_group, $key){
   if(!$do_group) return $billed_meals_collection;
   $grouped_collection = $billed_meals_collection;

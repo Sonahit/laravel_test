@@ -1,8 +1,10 @@
 <?php
 
 use App\Models\Billed_Meals;
-use App\Utils\Helpers\DatabaseHelper;
+use App\Models\Billed_Meals_Info;
+use App\Models\Billed_Meals_Prices;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class BilledMealsSeeder extends Seeder
 {
@@ -13,32 +15,18 @@ class BilledMealsSeeder extends Seeder
      */
     public function run()
     {
-        //TODO: simulate query without get
-        info('Started seeding billed_meals_info');
-        $rows = ['nomenclature', 'name', 'iata_code', 'type', 'class'];
-        $billed_meals_info = Billed_Meals::withoutGlobalScope('january_business')
-            ->select($rows)
-            ->groupBy('nomenclature')
-            ->get();
-            /*
-            TODO: simulate this query
-            INSERT INTO billed_meals_prices (billed_meals_id, delivery_number, qty, price_per_one, total, total_novat_discounted)
-SELECT bm.id AS billed_meals_id,
-	bm.delivery_number AS delivery_number,
-	bm.qty AS qty,
-	bm.price_per_one AS price_per_one,
-	bm.total AS total,
-	bm.total_novat_discounted AS total_novat_discounted
-FROM billed_meals AS bm;
-            */
-        DatabaseHelper::updateOrInsert('billed_meals_info', $billed_meals_info, $rows);
-        info('Done');
-        info('Started seeding billed_meals_prices');
-        $rows = ['name', 'delivery_number', 'qty' ,'price_per_one', 'total', 'total_novat_discounted'];
-        $billed_meals_price = Billed_Meals::withoutGlobalScope('january_business')
-            ->select($rows)->groupBy('name', 'price_per_one', 'total')
-            ->get();
-        DatabaseHelper::updateOrInsert('billed_meals_prices', $billed_meals_price, $rows);
-        info('Done');
+        $rows = ['nomenclature', 'iata_code', 'type', 'class', 'name' ];
+        $select = Billed_Meals::withoutGlobalScope('january_business')
+                    ->select($rows)
+                    ->groupBy('nomenclature');
+        Billed_Meals_Info::insertUsing($rows, $select);
+        // DB::table('test_billed_meals_info')->insertUsing($rows, $select);
+        $rows = ['billed_meals_id', 'delivery_number', 'qty', 'price_per_one', 'total', 'total_novat_discounted'];
+        $select = Billed_Meals::withoutGlobalScope('january_business')
+                    ->select(
+                        ['id', 'delivery_number', 'qty', 'price_per_one', 'total', 'total_novat_discounted']
+                    );
+        Billed_Meals_Prices::insertUsing($rows, $select);
+        // DB::table('test_billed_meals_prices')->insertUsing($rows, $select);
     }
 }

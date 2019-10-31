@@ -13,6 +13,7 @@ class CreateMealInfo extends Migration
      */
     public function up()
     {
+        if(Schema::hasTable('meal_info')) return;
         Schema::create('meal_info', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('meal_id')->unique();
