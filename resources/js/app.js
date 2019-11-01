@@ -12,7 +12,7 @@ require("./bootstrap");
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-require("./components/DatePicker.js");
+require("./components/Filtering.js");
 
 // Pre-load tasks
 import Database from "./database.js";

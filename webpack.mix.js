@@ -1,5 +1,5 @@
-const mix = require('laravel-mix');
-const fs = require('fs');
+const mix = require("laravel-mix");
+const fs = require("fs");
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
@@ -10,11 +10,15 @@ const fs = require('fs');
  | file for the application as well as bundling up all the JS files.
  |
  */
+require("laravel-mix-alias");
+mix.alias({
+    "@helpers": "resources/js/helpers"
+});
 
-mix.react('resources/js/app.js', 'public/js');
+mix.react("resources/js/app.js", "public/js");
 
 fs.readdirSync(`${__dirname}/resources/sass`).forEach(file => {
-   mix.sass(`${__dirname}/resources/sass/${file}`, 'public/css');
-})
+    mix.sass(`${__dirname}/resources/sass/${file}`, "public/css");
+});
 
 mix.sourceMaps();

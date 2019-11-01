@@ -20,7 +20,7 @@
           <button class="options__download__xml" onclick="Database.downloadXML()">Download XML</button>
           <button class="options__download__csv" onclick="Database.downloadCSV()">Download CSV</button>
         </section>
-        <section class="options__datepicker">
+        <section class="options__filtering">
           {{-- REACT --}}
         </section>
         <section class="options__get-data">
@@ -32,27 +32,28 @@
       <table class="main-table">
         <thead class="main-table__thead">
             <tr class="main-table__tr">
-                <th class="main-table__th--sortable" data-sort="flight_id" rowSpan="2"><span class="asc">Номер полёта</span></th>
-                <th class="main-table__th--sortable" data-sort="flight_date" rowSpan="2"><span class="asc">Дата полёта</span></th>
+                <th class="main-table__th--sortable" type="number" data-sort="flight_id" rowSpan="2"><span class="asc">Номер полёта</span></th>
+                <th class="main-table__th--sortable" type="date" data-sort="flight_date" rowSpan="2"><span class="asc">Дата полёта</span></th>
                 <th class="main-table__th" rowSpan="2"><span>Класс</span></th>
                 <th class="main-table__th" rowSpan="2"><span>Тип номенклатуры</span></th>
                 <th class="main-table__th" colSpan="2"><span>Код</span></th>
                 <th class="main-table__th" colSpan="2"><span>Количество</span></th>
                 <th class="main-table__th" colSpan="2"><span>Цена</span></th>
-                <th class="main-table__th--sortable" data-sort="delta" rowSpan="2"><span class="asc">Дельта</span></th>
+                <th class="main-table__th--sortable" type="number" data-sort="delta" rowSpan="2"><span class="asc">Дельта</span></th>
             </tr>
             <tr class="main-table__tr">
-                <th class="main-table__th--sortable" data-sort="plan_code"><span class="asc">План</span></th>
-                <th class="main-table__th--sortable" data-sort="fact_code"><span class="asc">Факт</span></th>
+                <th class="main-table__th--sortable" type="string" data-sort="plan_code"><span class="asc">План</span></th>
+                <th class="main-table__th--sortable" type="string" data-sort="fact_code"><span class="asc">Факт</span></th>
 
-                <th class="main-table__th--sortable" data-sort="plan_qty"><span class="asc">План</span></th>
-                <th class="main-table__th--sortable" data-sort="fact_qty"><span class="asc">Факт</span></th>
+                <th class="main-table__th--sortable" type="number" data-sort="plan_qty"><span class="asc">План</span></th>
+                <th class="main-table__th--sortable" type="number" data-sort="fact_qty"><span class="asc">Факт</span></th>
 
-                <th class="main-table__th--sortable" data-sort="plan_price"><span class="asc">План</span></th>
-                <th class="main-table__th--sortable" data-sort="fact_price"><span class="asc">Факт</span></th>
+                <th class="main-table__th--sortable" type="number" data-sort="plan_price"><span class="asc">План</span></th>
+                <th class="main-table__th--sortable" type="number" data-sort="fact_price"><span class="asc">Факт</span></th>
             </tr>
         </thead>
         <tbody class="main-table__tbody">
+          {{-- TODO: Front side request api --}}
         @foreach ($billed_meals_collection as $key => $billed_meal)
           @if ($billed_meal)
             <tr class="main-table__tr">

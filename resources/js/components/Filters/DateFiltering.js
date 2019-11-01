@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import DatePicker from "react-datepicker";
-import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
 
 import "react-datepicker/dist/react-datepicker.css";
+import { dispatchCustomEvent } from "@helpers/EventHelper";
+import TableHelper from "../../helpers/TableHelper";
 
-export class DateTable extends Component {
+export default class DateFiltering extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -16,14 +18,19 @@ export class DateTable extends Component {
     }
 
     componentDidUpdate() {
-        window.dispatchEvent(
-            new CustomEvent("filter_table__date", {
-                detail: {
-                    startDate: this.state.startDate,
-                    endDate: this.state.endDate
-                }
-            })
-        );
+        if (!this.state.startDate) {
+            TableHelper.prototype.showTable();
+        } else {
+            dispatchCustomEvent(`filter_table_${this.props.method}`, {
+                startDate: this.state.startDate,
+                endDate: this.state.endDate,
+                key: this.props.filteringKey
+            });
+        }
+    }
+
+    componentWillUnmount() {
+        TableHelper.prototype.showTable();
     }
 
     setStartDate(startDate) {
@@ -42,7 +49,6 @@ export class DateTable extends Component {
         const dateFormat = "yyyy-MM-dd";
         return (
             <div className="options__datepicker__render">
-                <label className="options__information">Фильтрация по датам</label>
                 <DatePicker
                     dateFormat={dateFormat}
                     selected={this.state.startDate}
@@ -65,7 +71,7 @@ export class DateTable extends Component {
     }
 }
 
-const el = document.getElementsByClassName("options__datepicker")[0];
-if (el) {
-    ReactDOM.render(<DateTable />, el);
-}
+DateFiltering.propTypes = {
+    method: PropTypes.string.isRequired,
+    filteringKey: PropTypes.string.isRequired
+};

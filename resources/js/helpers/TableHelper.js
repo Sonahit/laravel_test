@@ -1,6 +1,8 @@
+import * as sortKeys from "./SortKeys";
+
 export default class TableHelper {
     listenToChangeSorting() {
-        const thead = document.getElementsByClassName("main-table__thead")[0];
+        const thead = this.getTable();
         thead.addEventListener("click", e => {
             const node = e.target;
             const parent = node.parentNode;
@@ -46,51 +48,93 @@ export default class TableHelper {
                 this.active(child);
             }
             if (sortBy) {
-                this.sortTable(e.currentTarget.parentNode, sortBy);
+                this.sortTable(this.getTable(), sortBy);
             }
         });
         return this;
     }
 
+    getTable() {
+        return document.getElementsByClassName("main-table")[0];
+    }
+
     listenFiltering() {
         window.addEventListener("filter_table__date", e => {
             const { startDate, endDate } = e.detail;
-            this.filterTable(document.getElementsByClassName("main-table")[0], startDate, endDate, "flight_date", "date");
+            this.filterTable(this.getTable(), startDate, endDate, "flight_date", "date");
+        });
+        window.addEventListener("filter_table__number", e => {
+            const { startValue, endValue, key } = e.detail;
+            this.filterTable(this.getTable(), startValue, endValue, key, "number");
+        });
+        window.addEventListener("filter_table__string", e => {
+            const { string, key } = e.detail;
+            this.filterTable(this.getTable(), string, "", key, "string");
         });
         return this;
     }
 
-    //TODO: implement by multiple keys. Now is date
     filterTable(table, startValue, endValue, key, method) {
+        const index = this.getSortIndex(this.flatTHead(table).indexOf(this.th(table, key)));
         if (method === "date") {
-            this.filterByDate(table, startValue, endValue || startValue, key);
+            this.filterByDate(table, startValue, endValue || startValue, index);
         } else if (method === "number") {
-            this.filterByNumber(table, startValue, endValue || startValue, key);
+            this.filterByNumber(table, startValue, endValue || startValue, index);
         } else if (method === "string") {
-            this.filterByString(table, startValue, endValue || startValue, key);
+            this.filterByString(table, startValue, index);
         }
     }
 
-    filterByNumber(table, startValue, endValue, key) {}
+    showTable() {
+        this.getTBody(this.getTable()).forEach(tr => (tr.style.display = ""));
+    }
 
-    filterByString(table, startValue, endValue, key) {}
+    filterByNumber(table, startValue, endValue, index) {
+        const start = parseInt(startValue);
+        const end = parseInt(endValue);
+        if (end < start) return;
+        // TODO: array.filter(tBody).forEach(tr => table.tBodies[0].appendChild(tr));
+        this.getTBody(table).forEach(tr => {
+            const trNumber = parseInt(tr.children[index].innerText);
+            if (trNumber >= start && trNumber <= end) {
+                tr.style.display = "";
+            } else {
+                tr.style.display = "none";
+            }
+        });
+    }
 
-    filterByDate(table, startDate, endDate, key) {
+    filterByString(table, string, index) {
+        const s = string.toLocaleLowerCase();
+        // TODO: array.filter(tBody).forEach(tr => table.tBodies[0].appendChild(tr));
+        this.getTBody(table).forEach(tr => {
+            const trString = tr.children[index].innerText.toLocaleLowerCase();
+            if (trString.includes(s)) {
+                tr.style.display = "";
+            } else {
+                tr.style.display = "none";
+            }
+        });
+    }
+
+    filterByDate(table, startDate, endDate, index) {
         const start = Date.parse(startDate);
         const end = Date.parse(endDate);
-        const index = this.getSortIndex(this.flatTHead(table).indexOf(this.th(table, key)));
-        Array.from(table.rows)
-            .filter(v => {
-                if (v.rowIndex > 1) return v;
-            })
-            .forEach(tr => {
-                const trDate = Date.parse(tr.children[index].innerText);
-                if (trDate >= start && trDate <= end) {
-                    tr.style.display = "";
-                } else {
-                    tr.style.display = "none";
-                }
-            });
+        // TODO: array.filter(tBody).forEach(tr => table.tBodies[0].appendChild(tr));
+        this.getTBody(table).forEach(tr => {
+            const trDate = Date.parse(tr.children[index].innerText);
+            if (trDate >= start && trDate <= end) {
+                tr.style.display = "";
+            } else {
+                tr.style.display = "none";
+            }
+        });
+    }
+
+    getTBody(table) {
+        return Array.from(table.rows).filter(v => {
+            if (v.rowIndex > 1) return v;
+        });
     }
 
     active(node) {
@@ -104,8 +148,8 @@ export default class TableHelper {
     }
 
     sortTable(table, sortBy) {
-        const isAsc = sortBy.includes("asc");
-        const key = isAsc ? sortBy.split("_asc")[0] : sortBy.split("_desc")[0];
+        const isDesc = !sortBy.includes("asc");
+        const key = isDesc ? sortBy.split("_desc")[0] : sortBy.split("_asc")[0];
         const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
         const comparer = (idx, asc) => (a, b) =>
             ((v1, v2) => (v1 !== "" && v2 !== "" && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)))(
@@ -115,11 +159,8 @@ export default class TableHelper {
         //Sort table by key
         const index = this.getSortIndex(this.flatTHead(table).indexOf(this.th(table, key)));
         if (index === 9999) return;
-        Array.from(table.rows)
-            .filter(v => {
-                if (v.rowIndex > 1) return v;
-            })
-            .sort(comparer(index, isAsc))
+        this.getTBody(table)
+            .sort(comparer(index, isDesc))
             .forEach(tr => table.tBodies[0].appendChild(tr));
     }
 
@@ -134,66 +175,29 @@ export default class TableHelper {
     }
 
     getSortIndex(index) {
-        //table rows
-        const FLIGHTID_R = 0,
-            FLIGHTDATE_R = 1,
-            CLASS_R = 2,
-            NOMENCLATURE_R = 3,
-            CODEPLAN_R = 4,
-            CODEFACT_R = 5,
-            QTYPLAN_R = 6,
-            QTYFACT_R = 7,
-            PRICEPLAN_R = 8,
-            PRICEFACT_R = 9,
-            DELTA_R = 10;
-        //table headers
-        const FLIGHTID_H = 0,
-            FLIGHTDATE_H = 1,
-            CLASS_H = 2,
-            NOMENCLATURE_H = 3,
-            CODE_H = 4,
-            QTY_H = 5,
-            PRICE_H = 6,
-            DELTA_H = 7,
-            CODEPLAN_H = 8,
-            CODEFACT_H = 9,
-            QTYPLAN_H = 10,
-            QTYFACT_H = 11,
-            PRICEPLAN_H = 12,
-            PRICEFACT_H = 13,
-            NOTSORTABLE = 9999;
-        switch (index) {
-            case FLIGHTID_H:
-                return FLIGHTID_R;
-            case FLIGHTDATE_H:
-                return FLIGHTDATE_R;
-            case CLASS_H:
-                return NOTSORTABLE;
-            case NOMENCLATURE_H:
-                return NOTSORTABLE;
-            case CODE_H:
-                return NOTSORTABLE;
-            case QTY_H:
-                return NOTSORTABLE;
-            case PRICE_H:
-                return NOTSORTABLE;
-            case DELTA_H:
-                return DELTA_R;
-            case CODEPLAN_H:
-                return CODEPLAN_R;
-            case CODEFACT_H:
-                return CODEFACT_R;
-            case QTYPLAN_H:
-                return QTYPLAN_R;
-            case QTYFACT_H:
-                return QTYFACT_R;
-            case PRICEPLAN_H:
-                return PRICEPLAN_R;
-            case PRICEFACT_H:
-                return PRICEFACT_R;
-            default:
-                return NOTSORTABLE;
-        }
+        const { FLIGHTDATE_H, FLIGHTID_H, DELTA_H, PRICEFACT_H, PRICEPLAN_H, CODEFACT_H, CODEPLAN_H, QTYPLAN_H, QTYFACT_H } = sortKeys.headerKeys;
+        //prettier-ignore
+        const {
+            FLIGHTDATE_R,
+            FLIGHTID_R, 
+            QTYPLAN_R, 
+            QTYFACT_R, 
+            CODEFACT_R, 
+            CODEPLAN_R, 
+            PRICEFACT_R, 
+            PRICEPLAN_R, 
+            DELTA_R 
+        } = sortKeys.rowKeys;
+        if (index === FLIGHTID_H) return FLIGHTID_R;
+        if (index === FLIGHTDATE_H) return FLIGHTDATE_R;
+        if (index === DELTA_H) return DELTA_R;
+        if (index === CODEPLAN_H) return CODEPLAN_R;
+        if (index === CODEFACT_H) return CODEFACT_R;
+        if (index === QTYPLAN_H) return QTYPLAN_R;
+        if (index === QTYFACT_H) return QTYFACT_R;
+        if (index === PRICEPLAN_H) return PRICEPLAN_R;
+        if (index === PRICEFACT_H) return PRICEFACT_R;
+        return NOTSORTABLE;
     }
 }
 

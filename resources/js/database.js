@@ -1,9 +1,10 @@
 import cookie from "js-cookie";
 import { input } from "./app.js";
+import TableHelper from "./helpers/TableHelper.js";
 
 export default class Database {
     downloadCSV() {
-        const table = document.getElementsByClassName("main-table")[0];
+        const table = TableHelper.prototype.getTable();
         //If no table return
         if (!table) return;
 
@@ -49,7 +50,7 @@ export default class Database {
     }
 
     downloadPDF() {
-        const table = document.getElementsByClassName("main-table")[0].outerHTML;
+        const table = TableHelper.prototype.getTable().outerHTML;
         fetch("/api/v1/pdf", {
             method: "POST",
             body: JSON.stringify(table)
@@ -58,7 +59,7 @@ export default class Database {
         });
     }
     downloadXML() {
-        const table = document.getElementsByClassName("main-table")[0];
+        const table = TableHelper.prototype.getTable();
         const xml = new XMLSerializer();
         const xmlTable = xml.serializeToString(table);
         this.download(xmlTable, "xml", "data:text/xml");
@@ -72,6 +73,7 @@ export default class Database {
         download.click();
         document.body.removeChild(download);
     }
+
     getMoreData() {
         const paginate = input("input_get-data").value;
         const url = new URL(location.href);
@@ -84,6 +86,8 @@ export default class Database {
         cookie.set("paginate", paginate);
         location.replace(url);
     }
+
+    // TODO: request data from api (fetch(url))
 }
 
 function getOS() {

@@ -20,6 +20,7 @@ $arrow-up: -135;
 .main-table{
     width: 100%;
     border-collapse: collapse;
+    margin-top: 10px;
 
     &__th{
         padding: 10px;
@@ -84,6 +85,7 @@ $arrow-up: -135;
 
     &__td{
         padding: 10px 15px;
+        min-width: 100px;
     }
 
     &__tr{
@@ -111,14 +113,31 @@ $arrow-up: -135;
     @include flex();
     justify-content: space-between;
     margin: 20px 20px 0px 20px;
+
     &__get-data{
         @include flex(column);
+        align-self: flex-end;
+    }
+
+    &__filtering{
         align-self: flex-end;
     }
 
     &__download{
         @include flex();
         align-self: flex-end;
+
+        &__pdf, &__xml, &__csv{
+            margin-right: 3px;
+            margin-left: 3px;
+        }
+    }
+
+    &__datepicker__render{
+        @include flex(row);
+        *{
+            padding: 0px 3px;
+        }
     }
 }
 
@@ -128,10 +147,6 @@ $arrow-up: -135;
     }
 }
 
-
-.options__datepicker__render{
-    @include flex(column);
-    *{
-        padding: 3px 0px;
-    }
+.flex_wrapper{
+    display: inline-flex;
 }
