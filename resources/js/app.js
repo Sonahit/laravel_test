@@ -13,6 +13,7 @@ require("./bootstrap");
  */
 
 require("./components/Filtering.js");
+require("./components/TableBody.js");
 
 // Pre-load tasks
 import Database from "./database.js";

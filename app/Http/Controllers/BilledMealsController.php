@@ -106,11 +106,12 @@ class BilledMealsController extends Controller
         //         "billed_meals_collection" => $collection
         //     ]);
         // }
-        $billed_meals_collection = $this->index($billed_meals, $request);
+        // $billed_meals_collection = $this->index($billed_meals, $request);
         // Cache::remember($billed_meals_collection, now()->addSeconds(60));
-        return view("index", [
-            "billed_meals_collection" => $billed_meals_collection
-        ]);
+        // return view("index", [
+        //     "billed_meals_collection" => $billed_meals_collection
+        // ]);
+        return view("index");
     }   
 }
 

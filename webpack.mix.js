@@ -21,4 +21,4 @@ fs.readdirSync(`${__dirname}/resources/sass`).forEach(file => {
     mix.sass(`${__dirname}/resources/sass/${file}`, "public/css");
 });
 
-mix.sourceMaps();
+mix.sourceMaps("cheap-module-source-map");

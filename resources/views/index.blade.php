@@ -10,9 +10,9 @@
   <title>S7</title>
 </head>
 <body>
-    @if(method_exists($billed_meals_collection, 'links'))
+    {{-- @if(method_exists($billed_meals_collection, 'links'))
       {!! $billed_meals_collection->links() !!}
-    @endif
+    @endif --}}
     <main>
       <section class="options">
         <section class="options__download">
@@ -53,8 +53,9 @@
             </tr>
         </thead>
         <tbody class="main-table__tbody">
+          {{-- REACT --}}
           {{-- TODO: Front side request api --}}
-        @foreach ($billed_meals_collection as $key => $billed_meal)
+        {{-- @foreach ($billed_meals_collection as $key => $billed_meal)
           @if ($billed_meal)
             <tr class="main-table__tr">
                 <td class="main-table__td">  {{ $billed_meal['id']}} </td>
@@ -70,7 +71,7 @@
                 <td class="main-table__td">  {{ round($billed_meal['fact_attributes']['price'] - if_data($billed_meal['plan_attributes']['price'], 0), 2) }}</td>
             </tr>
           @endif
-        @endforeach
+        @endforeach --}}
         @php
           function if_data($data, $no_data = "NO DATA"){
               return $data ? $data : $no_data;

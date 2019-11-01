@@ -86,8 +86,6 @@ export default class Database {
         cookie.set("paginate", paginate);
         location.replace(url);
     }
-
-    // TODO: request data from api (fetch(url))
 }
 
 function getOS() {
