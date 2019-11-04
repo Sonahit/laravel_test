@@ -20,11 +20,12 @@ class ConverterController extends Controller
     }
 
     
-    public function pdf(Request $request)
+    public function pdf($request)
     {
         //TODO: get pdf file
-        $response = new Response();
-        return $response;
+        $pathToFile = storage_path() . "/" . strval(random_int(0, 1000000000)) . ".pdf";
+        // $pdf = PDF::loadView('pdf.invoice', $pathToFile);
+        // return $pdf->download('invoice.pdf');
     }
 }
 
