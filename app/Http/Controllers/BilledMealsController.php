@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Collections\Billed_Meals_Collection;
 use App\Models\Billed_Meals;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 class BilledMealsController extends Controller
 {
@@ -19,12 +18,13 @@ class BilledMealsController extends Controller
         $query = get_params_as_array($request, "paginate", "sort", "asc");
         $billed_meals_collection = $this->getData($billed_meals, $query);
         if($billed_meals_collection instanceof Billed_Meals_Collection) {
-          return $billed_meals_collection
+          return [
+              'pages' => $billed_meals_collection
                     ->groupBy("flight_id")
                     ->formatByDate()
-                    ->flatten(1);
+                    ->flatten(1)
+          ];
         }
-        
         $billed_meals_transformed = $billed_meals_collection
                 ->groupBy("flight_id")
                 ->formatByDate()
@@ -40,7 +40,10 @@ class BilledMealsController extends Controller
                 ]
             ]
         );
-        return $pages;
+        return [
+            'pages' => $pages,
+            'html' => $pages->links()->toHtml()
+        ];
     }
     
     public function getData(Billed_Meals $billed_meals, array $query)
@@ -69,48 +72,27 @@ class BilledMealsController extends Controller
                 "new_matrix.meal_id",
                 "new_matrix.iata_code",
                 "new_matrix.meal_qty",
-                "new_matrix.passenger_amount",
-              );
+                "new_matrix.passenger_amount");
             }
         ];
 
-        $billed_meals_base = $billed_meals->januaryBusiness()
+        $billed_meals_collect = $billed_meals->januaryBusiness()
             ->whereDoesntHave("billed_meals_info", function($q){
                 $q->where("iata_code", "ALC");
             })
-            ->with($relations);
-        $billed_meals_collect = $billed_meals_base->sort($asc);
+            ->with($relations)
+            ->sort($asc);
         if($paginate < 1) return $billed_meals_collect->get();
         return $billed_meals_collect->paginate($paginate);
     }    
 
-
-    protected function fromCache(String $key){
-        if(Cache::has($key)){
-            return Cache::get($key);
-        } 
-        return false;
-    }
     /**
      * Display the specified resource.
      *
-     * @param  \App\Billed_Meals  $billed_Meals
      * @return \Illuminate\Http\Response
      */
-    public function show(Billed_Meals $billed_meals, Request $request)
+    public function show()
     {
-        //TODO: caching
-        // $collection = json_decode($this->fromCache('collection'));
-        // if($collection){
-        //     return view("index", [
-        //         "billed_meals_collection" => $collection
-        //     ]);
-        // }
-        // $billed_meals_collection = $this->index($billed_meals, $request);
-        // Cache::remember($billed_meals_collection, now()->addSeconds(60));
-        // return view("index", [
-        //     "billed_meals_collection" => $billed_meals_collection
-        // ]);
         return view("index");
     }   
 }
