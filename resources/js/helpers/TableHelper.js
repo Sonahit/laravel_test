@@ -1,4 +1,5 @@
 import * as sortKeys from "./SortKeys";
+import TableBody from "../components/TableBody";
 
 export default class TableHelper {
     listenToChangeSorting() {
@@ -58,83 +59,8 @@ export default class TableHelper {
         return document.getElementsByClassName("main-table")[0];
     }
 
-    listenFiltering() {
-        window.addEventListener("filter_table__date", e => {
-            const { startDate, endDate } = e.detail;
-            this.filterTable(this.getTable(), startDate, endDate, "flight_date", "date");
-        });
-        window.addEventListener("filter_table__number", e => {
-            const { startValue, endValue, key } = e.detail;
-            this.filterTable(this.getTable(), startValue, endValue, key, "number");
-        });
-        window.addEventListener("filter_table__string", e => {
-            const { string, key } = e.detail;
-            this.filterTable(this.getTable(), string, "", key, "string");
-        });
-        return this;
-    }
-
-    filterTable(table, startValue, endValue, key, method) {
-        const index = this.getSortIndex(this.flatTHead(table).indexOf(this.th(table, key)));
-        if (method === "date") {
-            this.filterByDate(table, startValue, endValue || startValue, index);
-        } else if (method === "number") {
-            this.filterByNumber(table, startValue, endValue || startValue, index);
-        } else if (method === "string") {
-            this.filterByString(table, startValue, index);
-        }
-    }
-
-    showTable() {
-        this.getTBody(this.getTable()).forEach(tr => (tr.style.display = ""));
-    }
-
-    filterByNumber(table, startValue, endValue, index) {
-        const start = parseInt(startValue);
-        const end = parseInt(endValue);
-        if (end < start) return;
-        // TODO: array.filter(tBody).forEach(tr => table.tBodies[0].appendChild(tr));
-        this.getTBody(table).forEach(tr => {
-            const trNumber = parseInt(tr.children[index].innerText);
-            if (trNumber >= start && trNumber <= end) {
-                tr.style.display = "";
-            } else {
-                tr.style.display = "none";
-            }
-        });
-    }
-
-    filterByString(table, string, index) {
-        const s = string.toLocaleLowerCase();
-        // TODO: array.filter(tBody).forEach(tr => table.tBodies[0].appendChild(tr));
-        this.getTBody(table).forEach(tr => {
-            const trString = tr.children[index].innerText.toLocaleLowerCase();
-            if (trString.includes(s)) {
-                tr.style.display = "";
-            } else {
-                tr.style.display = "none";
-            }
-        });
-    }
-
-    filterByDate(table, startDate, endDate, index) {
-        const start = Date.parse(startDate);
-        const end = Date.parse(endDate);
-        // TODO: array.filter(tBody).forEach(tr => table.tBodies[0].appendChild(tr));
-        this.getTBody(table).forEach(tr => {
-            const trDate = Date.parse(tr.children[index].innerText);
-            if (trDate >= start && trDate <= end) {
-                tr.style.display = "";
-            } else {
-                tr.style.display = "none";
-            }
-        });
-    }
-
     getTBody(table) {
-        return Array.from(table.rows).filter(v => {
-            if (v.rowIndex > 1) return v;
-        });
+        return Array.from(table.rows).filter(v => v.rowIndex > 1);
     }
 
     active(node) {
@@ -168,6 +94,11 @@ export default class TableHelper {
         return Array.from(table.tHead.rows)
             .map(thead => Array.from(thead.children).map(tr => tr))
             .flat();
+    }
+    
+    filterTable(table, startValue, endValue, key, method) {
+        const index = this.getSortIndex(this.flatTHead(table).indexOf(this.th(table, key)));
+        sessionStorage.setItem('sortIndex', index);
     }
 
     th(table, key) {

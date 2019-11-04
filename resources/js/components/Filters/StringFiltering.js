@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { dispatchCustomEvent } from "@helpers/EventHelper.js";
-import TableHelper from "../../helpers/TableHelper";
 
 export default class StringFiltering extends Component {
     constructor(props) {
@@ -14,7 +13,7 @@ export default class StringFiltering extends Component {
 
     componentDidUpdate() {
         if (!this.state.value) {
-            TableHelper.prototype.showTable();
+            dispatchCustomEvent(`filter_table__reset`);
         } else {
             dispatchCustomEvent(`filter_table__${this.props.method}`, {
                 string: this.state.value,
@@ -24,7 +23,7 @@ export default class StringFiltering extends Component {
     }
 
     componentWillUnmount() {
-        TableHelper.prototype.showTable();
+        dispatchCustomEvent(`filter_table__reset`);
     }
 
     handleChange(e) {

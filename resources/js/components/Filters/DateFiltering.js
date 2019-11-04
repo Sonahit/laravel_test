@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 
 import "react-datepicker/dist/react-datepicker.css";
 import { dispatchCustomEvent } from "@helpers/EventHelper";
-import TableHelper from "../../helpers/TableHelper";
 
 export default class DateFiltering extends Component {
     constructor(props) {
@@ -19,7 +18,7 @@ export default class DateFiltering extends Component {
 
     componentDidUpdate() {
         if (!this.state.startDate) {
-            TableHelper.prototype.showTable();
+            dispatchCustomEvent(`filter_table__reset`);
         } else {
             dispatchCustomEvent(`filter_table_${this.props.method}`, {
                 startDate: this.state.startDate,
@@ -30,7 +29,7 @@ export default class DateFiltering extends Component {
     }
 
     componentWillUnmount() {
-        TableHelper.prototype.showTable();
+        dispatchCustomEvent(`filter_table__reset`);
     }
 
     setStartDate(startDate) {

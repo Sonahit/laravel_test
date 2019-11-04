@@ -24,7 +24,7 @@ export const input = id => document.getElementById(id);
 window.Database = new Database();
 
 const tableHelper = new TableHelper();
-tableHelper.listenToChangeSorting().listenFiltering();
+tableHelper.listenToChangeSorting();
 const int = v => parseInt(v);
 
 window.onload = () => {

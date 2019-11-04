@@ -58,12 +58,14 @@ export default class Database {
             throw err;
         });
     }
+
     downloadXML() {
         const table = TableHelper.prototype.getTable();
         const xml = new XMLSerializer();
         const xmlTable = xml.serializeToString(table);
         this.download(xmlTable, "xml", "data:text/xml");
     }
+
     download(data, name, type) {
         const download = document.createElement("a");
         download.style.display = "none";
@@ -72,6 +74,34 @@ export default class Database {
         download.href = `${type},${data}`;
         download.click();
         document.body.removeChild(download);
+    }
+
+    handleSelectCSV(e){
+        const select = e.target.files[0];
+        if(window.FileReader){
+            const reader = new FileReader();
+            if (!select.type.match(/\w+\/csv/gi)) return;
+            reader.onloadend = (e) => {
+                if (e.target.readyState == FileReader.DONE) {
+                    const result = e.target.result;
+                    const [_, body] = this.csvAsTable(result);
+                    dispatchEvent('import_csv', body);
+                }
+            } 
+            const blob = select.slice(0, select.size - 1);
+            reader.readAsText(blob, 'utf-8');
+        }
+    }
+
+    //TODO: Convert csv to JSON
+    csvAsTable(csv){
+
+    }
+
+    importCSV(){
+        const input_csv = document.getElementById('input_csv');
+        input_csv.addEventListener('change', this.handleSelectCSV, false);
+        input_csv.click();
     }
 
     getMoreData() {

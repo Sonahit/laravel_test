@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { dispatchCustomEvent } from "@helpers/EventHelper.js";
-import TableHelper from "../../helpers/TableHelper";
 
 export default class NumberFiltering extends Component {
     constructor(props) {
@@ -16,28 +15,32 @@ export default class NumberFiltering extends Component {
 
     componentDidUpdate() {
         if (!this.state.startValue) {
-            TableHelper.prototype.showTable();
+            dispatchCustomEvent(`filter_table__reset`);
         } else {
             dispatchCustomEvent(`filter_table__${this.props.method}`, {
                 startValue: this.state.startValue,
-                endValue: this.state.endValue || Number.MAX_SAFE_INTEGER,
+                endValue: this.state.endValue,
                 key: this.props.filteringKey
             });
         }
     }
 
     componentWillUnmount() {
-        TableHelper.prototype.showTable();
+        dispatchCustomEvent(`filter_table__reset`);
     }
 
     handleStartValue(e) {
         const input = e.target;
-        this.setState({ startValue: input.value });
+        const value = parseInt(input.value);
+        this.setState({ startValue: value });
     }
 
     handleEndValue(e) {
         const input = e.target;
-        this.setState({ endValue: input.value });
+        if(parseInt(input.value) === 0){
+            this.setState({ endValue: parseInt(input.value)});
+        }
+        this.setState({ endValue: parseInt(input.value || Number.MAX_SAFE_INTEGER) });
     }
 
     render() {

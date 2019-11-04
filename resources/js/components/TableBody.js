@@ -3,19 +3,29 @@ import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 
 import ApiHelper from "../helpers/ApiHelper";
+import Modal from "./Modal/Modal";
 
 export default class TableBody extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            body: false
+            pages: false,
+            table: false,
+            filteredTable: false,
+            error: false,
         };
+        this.filterTable = this.filterTable.bind(this);
+        this.filterByString = this.filterByString.bind(this);
+        this.filterByNumber = this.filterByNumber.bind(this);
+        this.filterByDate = this.filterByDate.bind(this);
+        this.showTable = this.showTable.bind(this);
+        this.listenFiltering = this.listenFiltering.bind(this);
+        this.handleCSV = this.handleCSV.bind(this);
     }
 
     componentDidMount() {
         const pagination = sessionStorage.getItem("pagination") || 20;
         const page = sessionStorage.getItem("page") || 1;
-        //TODO: Resolve links problem
         ApiHelper.get(`${ApiHelper.url}/billed_meals`, [
             {
                 key: "pagination",
@@ -25,44 +35,162 @@ export default class TableBody extends Component {
                 key: "page",
                 value: page
             }
-        ]).then(data => this.setState({ body: data }));
+        ]).then(response => {
+            let table = '';
+            if(response.pages && response.pages.data){
+                table = response.pages.data;
+            } else if(response.pages) {
+                table = response.pages;
+            }
+            this.setState({ 
+                pages: response.pages, 
+                table, 
+                html: response.html });
+        }).catch(() => {
+            this.setState({error: true});
+        })
+        this.listenFiltering();
+    }
+
+    componentWillUnmount(){
+        window.removeEventListener('filter_table__reset', () => {});
+        window.removeEventListener('filter_table__number', () => {});
+        window.removeEventListener('filter_table__date', () => {});
+        window.removeEventListener('filter_table__string', () => {});
+        window.removeEventListener('filter_table__csv', () => {});
+    }
+
+    handleCSV(e){
+        const { detail } = e;
+        console.log(detail);
+    }
+
+    listenFiltering() {
+        window.addEventListener('filter_table__csv', this.handleCSV);
+        window.addEventListener('filter_table__reset', this.showTable);
+        window.addEventListener("filter_table__date", e => {
+            const { startDate, endDate } = e.detail;
+            this.filterTable(startDate, endDate, "flight_date", "date");
+        });
+        window.addEventListener("filter_table__number", e => {
+            const { startValue, endValue, key } = e.detail;
+            this.filterTable(startValue, endValue, key, "number");
+        });
+        window.addEventListener("filter_table__string", e => {
+            const { string, key } = e.detail;
+            this.filterTable(string, "", key, "string");
+        });
+    }
+
+    filterTable(startValue, endValue, key, method) {
+        if(!startValue){
+            this.showTable();
+        }
+        const [index, subIndex] = this.getIndex(key);
+        if(!index) return;
+        if (method === "date") {
+            this.filterByDate(this.state.table, startValue, endValue || startValue, index, subIndex);
+        } else if (method === "number") {
+            this.filterByNumber(this.state.table, startValue, endValue, index, subIndex);
+        } else if (method === "string") {
+            this.filterByString(this.state.table, startValue, index, subIndex);
+        }
+    }
+
+    getIndex(key){
+        switch(key){
+            case 'flight_date':return ['date',false];
+            case 'flight_id': return ['id',false];
+            case 'plan_code':return ['plan_attributes', 'codes'];
+            case 'plan_qty':return ['plan_attributes', 'qty'];
+            case 'plan_price':return ['plan_attributes', 'price'];
+            case 'fact_code':return ['fact_attributes', 'codes'];
+            case 'fact_qty':return ['fact_attributes', 'qty'];
+            case 'fact_price':return ['fact_attributes', 'price'];
+            case 'delta':return ['delta',false];
+            default: return [false, false];
+        }
+    }
+
+    showTable() {
+        this.setState({filteredTable: false});
+    }
+
+    filterByNumber(table, startValue, endValue, index, subIndex){
+        const start = parseInt(startValue);
+        const end = parseInt(endValue);
+        if (end < start) return;
+        this.setState({
+            filteredTable: table.filter(tr => {
+                if(subIndex){
+                    const trNumber = parseInt(tr[index][subIndex]);
+                    if(!trNumber) return;
+                    return trNumber >= start && trNumber <= end;
+                }
+                const trNumber = index === 'delta'
+                    ? tr.plan_attributes.price - tr.fact_attributes.price
+                    : parseInt(tr[index]);
+                return trNumber >= start && trNumber <= end;
+            })
+        })
+    }
+
+    filterByString(table, string, index, subIndex){
+        const s = string.toLocaleLowerCase();
+        this.setState({
+            filteredTable: table.filter(tr => {
+                if(subIndex){
+                    const trString = tr[index][subIndex];
+                    if(!trString) return;
+                    return trString.toLocaleLowerCase().includes(s);
+                }
+                const trString = tr[index].toLocaleLowerCase();
+                return trString.includes(s);
+            })
+        });
+    }
+
+    filterByDate(table, startDate, endDate, index){
+        const start = Date.parse(startDate);
+        const end = Date.parse(endDate);
+        this.setState({
+            filteredTable: table.filter(tr => {
+                if(subIndex){
+                    const trDate = Date.parse(tr[index][subIndex]);
+                    if(!trDate) return;
+                    return trDate >= start && trDate <= end;
+                }
+                const trDate = Date.parse(tr[index]);
+                return trDate >= start && trDate <= end;
+            })
+        });
     }
 
     render() {
-        if (!this.state.body) {
-            //TODO: make modal with loading circle
+        if(this.state.error){
             return (
-                <tr>
-                    <td className="main-table__td">LOADING</td>
-                    <td className="main-table__td">LOADING</td>
-                    <td className="main-table__td">LOADING</td>
-                    <td className="main-table__td">LOADING</td>
-                    <td className="main-table__td">LOADING</td>
-                    <td className="main-table__td">LOADING</td>
-                    <td className="main-table__td">LOADING</td>
-                    <td className="main-table__td">LOADING</td>
-                    <td className="main-table__td">LOADING</td>
-                    <td className="main-table__td">LOADING</td>
-                    <td className="main-table__td">LOADING</td>
-                </tr>
+                <Modal>
+                    <img src="https://cdn.pixabay.com/photo/2017/02/12/21/29/false-2061132_960_720.png"></img>
+                </Modal>
             );
         }
-        const body = this.state.body;
-        return (
-            body.data.map((tr, i) => {
-                return <TableElement key={i} {...tr} />;
-            }) ||
-            body.map((tr, i) => {
-                return <TableElement key={i} {...tr} />;
-            })
-        );
+        if (!this.state.pages) {
+            return (
+                <Modal>
+                    <div className="loader"></div>
+                </Modal>
+            );
+        }
+        const table = this.state.filteredTable || this.state.table;
+        document.getElementsByTagName('nav')[0].outerHTML = this.state.html || '<nav></nav>';
+        return table.map((tr, i) => <TableElement key={i} {...tr} />);
     }
 }
 
 const TableElement = props => {
     const { id, date, type, plan_attributes, fact_attributes } = props;
     const nom_class = props.class;
-    const delta = (parseInt(plan_attributes.price) - parseInt(fact_attributes.price)).toFixed(2) || 0;
+    const delta = (plan_attributes.price - fact_attributes.price).toFixed(2);
     return (
         <tr>
             <td className="main-table__td">{id}</td>
@@ -71,10 +199,10 @@ const TableElement = props => {
             <td className="main-table__td">{type}</td>
             <td className="main-table__td">{plan_attributes.codes.join(", ") || "NO DATA"}</td>
             <td className="main-table__td">{fact_attributes.codes.join(", ")}</td>
-            <td className="main-table__td">{parseInt(plan_attributes.qty).toFixed(2) || 0}</td>
-            <td className="main-table__td">{parseInt(fact_attributes.qty).toFixed(2)}</td>
-            <td className="main-table__td">{parseInt(plan_attributes.price).toFixed(2) || 0}</td>
-            <td className="main-table__td">{parseInt(fact_attributes.price).toFixed(2)}</td>
+            <td className="main-table__td">{plan_attributes.qty}</td>
+            <td className="main-table__td">{fact_attributes.qty}</td>
+            <td className="main-table__td">{(plan_attributes.price).toFixed(2)}</td>
+            <td className="main-table__td">{(fact_attributes.price).toFixed(2)}</td>
             <td className="main-table__td">{delta}</td>
         </tr>
     );

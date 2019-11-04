@@ -10,16 +10,23 @@
   <title>S7</title>
 </head>
 <body>
-    {{-- @if(method_exists($billed_meals_collection, 'links'))
-      {!! $billed_meals_collection->links() !!}
-    @endif --}}
+    <nav>
+      {{-- REACT --}}
+    </nav>
     <main>
       <section class="options">
-        <section class="options__download">
-          <button class="options__download__pdf" onclick="Database.downloadPDF()">Download PDF</button>
-          <button class="options__download__xml" onclick="Database.downloadXML()">Download XML</button>
-          <button class="options__download__csv" onclick="Database.downloadCSV()">Download CSV</button>
+        <section class="options__files">
+          <section class="options__download">
+            <button class="options__download__pdf" onclick="Database.downloadPDF()">Download PDF</button>
+            <button class="options__download__xml" onclick="Database.downloadXML()">Download XML</button>
+            <button class="options__download__csv" onclick="Database.downloadCSV()">Download CSV</button>
+          </section>
+          <section class="options__upload">
+            <button class="options__download__csv" type="button" onclick="Database.importCSV()">Import CSV</button>
+            <input id="input_csv" type="file" class="hidden">
+          </section>
         </section>
+        
         <section class="options__filtering">
           {{-- REACT --}}
         </section>
@@ -54,30 +61,7 @@
         </thead>
         <tbody class="main-table__tbody">
           {{-- REACT --}}
-          {{-- TODO: Front side request api --}}
-        {{-- @foreach ($billed_meals_collection as $key => $billed_meal)
-          @if ($billed_meal)
-            <tr class="main-table__tr">
-                <td class="main-table__td">  {{ $billed_meal['id']}} </td>
-                <td class="main-table__td">  {{ $billed_meal['date'] }}</td>
-                <td class="main-table__td">  {{ $billed_meal['class'] }}</td>
-                <td class="main-table__td">  {{ $billed_meal['type'] }}</td>
-                <td class="main-table__td">  {{ if_data(implode(", ",$billed_meal['plan_attributes']['codes']))}}</td>
-                <td class="main-table__td">  {{ implode(", ",$billed_meal['fact_attributes']['codes'])}}</td>
-                <td class="main-table__td">  {{ if_data($billed_meal['plan_attributes']['qty'], 0)  }}</td>
-                <td class="main-table__td">  {{ $billed_meal['fact_attributes']['qty']  }}</td>
-                <td class="main-table__td">  {{ round(if_data($billed_meal['plan_attributes']['price'], 0), 2) }}</td>
-                <td class="main-table__td">  {{ round($billed_meal['fact_attributes']['price'], 2) }}</td>
-                <td class="main-table__td">  {{ round($billed_meal['fact_attributes']['price'] - if_data($billed_meal['plan_attributes']['price'], 0), 2) }}</td>
-            </tr>
-          @endif
-        @endforeach --}}
-        @php
-          function if_data($data, $no_data = "NO DATA"){
-              return $data ? $data : $no_data;
-          }   
-        @endphp
-      </tbody>
+        </tbody>
     </table>   
     </main>
   <script src="js/app.js"></script>
