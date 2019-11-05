@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 import ApiHelper from "../helpers/ApiHelper";
 import Modal from "./Modal/Modal";
+import TableHelper from "../helpers/TableHelper";
 
 export default class TableBody extends Component {
     constructor(props) {
@@ -21,6 +22,7 @@ export default class TableBody extends Component {
         this.showTable = this.showTable.bind(this);
         this.listenFiltering = this.listenFiltering.bind(this);
         this.handleCSV = this.handleCSV.bind(this);
+        this.handleTableReset = this.handleTableReset.bind(this);
     }
 
     componentDidMount() {
@@ -48,25 +50,37 @@ export default class TableBody extends Component {
                 html: response.html });
         }).catch(() => {
             this.setState({error: true});
-        })
+        });
+        window.addEventListener('table__reset', this.handleTableReset);
         this.listenFiltering();
     }
 
     componentWillUnmount(){
-        window.removeEventListener('filter_table__reset', () => {});
-        window.removeEventListener('filter_table__number', () => {});
-        window.removeEventListener('filter_table__date', () => {});
-        window.removeEventListener('filter_table__string', () => {});
-        window.removeEventListener('filter_table__csv', () => {});
+        window.removeEventListener('filter_table__reset', null);
+        window.removeEventListener('filter_table__number', null);
+        window.removeEventListener('filter_table__date', null);
+        window.removeEventListener('filter_table__string', null);
+        window.removeEventListener('import_csv', null);
+        window.removeEventListener('table__reset', null);
+    }
+
+    handleTableReset(){
+        let table = '';
+        if(this.state.pages && this.state.pages.data){
+            table = this.state.pages.data;
+        } else if(this.state.pages) {
+            table = this.state.pages;
+        }
+        this.setState({table});
     }
 
     handleCSV(e){
         const { detail } = e;
-        console.log(detail);
+        this.setState({ table: TableHelper.prototype.csvToJson(detail) });
     }
 
     listenFiltering() {
-        window.addEventListener('filter_table__csv', this.handleCSV);
+        window.addEventListener('import_csv', this.handleCSV);
         window.addEventListener('filter_table__reset', this.showTable);
         window.addEventListener("filter_table__date", e => {
             const { startDate, endDate } = e.detail;
@@ -113,7 +127,7 @@ export default class TableBody extends Component {
     }
 
     showTable() {
-        this.setState({filteredTable: false});
+        this.setState({ filteredTable: false });
     }
 
     filterByNumber(table, startValue, endValue, index, subIndex){

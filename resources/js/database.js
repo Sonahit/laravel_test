@@ -1,6 +1,7 @@
 import cookie from "js-cookie";
 import { input } from "./app.js";
 import TableHelper from "./helpers/TableHelper.js";
+import { dispatchCustomEvent } from './helpers/EventHelper';
 
 export default class Database {
     downloadCSV() {
@@ -19,20 +20,7 @@ export default class Database {
                 main.splice(i + 1, 0, "");
             }
         }
-        const values = raw => {
-            const row = [];
-            raw.forEach((v, i) => {
-                row[i] = [];
-                if (v.cells) {
-                    //For body
-                    Array.from(v.cells).forEach(cell => row[i].push(cell.innerText));
-                } else {
-                    //For headers
-                    Array.from(v).forEach(h => row[i].push(h.innerText || h));
-                }
-            });
-            return row;
-        };
+        const tableHelper = new TableHelper();
         const toCsv = (rawHead, rawBody) => {
             const head = [];
             const body = [];
@@ -40,7 +28,7 @@ export default class Database {
             rawBody.forEach(b => body.push(b.join(";")));
             return head.concat(body).join("\n");
         };
-        const csv = toCsv(values([main, sub]), values(tBody));
+        const csv = toCsv(tableHelper.values([main, sub]), tableHelper.values(tBody));
         const charset = getOS()
             .toLowerCase()
             .includes("windows")
@@ -50,11 +38,16 @@ export default class Database {
     }
 
     downloadPDF() {
-        const table = TableHelper.prototype.getTable().outerHTML;
-        fetch("/api/v1/pdf", {
-            method: "POST",
-            body: JSON.stringify(table)
-        }).catch(err => {
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        fetch(`${location.origin}/api/v1/pdf?pagination=${sessionStorage.getItem('pagination') || 20}&page=${sessionStorage.getItem('page') || 1}`, {
+            method: "GET",
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Cookie': document.cookie
+            }
+        }).then(data => data.text())
+        .then(data => this.download(data, 'pdf.pdf', 'data:application/pdf'))
+        .catch(err => {
             throw err;
         });
     }
@@ -76,31 +69,38 @@ export default class Database {
         document.body.removeChild(download);
     }
 
-    handleSelectCSV(e){
-        const select = e.target.files[0];
-        if(window.FileReader){
+    handleSelectCSV(ev){
+        const select = ev.target.files[0];
+        if(window.FileReader && select){
             const reader = new FileReader();
             if (!select.type.match(/\w+\/csv/gi)) return;
             reader.onloadend = (e) => {
                 if (e.target.readyState == FileReader.DONE) {
                     const result = e.target.result;
                     const [_, body] = this.csvAsTable(result);
-                    dispatchEvent('import_csv', body);
+                    dispatchCustomEvent('import_csv', body);
                 }
             } 
             const blob = select.slice(0, select.size - 1);
             reader.readAsText(blob, 'utf-8');
+            ev.currentTarget.value = '';
         }
     }
 
-    //TODO: Convert csv to JSON
-    csvAsTable(csv){
+    csvAsTable(rawCSV){
+        const csv = rawCSV.split('\n');
+        const head = csv.filter((_, i) => i <= 1).map(e => e.split(';'));
+        const body = csv.filter((_, i) => i > 1 ).map(e => e.split(';'));
+        return [head, body];
+    }
 
+    reset(){
+        dispatchCustomEvent('table__reset');
     }
 
     importCSV(){
         const input_csv = document.getElementById('input_csv');
-        input_csv.addEventListener('change', this.handleSelectCSV, false);
+        input_csv.addEventListener('change', (e) => this.handleSelectCSV.call(this, e));
         input_csv.click();
     }
 

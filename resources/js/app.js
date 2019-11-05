@@ -39,9 +39,11 @@ window.onload = () => {
     if (paginate) {
         inputData.value = paginate;
         sessionStorage.setItem("paginate", paginate);
+        history.pushState(null, "", `?page=${page || 1}&paginate=${paginate}`);
     } else {
         inputData.value = 20;
         sessionStorage.setItem("paginate", 20);
+        history.pushState(null, "", `?page=${page || 1}&paginate=20`);
     }
     if (window.history && page && paginate) {
         history.pushState(null, "", `?page=${page}&paginate=${paginate}`);
