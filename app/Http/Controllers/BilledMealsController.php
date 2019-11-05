@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Collections\Billed_Meals_Collection;
 use App\Models\Billed_Meals;
+use App\Utils\Helpers\RequestHelper;
 use Illuminate\Http\Request;
 
 class BilledMealsController extends Controller
@@ -15,7 +16,7 @@ class BilledMealsController extends Controller
      */
     public function index(Billed_Meals $billed_meals, Request $request)
     {
-        $query = get_params_as_array($request, "paginate", "sort", "asc");
+        $query = RequestHelper::get_params_as_array($request, "paginate", "sort", "asc");
         $billed_meals_collection = $this->getData($billed_meals, $query);
         if($billed_meals_collection instanceof Billed_Meals_Collection) {
           return [
@@ -95,13 +96,4 @@ class BilledMealsController extends Controller
     {
         return view("index");
     }   
-}
-
-function get_params_as_array(Request $request, ...$params){
-    $query = [];
-    foreach ($params as $param) {
-        $query[$param] = $request->query($param);
-    }
-    if(isset($_COOKIE["paginate"])) $query["paginate"] = intval($_COOKIE["paginate"]);
-    return $query;
 }

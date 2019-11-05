@@ -139,6 +139,7 @@ return [
         /*
          * Laravel Framework Service Providers...
          */
+        
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
@@ -174,6 +175,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
 
     ],
 
@@ -227,7 +229,8 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         //Laravel--end
         //Custom
-        'ArrMap' => App\Utils\ArrayMap::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
+
         //Custom--end
     ],
 
