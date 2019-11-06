@@ -1,5 +1,4 @@
 import * as sortKeys from "./SortKeys";
-import TableBody from "../components/TableBody";
 
 export default class TableHelper {
     listenToChangeSorting() {
@@ -55,18 +54,18 @@ export default class TableHelper {
         return this;
     }
 
-    csvToJson(csv){
+    csvToJson(csv) {
         return csv.map(el => {
             const fact_attributes = {
-                codes: el[5].replace('\s', '').split(','),
+                codes: el[5].replace("s", "").split(","),
                 price: parseInt(el[9]),
                 qty: parseInt(el[7])
             };
             const plan_attributes = {
-                codes: el[4].replace('\s', '').split(','),
+                codes: el[4].replace("s", "").split(","),
                 price: parseInt(el[8]),
                 qty: parseInt(el[6])
-            }
+            };
             return {
                 id: parseInt(el[0]),
                 date: el[1],
@@ -74,7 +73,7 @@ export default class TableHelper {
                 class: el[3],
                 fact_attributes,
                 plan_attributes
-            }
+            };
         });
     }
 
@@ -119,7 +118,7 @@ export default class TableHelper {
             .flat();
     }
 
-    values(raw){
+    values(raw) {
         const row = [];
         raw.forEach((v, i) => {
             row[i] = [];
@@ -132,43 +131,48 @@ export default class TableHelper {
             }
         });
         return row;
-    };
+    }
 
-    valuesWithAttr(raw){
+    valuesWithAttr(raw) {
         const row = [];
         raw.forEach((v, i) => {
             row[i] = [];
             if (v.cells) {
                 //For body
-                Array.from(v.cells).forEach(cell => row[i].push({
-                        v: cell.innerText || h, 
+                Array.from(v.cells).forEach(cell =>
+                    row[i].push({
+                        v: cell.innerText,
                         colSpan: cell.colSpan || 1,
-                        rowSpan: cell.rowSpan || 1,
-                    }
-                    ));
+                        rowSpan: cell.rowSpan || 1
+                    })
+                );
             } else {
                 //For headers
-                Array.from(v).forEach(h => row[i].push({
-                    v: h.innerText || h, 
-                    colSpan: h.colSpan || 1,
-                    rowSpan: h.rowSpan || 1,
-                }));
+                Array.from(v).forEach(h =>
+                    row[i].push({
+                        v: h.innerText || h,
+                        colSpan: h.colSpan || 1,
+                        rowSpan: h.rowSpan || 1
+                    })
+                );
             }
         });
         return row;
-    };
+    }
 
-    getTHead(table){
+    getTHead(table) {
         return Array.from(table.tHead.rows);
     }
 
-    tableToJson(table){
-        const [ head, body ] = [this.getTHead(table), this.getTBody(table)]
-        const [ vhead, vbody ] = [this.valuesWithAttr(head), this.values(body)];
-        return JSON.parse(JSON.stringify({
-            head: vhead,
-            body: vbody
-        }));
+    tableToJson(table) {
+        const [head, body] = [this.getTHead(table), this.getTBody(table)];
+        const [vhead, vbody] = [this.valuesWithAttr(head), this.values(body)];
+        return JSON.parse(
+            JSON.stringify({
+                head: vhead,
+                body: vbody
+            })
+        );
     }
 
     th(table, key) {
@@ -176,7 +180,19 @@ export default class TableHelper {
     }
 
     getSortIndex(index) {
-        const { FLIGHTDATE_H, FLIGHTID_H, DELTA_H, PRICEFACT_H, PRICEPLAN_H, CODEFACT_H, CODEPLAN_H, QTYPLAN_H, QTYFACT_H } = sortKeys.headerKeys;
+        //prettier-ignore
+        const { 
+            FLIGHTDATE_H, 
+            FLIGHTID_H,
+            DELTA_H,
+            PRICEFACT_H,
+            PRICEPLAN_H,
+            CODEFACT_H,
+            CODEPLAN_H,
+            QTYPLAN_H,
+            QTYFACT_H,
+            NOTSORTABLE
+        } = sortKeys.headerKeys;
         //prettier-ignore
         const {
             FLIGHTDATE_R,
@@ -187,7 +203,7 @@ export default class TableHelper {
             CODEPLAN_R, 
             PRICEFACT_R, 
             PRICEPLAN_R, 
-            DELTA_R 
+            DELTA_R
         } = sortKeys.rowKeys;
         if (index === FLIGHTID_H) return FLIGHTID_R;
         if (index === FLIGHTDATE_H) return FLIGHTDATE_R;

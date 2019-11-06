@@ -34,7 +34,7 @@
             <button class="options__download__csv" type="button" onclick="Database.importCSV()">Import CSV</button>
             <input id="input_csv" type="file" class="hidden">
             <button class="options__download__csv" type="button" onclick="Database.reset()">Reset</button>
-            <a href="{{ url('api/v1/pdf') }}" class="options__download__csv">Convert into PDF</a>
+            <a href="{{ url('api/v1/pdf') }}" class="options__download__button">Convert into PDF</a>
           </section>
         </section>
         

@@ -131,6 +131,18 @@ $arrow-up: -135;
             margin-right: 3px;
             margin-left: 3px;
         }
+        &__button{
+            margin-right: 3px;
+            margin-left: 3px;
+            padding: 3px;
+            background-color: rgb(243, 243, 243);
+            border: 1px black solid;
+            color: black;
+            &:link, &:visited{
+                text-decoration: none;
+            }
+            font-size: 12px;
+        }
     }
 
     &__datepicker__render{
