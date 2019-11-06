@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Collections\Billed_Meals_Collection;
 use App\Models\Billed_Meals;
 use App\Utils\Helpers\RequestHelper;
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -23,12 +24,9 @@ class BilledMealsController extends Controller
         if($paginate < 0) $page = 1;
         $key = "{$paginate}={$page}";
         $keyTotal = "{$paginate}=total";
-        $billed_meals_transformed = '';
         if(Cache::has($key) && Cache::has($keyTotal)){
             $billed_meals_transformed = json_decode(Cache::get($key));
-            if($paginate < 0) {
-                return ['pages' => $billed_meals_transformed];
-            }
+            if($paginate < 0) return $this->getResponse(['pages' => $billed_meals_transformed], 200);
         } else {
             $time = now()->addMinutes(2);
             $billed_meals_collection = $this->getData($billed_meals, $query);
@@ -36,10 +34,10 @@ class BilledMealsController extends Controller
                 ->groupBy("flight_id")
                 ->formatByDate()
                 ->flatten(1);
-            Cache::put($key, json_encode($billed_meals_transformed),$time );
+            Cache::put($key, json_encode($billed_meals_transformed), $time);
             if($billed_meals_collection instanceof Billed_Meals_Collection) {
                 Cache::put($keyTotal,$billed_meals_collection->count(), $time);
-                return ['pages' => $billed_meals_transformed];
+                return $this->getResponse(['pages' => $billed_meals_transformed], 200);
             };
             Cache::put($keyTotal,$billed_meals_collection->total(), $time);
         }
@@ -56,10 +54,14 @@ class BilledMealsController extends Controller
                 ]
             ]
         );
-        return [
+        return $this->getResponse([
             'pages' => $pages,
             'html' => $pages->links()->toHtml()
-        ];
+        ], 200);
+    }
+
+    protected function getResponse($data, int $code){
+        return new Response(json_encode($data), $code);
     }
     
     /**
