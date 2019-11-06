@@ -8,9 +8,12 @@ class RequestHelper
     public static function get_params_as_array(Request $request, ...$params){
         $query = [];
         foreach ($params as $param) {
-            $query[$param] = $request->query($param);
-        }
-        if(isset($_COOKIE["paginate"])) $query["paginate"] = intval($_COOKIE["paginate"]);
+            if(isset($_COOKIE[$param])){ 
+                $query[$param] = $_COOKIE[$param];
+            } else {
+                $query[$param] = $request->query($param);
+            }
+        }       
         return $query;
     }
 }

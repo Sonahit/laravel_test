@@ -17,34 +17,42 @@ class BilledMealsController extends Controller
      */
     public function index(Billed_Meals $billed_meals, Request $request)
     {
-        //TODO: caching
         $query = RequestHelper::get_params_as_array($request, "paginate", "sort", "asc", "page");
-        $billed_meals_collection = $this->getData($billed_meals, $query);
         $paginate = $query['paginate'];
         $page = $query['page'];
+        if($paginate < 0) $page = 1;
         $key = "{$paginate}={$page}";
+        $keyTotal = "{$paginate}=total";
         $billed_meals_transformed = '';
-        if(Cache::has($key)){
+        if(Cache::has($key) && Cache::has($keyTotal)){
             $billed_meals_transformed = json_decode(Cache::get($key));
+            if($paginate < 0) {
+                return ['pages' => $billed_meals_transformed];
+            }
         } else {
+            $time = now()->addMinutes(2);
+            $billed_meals_collection = $this->getData($billed_meals, $query);
             $billed_meals_transformed = $billed_meals_collection
                 ->groupBy("flight_id")
                 ->formatByDate()
                 ->flatten(1);
-            Cache::put($key, json_encode($billed_meals_transformed), now()->addMinutes(2));
+            Cache::put($key, json_encode($billed_meals_transformed),$time );
+            if($billed_meals_collection instanceof Billed_Meals_Collection) {
+                Cache::put($keyTotal,$billed_meals_collection->count(), $time);
+                return ['pages' => $billed_meals_transformed];
+            };
+            Cache::put($keyTotal,$billed_meals_collection->total(), $time);
         }
-        if($billed_meals_collection instanceof Billed_Meals_Collection) {
-          return ['pages' => $billed_meals_transformed];
-        };
+        $total = Cache::get($keyTotal);
         $pages = new \Illuminate\Pagination\LengthAwarePaginator(
             $billed_meals_transformed,
-            $billed_meals_collection->total(),
-            $billed_meals_collection->perPage(),
-            $billed_meals_collection->currentPage(), 
+            $total,
+            $paginate,
+            $page, 
             [
                 "path" => \Request::url(),
                 "query" => [
-                    "page" => $billed_meals_collection->currentPage()
+                    "page" => $page
                 ]
             ]
         );
