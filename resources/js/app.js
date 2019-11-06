@@ -13,6 +13,7 @@ require("./bootstrap");
  */
 
 require("./components/Filtering.js");
+require("./components/Nav.js");
 require("./components/TableBody.js");
 
 // Pre-load tasks
@@ -30,22 +31,14 @@ const int = v => parseInt(v);
 window.onload = () => {
     const inputData = input("input_get-data");
     const url = new URL(location.href);
-    const page = url.searchParams.get("page") || sessionStorage.getItem("page");
-    const paginate = url.searchParams.get("paginate") || sessionStorage.getItem("paginate");
+    const page = url.searchParams.get("page") || sessionStorage.getItem("page") || 1;
+    const paginate = url.searchParams.get("paginate") || sessionStorage.getItem("paginate") || 20;
     cookie.set("paginate", paginate);
-    if (page) {
-        sessionStorage.setItem("page", page);
-    }
-    if (paginate) {
-        inputData.value = paginate;
-        sessionStorage.setItem("paginate", paginate);
-        history.pushState(null, "", `?page=${page || 1}&paginate=${paginate}`);
-    } else {
-        inputData.value = 20;
-        sessionStorage.setItem("paginate", 20);
-        history.pushState(null, "", `?page=${page || 1}&paginate=20`);
-    }
-    if (window.history && page && paginate) {
+    cookie.set("page", page);
+    inputData.value = paginate;
+    sessionStorage.setItem("paginate", paginate);
+    sessionStorage.setItem("page", page);
+    if (window.history) {
         history.pushState(null, "", `?page=${page}&paginate=${paginate}`);
     }
 };

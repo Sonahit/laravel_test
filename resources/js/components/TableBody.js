@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
-import cookie from "js-cookie";
 
 import ApiHelper from "../helpers/ApiHelper";
 import Modal from "./Modal/Modal";
 import TableHelper from "../helpers/TableHelper";
+import { dispatchCustomEvent } from "../helpers/EventHelper";
 
 export default class TableBody extends Component {
     constructor(props) {
@@ -14,8 +14,7 @@ export default class TableBody extends Component {
             pages: false,
             table: false,
             filteredTable: false,
-            error: false,
-            navHTML: false
+            error: false
         };
         this.fetchData = this.fetchData.bind(this);
         this.filterTable = this.filterTable.bind(this);
@@ -32,6 +31,7 @@ export default class TableBody extends Component {
     componentDidMount() {
         this.fetchData();
         window.addEventListener("table__reset", this.handleTableReset);
+        window.addEventListener("fetch_data", this.fetchData);
         this.listenFiltering();
     }
 
@@ -45,11 +45,12 @@ export default class TableBody extends Component {
     }
 
     fetchData() {
-        const pagination = sessionStorage.getItem("pagination") || 20;
-        const page = sessionStorage.getItem("page") || 1;
+        this.setState({ pages: false });
+        const pagination = sessionStorage.getItem("paginate");
+        const page = sessionStorage.getItem("page");
         ApiHelper.get(`${ApiHelper.url}/billed_meals`, [
             {
-                key: "pagination",
+                key: "paginate",
                 value: pagination
             },
             {
@@ -58,21 +59,21 @@ export default class TableBody extends Component {
             }
         ])
             .then(response => {
-                const data = JSON.parse(response.message);
+                const pages = response.pages;
                 let table = "";
-                if (data.pages && data.pages.data) {
-                    table = data.pages.data;
-                } else if (response.pages) {
-                    table = data.pages;
+                if (response.html) {
+                    table = pages.data;
+                } else {
+                    table = pages;
                 }
+                this.prepareNav(response.html);
                 this.setState({
-                    pages: data.pages,
-                    table,
-                    navHTML: data.html
+                    pages: pages,
+                    table
                 });
             })
-            .catch(() => {
-                this.setState({ error: true });
+            .catch(e => {
+                this.setState({ error: e.message });
             });
     }
 
@@ -202,24 +203,14 @@ export default class TableBody extends Component {
 
     prepareNav(html) {
         if (!html) return;
-        document.getElementsByTagName("nav")[0].outerHTML = html;
-        const nav = document.getElementsByTagName("nav")[0];
-        Array.from(nav.children[0].children).forEach(li => {
-            const a = li.firstElementChild;
-            if (a.href) {
-                const apiURL = new URL(a.href);
-                const page = apiURL.searchParams.get("page");
-                const url = `${apiURL.origin}/?page=${page}`;
-                a.addEventListener("click", () => cookie.set("page", page));
-                a.href = url;
-            }
-        });
+        dispatchCustomEvent("prepare_nav", html);
     }
 
     handleRefresh() {
         this.setState({ error: false });
         this.fetchData();
     }
+
     render() {
         if (this.state.error) {
             return (
@@ -236,7 +227,6 @@ export default class TableBody extends Component {
             );
         }
         const table = this.state.filteredTable || this.state.table;
-        this.prepareNav(this.state.navHTML);
         return table.map((tr, i) => <TableElement key={i} {...tr} />);
     }
 }

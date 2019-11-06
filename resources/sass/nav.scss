@@ -20,13 +20,10 @@ nav {
     background-color: rgb(0, 5, 78);
     transition: all .5s ease;
 
-    &:hover{
+    &:hover, &.active, &:target{
         background-color: rgb(0, 110, 255);
     }
 
-    &.active{
-        background-color: rgb(0, 110, 255);
-    }
     &.disabled{
         background-color: rgb(0, 55, 128);
     }
