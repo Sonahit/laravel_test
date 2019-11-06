@@ -16,10 +16,11 @@ export class ApiHelper {
             method: "GET"
         })
             .then(data => {
-                return data.json();
+                if (data.ok) return data.json();
+                throw new Error(data.statusText);
             })
             .then(json => json)
-            .catch((err) => err);
+            .catch(err => err);
     }
 
     post(url, data) {
@@ -31,7 +32,7 @@ export class ApiHelper {
                 return data.json();
             })
             .then(json => json)
-            .catch((err) => err);
+            .catch(err => err);
     }
 }
 const instance = new ApiHelper("localhost:8000", apiPath);

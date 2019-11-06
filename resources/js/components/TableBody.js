@@ -14,8 +14,10 @@ export default class TableBody extends Component {
             pages: false,
             table: false,
             filteredTable: false,
-            error: false
+            error: false,
+            navHTML: false
         };
+        this.fetchData = this.fetchData.bind(this);
         this.filterTable = this.filterTable.bind(this);
         this.filterByString = this.filterByString.bind(this);
         this.filterByNumber = this.filterByNumber.bind(this);
@@ -24,9 +26,25 @@ export default class TableBody extends Component {
         this.listenFiltering = this.listenFiltering.bind(this);
         this.handleCSV = this.handleCSV.bind(this);
         this.handleTableReset = this.handleTableReset.bind(this);
+        this.handleRefresh = this.handleRefresh.bind(this);
     }
 
     componentDidMount() {
+        this.fetchData();
+        window.addEventListener("table__reset", this.handleTableReset);
+        this.listenFiltering();
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("filter_table__reset", null);
+        window.removeEventListener("filter_table__number", null);
+        window.removeEventListener("filter_table__date", null);
+        window.removeEventListener("filter_table__string", null);
+        window.removeEventListener("import_csv", null);
+        window.removeEventListener("table__reset", null);
+    }
+
+    fetchData() {
         const pagination = sessionStorage.getItem("pagination") || 20;
         const page = sessionStorage.getItem("page") || 1;
         ApiHelper.get(`${ApiHelper.url}/billed_meals`, [
@@ -40,32 +58,22 @@ export default class TableBody extends Component {
             }
         ])
             .then(response => {
+                const data = JSON.parse(response.message);
                 let table = "";
-                if (response.pages && response.pages.data) {
-                    table = response.pages.data;
+                if (data.pages && data.pages.data) {
+                    table = data.pages.data;
                 } else if (response.pages) {
-                    table = response.pages;
+                    table = data.pages;
                 }
                 this.setState({
-                    pages: response.pages,
+                    pages: data.pages,
                     table,
-                    html: response.html
+                    navHTML: data.html
                 });
             })
             .catch(() => {
                 this.setState({ error: true });
             });
-        window.addEventListener("table__reset", this.handleTableReset);
-        this.listenFiltering();
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("filter_table__reset", null);
-        window.removeEventListener("filter_table__number", null);
-        window.removeEventListener("filter_table__date", null);
-        window.removeEventListener("filter_table__string", null);
-        window.removeEventListener("import_csv", null);
-        window.removeEventListener("table__reset", null);
     }
 
     handleTableReset() {
@@ -208,11 +216,15 @@ export default class TableBody extends Component {
         });
     }
 
+    handleRefresh() {
+        this.setState({ error: false });
+        this.fetchData();
+    }
     render() {
         if (this.state.error) {
             return (
                 <Modal>
-                    <img src="https://cdn.pixabay.com/photo/2017/02/12/21/29/false-2061132_960_720.png"></img>
+                    <button onClick={this.handleRefresh}>Refresh</button>
                 </Modal>
             );
         }
@@ -224,7 +236,7 @@ export default class TableBody extends Component {
             );
         }
         const table = this.state.filteredTable || this.state.table;
-        this.prepareNav(this.state.html);
+        this.prepareNav(this.state.navHTML);
         return table.map((tr, i) => <TableElement key={i} {...tr} />);
     }
 }
