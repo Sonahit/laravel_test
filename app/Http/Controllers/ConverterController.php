@@ -22,8 +22,6 @@ class ConverterController extends Controller
     
     public function pdf(Billed_Meals $billed_Meals, Request $request)
     {
-        //TODO: get pdf file
-        // $pathToFile = storage_path() . "/" . strval(random_int(0, 1000000000)) . ".pdf";
         $controller = new BilledMealsController();
         $resp = $controller->index($billed_Meals, $request);
         $body = '';

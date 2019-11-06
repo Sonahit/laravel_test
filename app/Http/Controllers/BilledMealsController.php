@@ -6,6 +6,7 @@ use App\Collections\Billed_Meals_Collection;
 use App\Models\Billed_Meals;
 use App\Utils\Helpers\RequestHelper;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class BilledMealsController extends Controller
 {
@@ -16,25 +17,31 @@ class BilledMealsController extends Controller
      */
     public function index(Billed_Meals $billed_meals, Request $request)
     {
-        $query = RequestHelper::get_params_as_array($request, "paginate", "sort", "asc");
+        //TODO: caching
+        $query = RequestHelper::get_params_as_array($request, "paginate", "sort", "asc", "page");
         $billed_meals_collection = $this->getData($billed_meals, $query);
-        if($billed_meals_collection instanceof Billed_Meals_Collection) {
-          return [
-              'pages' => $billed_meals_collection
-                    ->groupBy("flight_id")
-                    ->formatByDate()
-                    ->flatten(1)
-          ];
-        }
-        $billed_meals_transformed = $billed_meals_collection
+        $paginate = $query['paginate'];
+        $page = $query['page'];
+        $key = "{$paginate}={$page}";
+        $billed_meals_transformed = '';
+        if(Cache::has($key)){
+            $billed_meals_transformed = json_decode(Cache::get($key));
+        } else {
+            $billed_meals_transformed = $billed_meals_collection
                 ->groupBy("flight_id")
                 ->formatByDate()
                 ->flatten(1);
+            Cache::put($key, json_encode($billed_meals_transformed), now()->addMinutes(2));
+        }
+        if($billed_meals_collection instanceof Billed_Meals_Collection) {
+          return ['pages' => $billed_meals_transformed];
+        };
         $pages = new \Illuminate\Pagination\LengthAwarePaginator(
             $billed_meals_transformed,
             $billed_meals_collection->total(),
             $billed_meals_collection->perPage(),
-            $billed_meals_collection->currentPage(), [
+            $billed_meals_collection->currentPage(), 
+            [
                 "path" => \Request::url(),
                 "query" => [
                     "page" => $billed_meals_collection->currentPage()
@@ -47,6 +54,9 @@ class BilledMealsController extends Controller
         ];
     }
     
+    /**
+     * @return \Illuminate\Support\Collection|\Illuminate\Pagination\LengthAwarePaginator 
+     */
     public function getData(Billed_Meals $billed_meals, array $query)
     {
         $paginate = $query["paginate"];
