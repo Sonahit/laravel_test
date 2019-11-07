@@ -7,95 +7,7 @@ import TableBody from "./TableBody";
 import TableHead from "./TableHead";
 import Options from "../Options.js";
 import Modal from "../Modal/Modal.js";
-
-const tHead = [
-    [
-        {
-            sortable: true,
-            type: "number",
-            dataSort: "flight_id",
-            rowSpan: 2,
-            text: "Номер полёта"
-        },
-        {
-            sortable: true,
-            type: "date",
-            dataSort: "flight_date",
-            rowSpan: 2,
-            text: "Дата полёта"
-        },
-        {
-            sortable: false,
-            rowSpan: 2,
-            text: "Класс"
-        },
-        {
-            sortable: false,
-            rowSpan: 2,
-            text: "Тип номенклатуры"
-        },
-        {
-            sortable: false,
-            colSpan: 2,
-            text: "Код"
-        },
-        {
-            sortable: false,
-            colSpan: 2,
-            text: "Количество"
-        },
-        {
-            sortable: false,
-            colSpan: 2,
-            text: "Цена"
-        },
-        {
-            sortable: true,
-            type: "number",
-            dataSort: "delta",
-            rowSpan: 2,
-            text: "Дельта"
-        }
-    ],
-    [
-        {
-            sortable: true,
-            type: "string",
-            dataSort: "plan_code",
-            text: "План"
-        },
-        {
-            sortable: true,
-            type: "string",
-            dataSort: "fact_code",
-            text: "Факт"
-        },
-        {
-            sortable: true,
-            type: "number",
-            dataSort: "plan_qty",
-            text: "План"
-        },
-        {
-            sortable: true,
-            type: "number",
-            dataSort: "fact_qty",
-            text: "Факт"
-        },
-        {
-            sortable: true,
-            type: "number",
-            dataSort: "plan_price",
-            text: "План"
-        },
-        {
-            sortable: true,
-            type: "number",
-            dataSort: "fact_price",
-            text: "Факт"
-        }
-    ]
-];
+import tHead from "./headRows.js";
 
 export default class Table extends Component {
     constructor(props) {
@@ -207,13 +119,6 @@ export default class Table extends Component {
                 </Modal>
             );
         }
-        if (!this.props.table) {
-            return (
-                <Modal>
-                    <div className="loader"></div>
-                </Modal>
-            );
-        }
         return (
             <>
                 <Options
@@ -222,11 +127,27 @@ export default class Table extends Component {
                     handleFilterValue={this.handleFilterValue}
                     handleFilterReset={this.handleFilterReset}
                     handleFilterSelect={this.handleFilterSelect}
+                    handleImportCSV={this.props.handleImportCSV}
+                    stopRenderImport={this.props.stopRenderImport}
+                    fetchAllData={this.props.fetchAllData}
                 />
-                <table className="main-table">
-                    <TableHead tHead={tHead} handleSort={this.handleSort} />
-                    <TableBody sort={this.state.sort} filter={this.state.filter} table={this.props.table} />
-                </table>
+                {this.props.table ? (
+                    <table className="main-table">
+                        <TableHead tHead={tHead} handleSort={this.handleSort} />
+                        <TableBody sort={this.state.sort} filter={this.state.filter} table={this.props.table} />
+                    </table>
+                ) : (
+                    <Modal>
+                        <div className="loader"></div>
+                    </Modal>
+                )}
+                {this.props.isUpdating ? (
+                    <Modal>
+                        <div className="loader" />
+                    </Modal>
+                ) : (
+                    <div className="hidden" />
+                )}
             </>
         );
     }
@@ -235,7 +156,11 @@ export default class Table extends Component {
 Table.propTypes = {
     table: PropTypes.oneOfType([PropTypes.bool, PropTypes.array]),
     error: PropTypes.any,
-    handleRefresh: PropTypes.func.isRequired
+    isUpdating: PropTypes.bool,
+    handleRefresh: PropTypes.func.isRequired,
+    handleImportCSV: PropTypes.func.isRequired,
+    stopRenderImport: PropTypes.func.isRequired,
+    fetchAllData: PropTypes.func.isRequired
 };
 
 function toAsc(node) {

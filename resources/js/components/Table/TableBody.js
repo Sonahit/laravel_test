@@ -36,8 +36,8 @@ export default class TableBody extends Component {
 
     filterTable(table, filter) {
         const { startValue, endValue, key, method } = filter;
-        if (!startValue || !key || !method) return table;
-
+        if (!key || !method) return table;
+        if (!startValue && startValue !== 0) return table;
         const [index, subIndex] = this.getIndex(key);
         if (!index) return table;
         if (method === "date") {
@@ -61,8 +61,8 @@ export default class TableBody extends Component {
                 const vB = trB[index][subIndex];
                 return comparer(!asc)(vA, vB);
             }
-            const vA = trA[index];
-            const vB = trB[index];
+            const vA = index === "delta" ? trA.plan_attributes.price - trA.fact_attributes.price : trA[index];
+            const vB = index === "delta" ? trB.plan_attributes.price - trB.fact_attributes.price : trB[index];
             return comparer(!asc)(vA, vB);
         });
     }

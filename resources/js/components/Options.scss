@@ -47,3 +47,19 @@
       }
   }
 }
+
+.flex_wrapper{
+    @include flex(row, nowrap, 0 1 auto);
+}
+
+.input_wrapper{
+    display: inline-block;
+    padding: 0;
+    border: 0;
+    &-container{
+        display: inline-block;
+        position: relative;
+        width: 100%;
+    }
+}
+

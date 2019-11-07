@@ -1,7 +1,4 @@
-import cookie from "js-cookie";
-import { input } from "./app.js";
 import TableHelper from "./helpers/TableHelper.js";
-import { dispatchCustomEvent } from "./helpers/EventHelper";
 
 export default class Database {
     downloadCSV() {
@@ -68,55 +65,6 @@ export default class Database {
         download.href = `${type},${data}`;
         download.click();
         document.body.removeChild(download);
-    }
-
-    handleSelectCSV(ev) {
-        const select = ev.target.files[0];
-        if (window.FileReader && select) {
-            const reader = new FileReader();
-            if (!select.type.match(/\w+\/csv/gi)) return;
-            reader.onloadend = e => {
-                if (e.target.readyState == FileReader.DONE) {
-                    const result = e.target.result;
-                    // eslint-disable-next-line no-unused-vars
-                    const [_, body] = this.csvAsTable(result);
-                    dispatchCustomEvent("import_csv", body);
-                }
-            };
-            const blob = select.slice(0, select.size - 1);
-            reader.readAsText(blob, "utf-8");
-            ev.currentTarget.value = "";
-        }
-    }
-
-    csvAsTable(rawCSV) {
-        const csv = rawCSV.split("\n");
-        const head = csv.filter((_, i) => i <= 1).map(e => e.split(";"));
-        const body = csv.filter((_, i) => i > 1).map(e => e.split(";"));
-        return [head, body];
-    }
-
-    reset() {
-        dispatchCustomEvent("table__reset");
-    }
-
-    importCSV() {
-        const input_csv = document.getElementById("input_csv");
-        input_csv.addEventListener("change", e => this.handleSelectCSV.call(this, e));
-        input_csv.click();
-    }
-
-    getMoreData() {
-        const paginate = input("input_get-data").value;
-        const url = new URL(location.href);
-        const page = url.searchParams.get("page");
-        if (page) {
-            url.searchParams.set("page", page);
-        }
-        url.searchParams.set("paginate", paginate);
-        sessionStorage.setItem("paginate", paginate);
-        cookie.set("paginate", paginate);
-        location.replace(url);
     }
 }
 

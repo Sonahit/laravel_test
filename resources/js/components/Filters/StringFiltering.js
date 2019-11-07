@@ -26,7 +26,11 @@ export default class StringFiltering extends Component {
     render() {
         return (
             <div className="input_container">
-                <input style={{ width: "100%", margin: "0 3px" }} placeholder="Введите текст" onChange={this.handleChange} />
+                <div className="input_wrapper">
+                    <div className="input_wrapper-container">
+                        <input style={{ width: "100%", margin: "0 3px" }} placeholder="Введите текст" onChange={this.handleChange} />
+                    </div>
+                </div>
             </div>
         );
     }

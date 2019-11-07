@@ -13,7 +13,7 @@ export default class NumberFiltering extends Component {
     }
 
     componentDidUpdate() {
-        if (!this.state.startValue) {
+        if (!this.state.startValue && this.state.startValue !== 0) {
             this.props.handleFilterReset(this.props.method, this.props.filteringKey);
         } else {
             this.props.handleFilterValue(this.state.startValue, this.state.endValue);
@@ -30,6 +30,7 @@ export default class NumberFiltering extends Component {
         const input = e.target;
         if (parseInt(input.value) === 0) {
             this.setState({ endValue: parseInt(input.value) });
+            return;
         }
         this.setState({ endValue: parseInt(input.value || Number.MAX_SAFE_INTEGER) });
     }
@@ -37,8 +38,16 @@ export default class NumberFiltering extends Component {
     render() {
         return (
             <div className="flex_wrapper">
-                <input placeholder="От" style={{ margin: "0 3px" }} onChange={this.handleStartValue} />
-                <input placeholder="До" style={{ margin: "0 3px" }} onChange={this.handleEndValue} />
+                <div className="input_wrapper">
+                    <div className="input_wrapper-container">
+                        <input placeholder="От" style={{ margin: "0 3px" }} onChange={this.handleStartValue} />
+                    </div>
+                </div>
+                <div className="input_wrapper">
+                    <div className="input_wrapper-container">
+                        <input placeholder="До" style={{ margin: "0 3px" }} onChange={this.handleEndValue} />
+                    </div>
+                </div>
             </div>
         );
     }

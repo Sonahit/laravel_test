@@ -38,6 +38,13 @@ export default class TableHelper {
             .flat();
     }
 
+    csvAsTable(rawCSV) {
+        const csv = rawCSV.split("\n");
+        const head = csv.filter((_, i) => i <= 1).map(e => e.split(";"));
+        const body = csv.filter((_, i) => i > 1).map(e => e.split(";"));
+        return [head, body];
+    }
+
     values(raw) {
         const row = [];
         raw.forEach((v, i) => {

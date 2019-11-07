@@ -4,6 +4,7 @@ export class ApiHelper {
     constructor(base, path = apiPath) {
         this.base = base;
         this.apiPath = path;
+        this.isFetching = false;
     }
 
     get url() {
@@ -12,10 +13,12 @@ export class ApiHelper {
 
     get(url, params) {
         const query = params.map(param => `${param.key}=${param.value}`).join("&");
+        this.isFetching = true;
         return fetch(`http://${url}?${query}`, {
             method: "GET"
         })
             .then(data => {
+                this.isFetching = false;
                 if (data.ok) return data.json();
                 throw new Error(data.statusText);
             })
@@ -35,5 +38,5 @@ export class ApiHelper {
             .catch(err => err);
     }
 }
-const instance = new ApiHelper("localhost:8000", apiPath);
-export default instance;
+
+export default ApiHelper;
