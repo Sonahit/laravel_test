@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { dispatchCustomEvent } from "@helpers/EventHelper.js";
 
 export default class NumberFiltering extends Component {
     constructor(props) {
@@ -15,18 +14,10 @@ export default class NumberFiltering extends Component {
 
     componentDidUpdate() {
         if (!this.state.startValue) {
-            dispatchCustomEvent(`filter_table__reset`);
+            this.props.handleFilterReset(this.props.method, this.props.filteringKey);
         } else {
-            dispatchCustomEvent(`filter_table__${this.props.method}`, {
-                startValue: this.state.startValue,
-                endValue: this.state.endValue,
-                key: this.props.filteringKey
-            });
+            this.props.handleFilterValue(this.state.startValue, this.state.endValue);
         }
-    }
-
-    componentWillUnmount() {
-        dispatchCustomEvent(`filter_table__reset`);
     }
 
     handleStartValue(e) {
@@ -37,8 +28,8 @@ export default class NumberFiltering extends Component {
 
     handleEndValue(e) {
         const input = e.target;
-        if(parseInt(input.value) === 0){
-            this.setState({ endValue: parseInt(input.value)});
+        if (parseInt(input.value) === 0) {
+            this.setState({ endValue: parseInt(input.value) });
         }
         this.setState({ endValue: parseInt(input.value || Number.MAX_SAFE_INTEGER) });
     }
@@ -55,5 +46,7 @@ export default class NumberFiltering extends Component {
 
 NumberFiltering.propTypes = {
     method: PropTypes.string.isRequired,
-    filteringKey: PropTypes.string.isRequired
+    filteringKey: PropTypes.string.isRequired,
+    handleFilterValue: PropTypes.func.isRequired,
+    handleFilterReset: PropTypes.func.isRequired
 };

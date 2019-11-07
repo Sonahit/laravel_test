@@ -3,14 +3,13 @@ import DatePicker from "react-datepicker";
 import PropTypes from "prop-types";
 
 import "react-datepicker/dist/react-datepicker.css";
-import { dispatchCustomEvent } from "@helpers/EventHelper";
 
 export default class DateFiltering extends Component {
     constructor(props) {
         super(props);
         this.state = {
             startDate: new Date("2017/01/01"),
-            endDate: ""
+            endDate: new Date()
         };
         this.setStartDate = this.setStartDate.bind(this);
         this.setEndDate = this.setEndDate.bind(this);
@@ -18,18 +17,10 @@ export default class DateFiltering extends Component {
 
     componentDidUpdate() {
         if (!this.state.startDate) {
-            dispatchCustomEvent(`filter_table__reset`);
+            this.props.handleFilterReset(this.props.method, this.props.filteringKey);
         } else {
-            dispatchCustomEvent(`filter_table_${this.props.method}`, {
-                startDate: this.state.startDate,
-                endDate: this.state.endDate,
-                key: this.props.filteringKey
-            });
+            this.props.handleFilterValue(this.state.startDate, this.state.endDate);
         }
-    }
-
-    componentWillUnmount() {
-        dispatchCustomEvent(`filter_table__reset`);
     }
 
     setStartDate(startDate) {
@@ -72,5 +63,7 @@ export default class DateFiltering extends Component {
 
 DateFiltering.propTypes = {
     method: PropTypes.string.isRequired,
-    filteringKey: PropTypes.string.isRequired
+    filteringKey: PropTypes.string.isRequired,
+    handleFilterValue: PropTypes.func.isRequired,
+    handleFilterReset: PropTypes.func.isRequired
 };

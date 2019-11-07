@@ -1,59 +1,6 @@
 import * as sortKeys from "./SortKeys";
 
 export default class TableHelper {
-    listenToChangeSorting() {
-        const thead = this.getTable();
-        thead.addEventListener("click", e => {
-            const node = e.target;
-            const parent = node.parentNode;
-            let sortBy = 0;
-            if (parent.classList.contains("main-table__th--sortable")) {
-                if (node.classList.contains("asc")) {
-                    if (node.classList.contains("active")) {
-                        sortBy = `${parent.getAttribute("data-sort")}_desc`;
-                        toDesc(node);
-                    } else {
-                        sortBy = `${parent.getAttribute("data-sort")}_asc`;
-                        toAsc(node);
-                    }
-                } else if (node.classList.contains("desc") && parent.classList.contains("main-table__th--sortable")) {
-                    if (node.classList.contains("active")) {
-                        sortBy = `${parent.getAttribute("data-sort")}_asc`;
-                        toAsc(node);
-                    } else {
-                        sortBy = `${parent.getAttribute("data-sort")}_desc`;
-                        toDesc(node);
-                    }
-                }
-                this.active(node);
-            } else if (node.classList.contains("main-table__th--sortable")) {
-                const child = node.children[0];
-                if (child.classList.contains("desc")) {
-                    if (child.classList.contains("active")) {
-                        sortBy = `${node.getAttribute("data-sort")}_asc`;
-                        toAsc(child);
-                    } else {
-                        sortBy = `${node.getAttribute("data-sort")}_desc`;
-                        toDesc(child);
-                    }
-                } else if (child.classList.contains("asc")) {
-                    if (child.classList.contains("active")) {
-                        sortBy = `${node.getAttribute("data-sort")}_desc`;
-                        toDesc(child);
-                    } else {
-                        sortBy = `${node.getAttribute("data-sort")}_asc`;
-                        toAsc(child);
-                    }
-                }
-                this.active(child);
-            }
-            if (sortBy) {
-                this.sortTable(this.getTable(), sortBy);
-            }
-        });
-        return this;
-    }
-
     csvToJson(csv) {
         return csv.map(el => {
             const fact_attributes = {
@@ -83,33 +30,6 @@ export default class TableHelper {
 
     getTBody(table) {
         return Array.from(table.rows).filter(v => v.rowIndex > 1);
-    }
-
-    active(node) {
-        if (!node.classList.contains("active")) {
-            const prevActive = document.getElementsByClassName("active")[0];
-            if (prevActive) {
-                prevActive.classList.remove("active");
-            }
-            node.classList.add("active");
-        }
-    }
-
-    sortTable(table, sortBy) {
-        const isDesc = !sortBy.includes("asc");
-        const key = isDesc ? sortBy.split("_desc")[0] : sortBy.split("_asc")[0];
-        const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
-        const comparer = (idx, asc) => (a, b) =>
-            ((v1, v2) => (v1 !== "" && v2 !== "" && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)))(
-                getCellValue(asc ? a : b, idx),
-                getCellValue(asc ? b : a, idx)
-            );
-        //Sort table by key
-        const index = this.getSortIndex(this.flatTHead(table).indexOf(this.th(table, key)));
-        if (index === 9999) return;
-        this.getTBody(table)
-            .sort(comparer(index, isDesc))
-            .forEach(tr => table.tBodies[0].appendChild(tr));
     }
 
     flatTHead(table) {
@@ -175,8 +95,8 @@ export default class TableHelper {
         );
     }
 
-    th(table, key) {
-        return this.flatTHead(table).find(th => th.getAttribute("data-sort") === key);
+    th(key) {
+        return this.flatTHead(this.getTable()).find(th => th.getAttribute("data-sort") === key);
     }
 
     getSortIndex(index) {
@@ -216,14 +136,4 @@ export default class TableHelper {
         if (index === PRICEFACT_H) return PRICEFACT_R;
         return NOTSORTABLE;
     }
-}
-
-function toAsc(node) {
-    node.classList.remove("desc");
-    node.classList.add("asc");
-}
-
-function toDesc(node) {
-    node.classList.remove("asc");
-    node.classList.add("desc");
 }

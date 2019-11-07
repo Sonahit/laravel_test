@@ -1,0 +1,40 @@
+nav {
+  display: flex;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.pagination{
+  display: flex;
+  flex: 1 1 auto;
+}
+
+.page-item{
+  display: inline-block;
+  flex: 1 0 auto;
+  padding: 5px;
+  text-align: center;
+  color: white;
+  background-color: rgb(0, 5, 78);
+  transition: all .5s ease;
+
+  &:hover, &.active, &:target{
+      background-color: rgb(0, 110, 255);
+  }
+
+  &.disabled{
+      background-color: rgb(0, 55, 128);
+  }
+
+}
+
+.page-link{
+  padding: 10px;
+  &:link, &:visited, &:active{
+      color: white;
+      text-decoration: none; 
+  }
+
+}

@@ -6,47 +6,4 @@
 
 require("./bootstrap");
 
-/**
- * Next, we will create a fresh React component instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-require("./components/Filtering.js");
-require("./components/Nav.js");
-require("./components/TableBody.js");
-
-// Pre-load tasks
-import Database from "./database.js";
-import cookie from "js-cookie";
-import TableHelper from "./helpers/TableHelper.js";
-export const input = id => document.getElementById(id);
-
-window.Database = new Database();
-
-const tableHelper = new TableHelper();
-tableHelper.listenToChangeSorting();
-const int = v => parseInt(v);
-
-window.onload = () => {
-    const inputData = input("input_get-data");
-    const url = new URL(location.href);
-    const page = url.searchParams.get("page") || sessionStorage.getItem("page") || 1;
-    const paginate = url.searchParams.get("paginate") || sessionStorage.getItem("paginate") || 20;
-    cookie.set("paginate", paginate);
-    cookie.set("page", page);
-    inputData.value = paginate;
-    sessionStorage.setItem("paginate", paginate);
-    sessionStorage.setItem("page", page);
-    if (window.history) {
-        history.pushState(null, "", `?page=${page}&paginate=${paginate}`);
-    }
-};
-
-input("input_get-data").addEventListener("input", e => {
-    const paginate = int(e.currentTarget.value);
-    if (paginate) {
-        sessionStorage.setItem("paginate", paginate);
-        cookie.set("paginate", paginate);
-    }
-});
+require("./App-React.js");

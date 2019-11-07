@@ -19,62 +19,8 @@
   <title>S7</title>
 </head>
 <body>
-    <nav>
-      {{-- REACT --}}
-    </nav>
-    <main>
-      <section class="options">
-        <section class="options__files">
-          <section class="options__download">
-            <button class="options__download__pdf" onclick="Database.downloadPDF()">Download PDF</button>
-            <button class="options__download__xml" onclick="Database.downloadXML()">Download XML</button>
-            <button class="options__download__csv" onclick="Database.downloadCSV()">Download CSV</button>
-          </section>
-          <section class="options__upload">
-            <button class="options__download__csv" type="button" onclick="Database.importCSV()">Import CSV</button>
-            <input id="input_csv" type="file" class="hidden">
-            <button class="options__download__csv" type="button" onclick="Database.reset()">Reset</button>
-            <a href="{{ url('api/v1/pdf') }}" class="options__download__button">Convert into PDF</a>
-          </section>
-        </section>
-        
-        <section class="options__filtering">
-          {{-- REACT --}}
-        </section>
-        <section class="options__get-data">
-          <label>Отобразить количество позиций на одну страницу</label>
-          <input id="input_get-data" type="text" name="page" placeholder="Per page">  
-          <button onclick="Database.getMoreData()">Отобразить</button>
-        </section>
-      </section>
-      <table class="main-table">
-        <thead class="main-table__thead">
-            <tr class="main-table__tr">
-                <th class="main-table__th--sortable" type="number" data-sort="flight_id" rowSpan="2"><span class="asc">Номер полёта</span></th>
-                <th class="main-table__th--sortable" type="date" data-sort="flight_date" rowSpan="2"><span class="asc">Дата полёта</span></th>
-                <th class="main-table__th" rowSpan="2"><span>Класс</span></th>
-                <th class="main-table__th" rowSpan="2"><span>Тип номенклатуры</span></th>
-                <th class="main-table__th" colSpan="2"><span>Код</span></th>
-                <th class="main-table__th" colSpan="2"><span>Количество</span></th>
-                <th class="main-table__th" colSpan="2"><span>Цена</span></th>
-                <th class="main-table__th--sortable" type="number" data-sort="delta" rowSpan="2"><span class="asc">Дельта</span></th>
-            </tr>
-            <tr class="main-table__tr">
-                <th class="main-table__th--sortable" type="string" data-sort="plan_code"><span class="asc">План</span></th>
-                <th class="main-table__th--sortable" type="string" data-sort="fact_code"><span class="asc">Факт</span></th>
-
-                <th class="main-table__th--sortable" type="number" data-sort="plan_qty"><span class="asc">План</span></th>
-                <th class="main-table__th--sortable" type="number" data-sort="fact_qty"><span class="asc">Факт</span></th>
-
-                <th class="main-table__th--sortable" type="number" data-sort="plan_price"><span class="asc">План</span></th>
-                <th class="main-table__th--sortable" type="number" data-sort="fact_price"><span class="asc">Факт</span></th>
-            </tr>
-        </thead>
-        <tbody class="main-table__tbody">
-          {{-- REACT --}}
-        </tbody>
-    </table>   
-    </main>
+  <noscript></noscript>
+  <div id="root"></div>
   <script src="js/app.js"></script>
 </body>
 </html>

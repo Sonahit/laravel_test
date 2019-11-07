@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { dispatchCustomEvent } from "@helpers/EventHelper.js";
 
 export default class StringFiltering extends Component {
     constructor(props) {
@@ -13,17 +12,10 @@ export default class StringFiltering extends Component {
 
     componentDidUpdate() {
         if (!this.state.value) {
-            dispatchCustomEvent(`filter_table__reset`);
+            this.props.handleFilterReset(this.props.method, this.props.filteringKey);
         } else {
-            dispatchCustomEvent(`filter_table__${this.props.method}`, {
-                string: this.state.value,
-                key: this.props.filteringKey
-            });
+            this.props.handleFilterValue(this.state.string, "");
         }
-    }
-
-    componentWillUnmount() {
-        dispatchCustomEvent(`filter_table__reset`);
     }
 
     handleChange(e) {
@@ -42,5 +34,7 @@ export default class StringFiltering extends Component {
 
 StringFiltering.propTypes = {
     method: PropTypes.string.isRequired,
-    filteringKey: PropTypes.string.isRequired
+    filteringKey: PropTypes.string.isRequired,
+    handleFilterValue: PropTypes.func.isRequired,
+    handleFilterReset: PropTypes.func.isRequired
 };

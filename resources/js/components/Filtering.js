@@ -1,32 +1,17 @@
 import React, { Component } from "react";
-import { DateFiltering, StringFiltering, NumberFiltering } from "./Filters/index.js";
+import PropTypes from "prop-types";
 
-import ReactDOM from "react-dom";
+import { DateFiltering, StringFiltering, NumberFiltering } from "./Filters/index.js";
 
 export default class Filtering extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            filtering: "flight_date",
-            method: "date"
-        };
         this.handleSelect = this.handleSelect.bind(this);
-    }
-
-    componentDidMount() {
-        document.querySelector(".filtering__select").addEventListener("change", this.handleSelect);
-    }
-
-    componentWillUnmount() {
-        document.querySelector(".filtering__select").removeEventListener("change", this.handleSelect);
     }
 
     handleSelect({ target }) {
         const option = Array.from(target.children).find(option => option.selected === true);
-        this.setState({
-            filtering: option.getAttribute("value"),
-            method: option.getAttribute("method")
-        });
+        this.props.handleFilterSelect(option.getAttribute("value"), option.getAttribute("method"));
     }
 
     render() {
@@ -34,7 +19,7 @@ export default class Filtering extends Component {
             <>
                 <div style={{ margin: 5 }}>
                     <span style={{ marginRight: 5 }}>Фильтрация по</span>
-                    <select className="filtering__select">
+                    <select onChange={e => this.handleSelect(e)} className="filtering__select">
                         <option defaultValue value="flight_date" method="date">
                             Датам
                         </option>
@@ -64,23 +49,47 @@ export default class Filtering extends Component {
                         </option>
                     </select>
                 </div>
-                <FilteringMethod method={this.state.method} filteringKey={this.state.filtering} />
+                <FilteringMethod
+                    method={this.props.method || "date"}
+                    filteringKey={this.props.filtering || "flight_date"}
+                    handleFilterReset={this.props.handleFilterReset}
+                    handleFilterValue={this.props.handleFilterValue}
+                />
             </>
         );
     }
 }
 
-const FilteringMethod = ({ method, filteringKey }) => {
-    if (method === "date") {
-        return <DateFiltering method={method} filteringKey={filteringKey} />;
-    } else if (method === "string") {
-        return <StringFiltering method={method} filteringKey={filteringKey} />;
-    } else if (method === "number") {
-        return <NumberFiltering method={method} filteringKey={filteringKey} />;
-    }
+Filtering.propTypes = {
+    method: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
+    filtering: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
+    handleFilterSelect: PropTypes.func.isRequired,
+    handleFilterValue: PropTypes.func.isRequired,
+    handleFilterReset: PropTypes.func.isRequired
 };
 
-const el = document.getElementsByClassName("options__filtering")[0];
-if (el) {
-    ReactDOM.render(<Filtering />, el);
-}
+const FilteringMethod = ({ method, filteringKey, handleFilterValue, handleFilterReset }) => {
+    if (method === "date") {
+        return (
+            <DateFiltering method={method} filteringKey={filteringKey} handleFilterReset={handleFilterReset} handleFilterValue={handleFilterValue} />
+        );
+    } else if (method === "string") {
+        return (
+            <StringFiltering
+                method={method}
+                filteringKey={filteringKey}
+                handleFilterReset={handleFilterReset}
+                handleFilterValue={handleFilterValue}
+            />
+        );
+    } else if (method === "number") {
+        return (
+            <NumberFiltering
+                method={method}
+                filteringKey={filteringKey}
+                handleFilterReset={handleFilterReset}
+                handleFilterValue={handleFilterValue}
+            />
+        );
+    }
+};
