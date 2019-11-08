@@ -11,8 +11,5 @@
 |
 */
 
-Route::get('/', 'BilledMealsController@show');
-
-Route::get('/public', function () {     
-    return view('welcome');
-}); 
+//SPA
+Route::get('/{any}', 'BilledMealsController@show')->where('any', '.*');
