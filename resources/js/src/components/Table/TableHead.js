@@ -1,23 +1,23 @@
-import React, { Component } from "react";
+import React from "react";
 
 import PropTypes from "prop-types";
 
-export default class TableHead extends Component {
-    render() {
-        const thead = this.props.tHead;
-        return (
-            <thead className="main-table__thead">
-                {thead.map((tr, i) => (
-                    <tr key={`${tr.length}__${i}`}>
-                        {tr.map((th, j) => (
-                            <Th key={`${i}_${j}`} handleSort={this.props.handleSort} {...th} />
-                        ))}
-                    </tr>
-                ))}
-            </thead>
-        );
-    }
-}
+const TableHead = props => {
+    const thead = props.tHead;
+    return (
+        <thead className="main-table__thead">
+            {thead.map((tr, i) => (
+                <tr key={`${tr.length}__${i}`}>
+                    {tr.map((th, j) => (
+                        <Th key={`${i}_${j}`} handleSort={props.handleSort} {...th} />
+                    ))}
+                </tr>
+            ))}
+        </thead>
+    );
+};
+
+export default TableHead;
 
 TableHead.propTypes = {
     handleSort: PropTypes.func.isRequired,

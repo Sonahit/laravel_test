@@ -5,7 +5,7 @@ import "./Table.scss";
 
 import TableBody from "./TableBody";
 import TableHead from "./TableHead";
-import Options from "../Options.js";
+import Options from "../Options/TableOptions";
 import Modal from "../Modal/Modal.js";
 import tHead from "./headRows.js";
 
@@ -130,6 +130,7 @@ export default class Table extends Component {
                     handleImportCSV={this.props.handleImportCSV}
                     stopRenderImport={this.props.stopRenderImport}
                     fetchAllData={this.props.fetchAllData}
+                    external={this.props.external}
                 />
                 {this.props.table ? (
                     <table className="main-table">
@@ -155,12 +156,13 @@ export default class Table extends Component {
 
 Table.propTypes = {
     table: PropTypes.oneOfType([PropTypes.bool, PropTypes.array]),
-    error: PropTypes.any,
-    isUpdating: PropTypes.bool,
     handleRefresh: PropTypes.func.isRequired,
     handleImportCSV: PropTypes.func.isRequired,
     stopRenderImport: PropTypes.func.isRequired,
-    fetchAllData: PropTypes.func.isRequired
+    fetchAllData: PropTypes.func.isRequired,
+    external: PropTypes.bool,
+    error: PropTypes.any,
+    isUpdating: PropTypes.bool
 };
 
 function toAsc(node) {

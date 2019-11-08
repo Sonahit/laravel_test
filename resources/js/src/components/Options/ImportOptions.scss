@@ -1,0 +1,52 @@
+@mixin flex($flex-direction: row, $flex-wrap: nowrap, $flex: 0 1 auto){
+  display: flex;
+  flex-flow: $flex-direction $flex-wrap;
+  flex: $flex;
+}
+
+.import{
+  &__form{
+    @include flex();
+    margin: 20px 20px 0px 20px;
+    justify-content: center;
+    fieldset{
+      width: 50%;
+      legend{
+        margin: 10px 20px;
+      }
+    }
+  }
+
+  &__data{
+    padding: 20px;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  &__options{
+      @include flex(row);
+      justify-content: space-between;
+      margin: 20px; 
+
+      &__pdf, &__xml, &__csv, &__delete{
+        margin: 5px;
+      }
+
+      &__delete{
+        align-self: flex-end;
+      }
+      
+      &__button{
+          margin-right: 3px;
+          margin-left: 3px;
+          padding: 3px;
+          background-color: rgb(243, 243, 243);
+          border: 1px black solid;
+          color: black;
+          &:link, &:visited{
+              text-decoration: none;
+          }
+          font-size: 12px;
+      }
+  }
+}
+

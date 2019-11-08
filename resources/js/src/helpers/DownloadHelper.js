@@ -1,6 +1,6 @@
-import TableHelper from "./helpers/TableHelper.js";
+import TableHelper from "./TableHelper.js";
 
-export default class Database {
+export default class DownloadHelper {
     downloadCSV() {
         const table = TableHelper.prototype.getTable();
         //If no table return

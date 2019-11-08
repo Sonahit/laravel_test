@@ -1,4 +1,4 @@
-export default [
+const rows = [
     [
         {
             sortable: true,
@@ -86,3 +86,5 @@ export default [
         }
     ]
 ];
+
+export default rows;

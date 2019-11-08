@@ -95,9 +95,11 @@ $arrow-up: -135;
 
   &__tbody{
       tr {
-          border-bottom: 1px solid black;
+        transition: 0.5s all ease;
+        border-bottom: 1px solid black;
           &:hover{
-              background-color: #cfcfcf;
+            transition: 0.5s all ease;
+            background-color: #cfcfcf;
           }
       }
   }

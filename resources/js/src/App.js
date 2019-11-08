@@ -1,9 +1,13 @@
 import React, { Component } from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import ReactDOM from "react-dom";
 
-import Table from "./components/Table/Table.js";
+import Nav from "./components/Nav/Nav.js";
+
+import routes from "./routes.js";
 
 import ApiHelper from "@helpers/ApiHelper";
+import TableHelper from "@helpers/TableHelper.js";
 const apiHelper = new ApiHelper("localhost:8000");
 
 export default class App extends Component {
@@ -51,6 +55,7 @@ export default class App extends Component {
 
     handleImportCSV(body) {
         this.setState({ external: { table: body, render: true } });
+        return true;
     }
 
     stopRenderImport() {
@@ -74,68 +79,38 @@ export default class App extends Component {
             this.fetchTable(nextPage, sessionStorage.getItem("paginate")).then(({ pages, table }) => {
                 this.setState(prevState => ({
                     pages,
-                    // fetch_table: prevState.fetch_table.concat(table),
-                    fetch_table: this.group(prevState.fetch_table.concat(table)),
+                    fetch_table: this.group(prevState.fetch_table, table),
                     isUpdating: false
                 }));
             });
         }
     }
 
-    group(table) {
+    group(prevTable, table) {
+        const concatLast = (minus, prevTable, table) => prevTable.filter((_, i) => i > prevTable.length - minus).concat(table);
         const groupBy = (xs, key) => {
             return xs.reduce((rv, x) => {
                 (rv[x[key]] = rv[x[key]] || []).push(x);
                 return rv;
             }, {});
         };
-        const groupIdTable = groupBy(table, "id");
+        const groupIdTable = groupBy(concatLast(6, prevTable, table), "id");
         const groupIdDateTable = Object.keys(groupIdTable).reduce((acc, id) => {
             acc[id] = groupBy(groupIdTable[id], "date");
             return acc;
         }, {});
         //Grouping by data according to table headers
-        return Object.keys(groupIdDateTable)
-            .map(id => {
-                return Object.keys(groupIdDateTable[id]).map(date => {
-                    const values = groupIdDateTable[id][date];
-                    const accum = values.reduce(
-                        (accum, v) => {
-                            if (!accum.id) accum.id = v.id;
-                            if (!accum.date) accum.date = v.date;
-                            if (!accum.class) accum.class = v.class;
-                            if (!accum.type) accum.type = v.type;
-                            accum.plan_attributes = v.plan_attributes;
-                            accum.fact_attributes.qty += v.fact_attributes.qty;
-                            accum.fact_attributes.price += v.fact_attributes.price;
-                            v.fact_attributes.codes.forEach(code => {
-                                if (!accum.fact_attributes.codes.includes(code)) {
-                                    accum.fact_attributes.codes.push(code);
-                                }
-                            });
-                            return accum;
-                        },
-                        {
-                            id: 0,
-                            date: 0,
-                            class: "",
-                            type: "",
-                            fact_attributes: {
-                                qty: 0,
-                                codes: [],
-                                price: 0
-                            },
-                            plan_attributes: {
-                                qty: 0,
-                                codes: [],
-                                price: 0
-                            }
-                        }
-                    );
-                    return accum;
-                });
-            })
-            .flat();
+        return prevTable.concat(
+            Object.keys(groupIdDateTable)
+                .map(id => {
+                    return Object.keys(groupIdDateTable[id]).map(date => {
+                        const values = groupIdDateTable[id][date];
+                        const accum = TableHelper.prototype.sumAndGroup(values);
+                        return accum;
+                    });
+                })
+                .flat()
+        );
     }
 
     fetchTable(page, pagination) {
@@ -179,17 +154,27 @@ export default class App extends Component {
         const { fetch_table, isUpdating, error, external } = this.state;
         const table = external.render ? external.table : fetch_table;
         return (
-            <main>
-                <Table
-                    handleRefresh={this.handleRefresh}
-                    table={table}
-                    error={error}
-                    isUpdating={isUpdating}
-                    handleImportCSV={this.handleImportCSV}
-                    stopRenderImport={this.stopRenderImport}
-                    fetchAllData={this.fetchAllData}
-                />
-            </main>
+            <Router>
+                <React.StrictMode>
+                    <Nav links={routes.map(route => ({ link: route.path, text: route.text }))} />
+                    <main>
+                        {routes.map(route => (
+                            <Route key={`${route.path}`} path={route.path} exact={route.exact}>
+                                <route.component
+                                    handleRefresh={this.handleRefresh}
+                                    table={table}
+                                    external={external.render}
+                                    error={error}
+                                    isUpdating={isUpdating}
+                                    handleImportCSV={this.handleImportCSV}
+                                    stopRenderImport={this.stopRenderImport}
+                                    fetchAllData={this.fetchAllData}
+                                />
+                            </Route>
+                        ))}
+                    </main>
+                </React.StrictMode>
+            </Router>
         );
     }
 }

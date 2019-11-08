@@ -38,6 +38,42 @@ export default class TableHelper {
             .flat();
     }
 
+    sumAndGroup(rows) {
+        return rows.reduce(
+            (accum, v) => {
+                if (!accum.id) accum.id = v.id;
+                if (!accum.date) accum.date = v.date;
+                if (!accum.class) accum.class = v.class;
+                if (!accum.type) accum.type = v.type;
+                accum.plan_attributes = v.plan_attributes;
+                accum.fact_attributes.qty += v.fact_attributes.qty;
+                accum.fact_attributes.price += v.fact_attributes.price;
+                v.fact_attributes.codes.forEach(code => {
+                    if (!accum.fact_attributes.codes.includes(code)) {
+                        accum.fact_attributes.codes.push(code);
+                    }
+                });
+                return accum;
+            },
+            {
+                id: 0,
+                date: 0,
+                class: "",
+                type: "",
+                fact_attributes: {
+                    qty: 0,
+                    codes: [],
+                    price: 0
+                },
+                plan_attributes: {
+                    qty: 0,
+                    codes: [],
+                    price: 0
+                }
+            }
+        );
+    }
+
     csvAsTable(rawCSV) {
         const csv = rawCSV.split("\n");
         const head = csv.filter((_, i) => i <= 1).map(e => e.split(";"));

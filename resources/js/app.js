@@ -6,4 +6,4 @@
 
 require("./bootstrap");
 
-require("./reactRoot.js");
+require("./src/App.js");
