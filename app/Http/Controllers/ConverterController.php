@@ -11,12 +11,13 @@ class ConverterController extends Controller
 {
     public function index()
     {
+        $status = 406;
         $raw = [
-            'not_supported' => "Yes",
+            'status' => $status, 
+            'body' => '',
         ];
         $json = json_encode($raw);
-        $response = new Response($json, 503);
-        return $response;
+        return new Response($json, $status);
     }
 
     
@@ -24,11 +25,11 @@ class ConverterController extends Controller
     {
         $controller = new BilledMealsController();
         $resp = $controller->index($billed_Meals, $request);
-        $body = '';
-        if($resp['html']){
-            $body = $resp['pages']->items();
+        $data = json_decode($resp->content());
+        if($data->html){
+            $body = $data->pages->data;
         } else {
-            $body = $resp['pages'];
+            $body = $data->pages;
         }
         $tableHTML = $this->get_html_table($body);
         $pdf = \App::make('dompdf.wrapper');
@@ -74,20 +75,20 @@ class ConverterController extends Controller
     private function get_tbody($rows){
         $body = "";
         foreach ($rows as $row) {
-            $id = $row['id'];
-            $date = $row['date'];
-            $class = $row['class'];
-            $type = $row['type'];
-            $fact_attributes = $row['fact_attributes'];
-            $plan_attributes = $row['plan_attributes'];
-            $fact_codes = implode(",",$fact_attributes['codes']);
-            $fact_qty = $fact_attributes['qty'];
-            $fact_price = $fact_attributes['price'];
-            $plan_codes = implode(",",$plan_attributes['codes']);
+            $id = $row->id;
+            $date = $row->date;
+            $class = $row->class;
+            $type = $row->type;
+            $fact_attributes = $row->fact_attributes;
+            $plan_attributes = $row->plan_attributes;
+            $fact_codes = implode(",",$fact_attributes->codes);
+            $fact_qty = $fact_attributes->qty;
+            $fact_price = $fact_attributes->price;
+            $plan_codes = implode(",",$plan_attributes->codes);
             if(!$plan_codes) $plan_codes = 'NO DATA';
-            $plan_qty = $plan_attributes['qty'];
+            $plan_qty = $plan_attributes->qty;
             if(!$plan_qty) $plan_qty = 0;
-            $plan_price = $plan_attributes['price'];
+            $plan_price = $plan_attributes->price;
             if(!$plan_price) $plan_price = 0;
             $delta = $plan_price - $fact_price;
             $body .= "

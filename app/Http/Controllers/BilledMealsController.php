@@ -21,7 +21,8 @@ class BilledMealsController extends Controller
         $query = RequestHelper::get_params_as_array($request, "paginate", "sort", "asc", "page");
         $paginate = $query['paginate'];
         $page = $query['page'];
-        if($paginate < 0) $page = 1;
+        if($paginate < 0 || !$paginate) $page = 1;
+        if(!$paginate) $paginate = 40;
         $key = "{$paginate}={$page}";
         $keyTotal = "{$paginate}=total";
         if(Cache::has($key) && Cache::has($keyTotal)){
