@@ -1,0 +1,8 @@
+.filtering{
+    &__select{
+        & .active{
+            background-color: coral;
+            color: black;
+        }
+    }
+}
