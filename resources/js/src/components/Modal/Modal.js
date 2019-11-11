@@ -4,8 +4,13 @@ import PropTypes from "prop-types";
 import "./Modal.scss";
 
 const Modal = props => {
+    const style = { 
+            position: props.relative ? "relative" : "absolute",
+            padding: props.relative ? "50px" : "0px"
+    }
+    
     return (
-        <div className="modal">
+        <div className="modal" style={style}>
             <div className="modal__outer">
                 <div className="modal__inner">{props.children}</div>
             </div>
@@ -16,5 +21,10 @@ const Modal = props => {
 export default Modal;
 
 Modal.propTypes = {
-    children: PropTypes.any
+    relative: PropTypes.bool,
+    children: PropTypes.any,
 };
+
+Modal.defaultProps ={
+    relative: false
+}
