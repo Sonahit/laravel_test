@@ -11,6 +11,10 @@ export class ApiHelper {
         return `${this.base}${apiPath}`;
     }
 
+    setFetch(fetch){
+        this.isFetching = fetch;
+    }
+
     get(url, params) {
         const query = params.map(param => `${param.key}=${param.value}`).join("&");
         this.isFetching = true;
