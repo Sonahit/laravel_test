@@ -18,7 +18,7 @@ const Filters = props => {
 
     const isNotInitValue = filter => {
         const {init, startValue, endValue} = filter;
-        return init.startValue !== startValue || init.endValue !== endValue;
+        return init.startValue.toString() !== startValue.toString() || init.endValue.toString() !== endValue.toString();
     }
 
     const hasFilter = (key) => Object.keys(props.filters).some(k => k === key && props.filters[k] && isNotInitValue(props.filters[k]));

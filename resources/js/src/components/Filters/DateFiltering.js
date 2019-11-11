@@ -13,7 +13,7 @@ const DateFiltering = props => {
         endValue = filter.endValue;
     }
     const [startDate, setStartDate] = useState(startValue || new Date("2017/01/01"));
-    const [endDate, setEndDate] = useState(endValue || new Date());
+    const [endDate, setEndDate] = useState(endValue || new Date(new Date().setHours(0, 0, 0)));
     if(!initEndDate) initEndDate = endDate;
     useEffect(() => {
         if (!startDate) {
