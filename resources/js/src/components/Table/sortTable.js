@@ -14,6 +14,6 @@ export default function sortTable(table, sortOptions) {
         }
         const vA = index === "delta" ? trA.plan_attributes.price - trA.fact_attributes.price : trA[index];
         const vB = index === "delta" ? trB.plan_attributes.price - trB.fact_attributes.price : trB[index];
-        return comparer(!asc)(vA, vB);
+        return comparer(asc)(vA, vB);
     });
 }
