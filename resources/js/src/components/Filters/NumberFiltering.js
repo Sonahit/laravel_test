@@ -2,13 +2,19 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 const NumberFiltering = props => {
-    const [startValue, setStartValue] = useState(Number.MIN_SAFE_INTEGER);
-    const [endValue, setEndValue] = useState(Number.MAX_SAFE_INTEGER);
+    const {filteringKey, method, filter} = props;
+    let startValue, endValue;
+    if(filter){ 
+        startValue = filter.startValue;
+        endValue = filter.endValue;
+    }
+    const [startNumber, setStartNumber] = useState(!isNaN(startValue) ? startValue : Number.MIN_SAFE_INTEGER);
+    const [endNumber, setEndNumber] = useState(!isNaN(endValue) ? endValue : Number.MAX_SAFE_INTEGER);
     useEffect(() => {
-        if (isNaN(startValue)) {
-            props.handleFilterReset(props.method, props.filteringKey);
+        if (isNaN(startNumber)) {
+            props.handleFilterReset(filteringKey);
         } else {
-            props.handleFilterValue(startValue, endValue);
+            props.handleFilterValue(filteringKey, method, startNumber, endNumber, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
         }
     });
     return (
@@ -18,7 +24,8 @@ const NumberFiltering = props => {
                     <input
                         placeholder="От"
                         style={{ margin: "0 3px" }}
-                        onChange={({ target }) => setStartValue(isNaN(parseInt(target.value)) ? Number.MIN_SAFE_INTEGER : parseInt(target.value))}
+                        onChange={({ target }) => setStartNumber(isNaN(parseInt(target.value)) ? Number.MIN_SAFE_INTEGER : parseInt(target.value))}
+                        value={startNumber === Number.MIN_SAFE_INTEGER ? '' : startNumber}
                     />
                 </div>
             </div>
@@ -27,7 +34,8 @@ const NumberFiltering = props => {
                     <input
                         placeholder="До"
                         style={{ margin: "0 3px" }}
-                        onChange={({ target }) => setEndValue(isNaN(parseInt(target.value)) ? Number.MAX_SAFE_INTEGER : parseInt(target.value))}
+                        onChange={({ target }) => setEndNumber(isNaN(parseInt(target.value)) ? Number.MAX_SAFE_INTEGER : parseInt(target.value))}
+                        value={endNumber === Number.MAX_SAFE_INTEGER ? '' : endNumber}
                     />
                 </div>
             </div>
@@ -39,6 +47,7 @@ export default NumberFiltering;
 
 NumberFiltering.propTypes = {
     method: PropTypes.string.isRequired,
+    filter: PropTypes.object,
     filteringKey: PropTypes.string.isRequired,
     handleFilterValue: PropTypes.func.isRequired,
     handleFilterReset: PropTypes.func.isRequired

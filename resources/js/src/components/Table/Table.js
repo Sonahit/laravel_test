@@ -5,7 +5,7 @@ import "./Table.scss";
 
 import TableBody from "./TableBody";
 import TableHead from "./TableHead";
-import Options from "../Options/TableOptions";
+import TableOptions from "../Options/TableOptions";
 import Modal from "../Modal/Modal.js";
 import tHead from "./headRows.js";
 
@@ -17,12 +17,23 @@ export default class Table extends Component {
                 method: false,
                 dataSort: false
             },
-            filter: {
-                method: false,
-                key: false,
-                startValue: false,
-                endValue: false
+            //TODO: Multiple filters
+            methodFilterSelect: "date",
+            filters: {}
+            /*
+            Example filter
+            filters: {
+                [key]: {
+                    method: 'date'
+                    startValue: '0'
+                    endValue: '0',
+                    init: {
+                        startValue: '0',
+                        endValue: '0'
+                    }
+                }
             }
+            */
         };
         this.handleSort = this.handleSort.bind(this);
         this.handleFilterReset = this.handleFilterReset.bind(this);
@@ -30,85 +41,60 @@ export default class Table extends Component {
         this.handleFilterValue = this.handleFilterValue.bind(this);
     }
 
+    shouldComponentUpdate(prevProps, prevState){
+        const prevSt = JSON.stringify(prevState);
+        const currSt = JSON.stringify(this.state);
+        const prevPr = JSON.stringify(prevProps);
+        const currPr = JSON.stringify(this.props);
+        if(prevSt !== currSt) return true;
+        if(prevPr !== currPr) return true;
+        return false;
+    }
+
     handleSort(e, method, dataSort) {
         if (!method || !dataSort) return;
-        const node = e.target;
-        const parent = node.parentNode;
-        let asc = false;
-        if (parent.classList.contains("main-table__th--sortable")) {
-            if (node.classList.contains("asc")) {
-                if (node.classList.contains("active")) {
-                    asc = false;
-                    toDesc(node);
-                } else {
-                    asc = true;
-                    toAsc(node);
-                }
-            } else if (node.classList.contains("desc") && parent.classList.contains("main-table__th--sortable")) {
-                if (node.classList.contains("active")) {
-                    asc = true;
-                    toAsc(node);
-                } else {
-                    asc = false;
-                    toDesc(node);
+        this.setState({ sort: { method, dataSort, asc: changeArrowDirection(e) } });
+    }
+
+    handleFilterReset(key) {
+        this.setState(prev => ({
+            ...prev,
+            filters: {
+                ...prev.filters,
+                [key]: false
+            }
+        }));
+        Object.keys(this.state.filters).every(filterKey => !this.state.filters[filterKey])
+    }
+
+    handleFilterSelect(_, method){
+        this.setState(({
+            methodFilterSelect: method
+        }))
+    }
+
+    handleFilterValue(key, method, startValue, endValue, initStartValue, initEndValue) {
+        this.setState(prev =>({
+            ...prev,
+            method,
+            filters: {
+                ...prev.filters,
+                [key] : {
+                    method: (prev.filters[key] && prev.filters[key].method) || method,
+                    startValue,
+                    endValue,
+                    init: {
+                        startValue: (prev.filters[key] && prev.filters[key].init.startValue) || startValue,
+                        endValue: (prev.filters[key] && prev.filters[key].init.endValue) || endValue
+                    }
                 }
             }
-            active(node);
-        } else if (node.classList.contains("main-table__th--sortable")) {
-            const child = node.children[0];
-            if (child.classList.contains("desc")) {
-                if (child.classList.contains("active")) {
-                    asc = true;
-                    toAsc(child);
-                } else {
-                    asc = false;
-                    toDesc(child);
-                }
-            } else if (child.classList.contains("asc")) {
-                if (child.classList.contains("active")) {
-                    asc = false;
-                    toDesc(child);
-                } else {
-                    asc = true;
-                    toAsc(child);
-                }
-            }
-            active(child);
+        }));
+        if(startValue.toString() === initStartValue.toString() && endValue.toString() === initEndValue.toString()){
+            this.props.setFetch(false);
+        } else {
+            this.props.setFetch(true);
         }
-        this.setState({ sort: { method, dataSort, asc } });
-    }
-
-    handleFilterReset(method, key) {
-        this.setState({
-            filter: {
-                method,
-                key,
-                startValue: false,
-                endValue: false
-            }
-        });
-    }
-
-    handleFilterSelect(key, method) {
-        this.setState(prev => ({
-            filter: {
-                key,
-                method,
-                startValue: prev.filter.startValue,
-                endValue: prev.filter.endValue
-            }
-        }));
-    }
-
-    handleFilterValue(startValue, endValue) {
-        this.setState(prev => ({
-            filter: {
-                key: prev.filter.key,
-                method: prev.filter.method,
-                startValue,
-                endValue
-            }
-        }));
     }
 
     render() {
@@ -121,9 +107,9 @@ export default class Table extends Component {
         }
         return (
             <>
-                <Options
-                    method={this.state.filter.method}
-                    filtering={this.state.filter.key}
+                <TableOptions
+                    method={this.state.methodFilterSelect}
+                    filters={this.state.filters}
                     handleFilterValue={this.handleFilterValue}
                     handleFilterReset={this.handleFilterReset}
                     handleFilterSelect={this.handleFilterSelect}
@@ -135,19 +121,17 @@ export default class Table extends Component {
                 {this.props.table ? (
                     <table className="main-table">
                         <TableHead tHead={tHead} handleSort={this.handleSort} />
-                        <TableBody sort={this.state.sort} filter={this.state.filter} table={this.props.table} />
+                        <TableBody sort={this.state.sort} filters={this.state.filters} table={this.props.table} />
                     </table>
                 ) : (
                     <Modal>
                         <div className="loader"></div>
                     </Modal>
                 )}
-                {this.props.isUpdating ? (
-                    <Modal>
+                {this.props.isUpdating && (
+                    <Modal relative={true}>
                         <div className="loader" />
                     </Modal>
-                ) : (
-                    <div className="hidden" />
                 )}
             </>
         );
@@ -160,10 +144,58 @@ Table.propTypes = {
     handleImportCSV: PropTypes.func.isRequired,
     stopRenderImport: PropTypes.func.isRequired,
     fetchAllData: PropTypes.func.isRequired,
+    setFetch: PropTypes.func.isRequired,
     external: PropTypes.bool,
     error: PropTypes.any,
     isUpdating: PropTypes.bool
 };
+
+function changeArrowDirection(e){
+    const node = e.target;
+    const parent = node.parentNode;
+    let asc = false;
+    if (parent.classList.contains("main-table__th--sortable")) {
+        if (node.classList.contains("asc")) {
+            if (node.classList.contains("active")) {
+                asc = false;
+                toDesc(node);
+            } else {
+                asc = true;
+                toAsc(node);
+            }
+        } else if (node.classList.contains("desc") && parent.classList.contains("main-table__th--sortable")) {
+            if (node.classList.contains("active")) {
+                asc = true;
+                toAsc(node);
+            } else {
+                asc = false;
+                toDesc(node);
+            }
+        }
+        active(node);
+    } else if (node.classList.contains("main-table__th--sortable")) {
+        const child = node.children[0];
+        if (child.classList.contains("desc")) {
+            if (child.classList.contains("active")) {
+                asc = true;
+                toAsc(child);
+            } else {
+                asc = false;
+                toDesc(child);
+            }
+        } else if (child.classList.contains("asc")) {
+            if (child.classList.contains("active")) {
+                asc = false;
+                toDesc(child);
+            } else {
+                asc = true;
+                toAsc(child);
+            }
+        }
+        active(child);
+    }
+    return asc;
+}
 
 function toAsc(node) {
     node.classList.remove("desc");

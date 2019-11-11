@@ -1,16 +1,33 @@
-export default function filterTable(table, filter) {
-    const { startValue, endValue, key, method } = filter;
-    if (!key || !method) return table;
-    if (!startValue && startValue !== 0) return table;
-    const [index, subIndex] = getIndex(key);
-    if (!index) return table;
-    if (method === "date") {
-        return filterByDate(table, startValue, endValue || startValue, index, subIndex);
-    } else if (method === "number") {
-        return filterByNumber(table, startValue, endValue, index, subIndex);
-    } else if (method === "string") {
-        return filterByString(table, startValue, index, subIndex);
-    }
+export default function filterTable(table, filters) {
+    // const { startValue, endValue, key, method } = filter;
+    // if (!key || !method) return table;
+    // if (!startValue && startValue !== 0) return table;
+    // const [index, subIndex] = getIndex(key);
+    // if (!index) return table;
+    // if (method === "date") {
+    //     return filterByDate(table, startValue, endValue || startValue, index, subIndex);
+    // } else if (method === "number") {
+    //     return filterByNumber(table, startValue, endValue, index, subIndex);
+    // } else if (method === "string") {
+    //     return filterByString(table, startValue, index, subIndex);
+    // }
+    return Object.keys(filters).reduce((filteredTable, key) => {
+        const filter = filters[key];
+        if(filter){
+            const {method, endValue, startValue} = filter;
+            const [index, subIndex] = getIndex(key);
+            if (!index) return filteredTable;
+            if (method === "date") {
+                return filterByDate(filteredTable, startValue, endValue || startValue, index, subIndex);
+            } else if (method === "number") {
+                return filterByNumber(filteredTable, startValue, endValue, index, subIndex);
+            } else if (method === "string") {
+                return filterByString(filteredTable, startValue, index, subIndex);
+            }
+        }
+        return filteredTable;
+    }, table)
+
 }
 
 export function getIndex(key) {

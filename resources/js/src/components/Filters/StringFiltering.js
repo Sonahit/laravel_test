@@ -2,12 +2,15 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 const StringFiltering = props => {
-    const [string, setString] = useState("");
+    const {filteringKey, method, filter} = props;
+    let startValue;
+    if(filter) startValue = filter.startValue
+    const [string, setString] = useState(startValue || "");
     useEffect(() => {
         if (!string) {
-            props.handleFilterReset(props.method, props.filteringKey);
+            props.handleFilterReset(filteringKey);
         } else {
-            props.handleFilterValue(string, "");
+            props.handleFilterValue(filteringKey, method, string, "", "", "");
         }
     });
     return (
@@ -18,6 +21,7 @@ const StringFiltering = props => {
                         style={{ width: "100%", margin: "0 3px" }}
                         placeholder="Введите текст"
                         onChange={({ target }) => setString(target.value)}
+                        value={string !== "" ? string : ""}
                     />
                 </div>
             </div>
@@ -29,6 +33,7 @@ export default StringFiltering;
 
 StringFiltering.propTypes = {
     method: PropTypes.string.isRequired,
+    filter: PropTypes.object,
     filteringKey: PropTypes.string.isRequired,
     handleFilterValue: PropTypes.func.isRequired,
     handleFilterReset: PropTypes.func.isRequired

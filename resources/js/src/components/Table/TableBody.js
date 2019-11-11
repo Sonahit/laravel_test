@@ -5,8 +5,8 @@ import filterTable from "./filterTable.js";
 import sortTable from "./sortTable.js";
 
 const TableBody = props => {
-    const { table, filter, sort } = props;
-    const tBody = filterTable(sortTable(table, sort), filter);
+    const { table, filters, sort } = props;
+    const tBody = filterTable(sortTable(table, sort), filters);
     return (
         <tbody className="main-table__tbody">
             {tBody.map((tr, i) => (
@@ -20,7 +20,7 @@ export default TableBody;
 
 TableBody.propTypes = {
     table: PropTypes.oneOfType([PropTypes.bool, PropTypes.array]).isRequired,
-    filter: PropTypes.object.isRequired,
+    filters: PropTypes.object.isRequired,
     sort: PropTypes.object.isRequired
 };
 

@@ -4,15 +4,22 @@ import PropTypes from "prop-types";
 
 import "react-datepicker/dist/react-datepicker.css";
 
+let initEndDate;
 const DateFiltering = props => {
-    const [startDate, setStartDate] = useState(new Date("2017/01/01"));
-    const [endDate, setEndDate] = useState(new Date());
-
+    const {filteringKey, method, filter} = props;
+    let startValue, endValue;
+    if(filter){ 
+        startValue = filter.startValue;
+        endValue = filter.endValue;
+    }
+    const [startDate, setStartDate] = useState(startValue || new Date("2017/01/01"));
+    const [endDate, setEndDate] = useState(endValue || new Date());
+    if(!initEndDate) initEndDate = endDate;
     useEffect(() => {
         if (!startDate) {
-            props.handleFilterReset(props.method, props.filteringKey);
+            props.handleFilterReset(filteringKey);
         } else {
-            props.handleFilterValue(startDate, endDate);
+            props.handleFilterValue(filteringKey, method, startDate, endDate || initEndDate, new Date("2017/01/01"), initEndDate);
         }
     });
     const dateFormat = "yyyy-MM-dd";
@@ -43,6 +50,7 @@ export default DateFiltering;
 
 DateFiltering.propTypes = {
     method: PropTypes.string.isRequired,
+    filter: PropTypes.any,
     filteringKey: PropTypes.string.isRequired,
     handleFilterValue: PropTypes.func.isRequired,
     handleFilterReset: PropTypes.func.isRequired
