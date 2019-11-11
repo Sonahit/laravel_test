@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import ReactDOM from "react-dom";
 
-import Nav from "./components/Nav/Nav.js";
+import './App.scss';
 
+import Nav from "./components/Nav/Nav.js";
 import routes from "./routes.js";
 
 import ApiHelper from "@helpers/ApiHelper";
@@ -17,9 +18,10 @@ export default class App extends Component {
             fetch_table: false,
             error: false,
             isUpdating: false,
+            isFiltering: false,
             external: {
                 table: false,
-                render: false
+                render: false,
             }
         };
         this.fetchTable = this.fetchTable.bind(this);
@@ -28,6 +30,7 @@ export default class App extends Component {
         this.stopRenderImport = this.stopRenderImport.bind(this);
         this.handleRefresh = this.handleRefresh.bind(this);
         this.handleScroll = this.handleScroll.bind(this);
+        this.setFetch = this.setFetch.bind(this);
     }
 
     componentDidMount() {
@@ -50,7 +53,7 @@ export default class App extends Component {
     }
 
     componentDidUpdate() {
-        apiHelper.isFetching = false;
+        apiHelper.setFetch(false);
     }
 
     handleImportCSV(body) {
@@ -67,11 +70,15 @@ export default class App extends Component {
         this.fetchTable(1, -1).then(({ table }) => this.setState({ external: { table, render: true } }));
     }
 
+    setFetch(fetch){
+        apiHelper.setFetch(fetch);
+    }
+
     handleScroll() {
         const scroll = window.scrollY;
         const height = window.innerHeight;
         const doUpdate = (scroll, height) => scroll > height * 0.9;
-        if (!this.state.external.render && !apiHelper.isFetching && doUpdate(scroll, height)) {
+        if (!this.state.error && !this.state.external.render && !this.state.isFiltering && !apiHelper.isFetching && doUpdate(scroll, height)) {
             apiHelper.isFetching = true;
             const nextPage = parseInt(sessionStorage.getItem("page")) + 1;
             sessionStorage.setItem("page", nextPage);
@@ -169,6 +176,7 @@ export default class App extends Component {
                                     handleImportCSV={this.handleImportCSV}
                                     stopRenderImport={this.stopRenderImport}
                                     fetchAllData={this.fetchAllData}
+                                    setFetch={this.setFetch}
                                 />
                             </Route>
                         ))}
