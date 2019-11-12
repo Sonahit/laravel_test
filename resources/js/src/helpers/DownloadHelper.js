@@ -1,14 +1,11 @@
 import TableHelper from "./TableHelper.js";
 import ApiHelper from "./ApiHelper.js";
 
+const tableHelper = new TableHelper();
+
 export default class DownloadHelper {
-    downloadCSV() {
-        const tableHelper = new TableHelper();
-
-        const table = tableHelper.getTable();
-        //If no table return
+    prepareHeaders(table) {
         if (!table) return;
-
         const tHead = Array.from(table.rows).filter(v => v.rowIndex <= 1);
         // const tBody = Array.from(table.rows).filter(v => v.rowIndex > 1);
         const [main, sub] = [Array.from(tHead[0].children), Array.from(tHead[1].children)];
@@ -20,13 +17,23 @@ export default class DownloadHelper {
                 main.splice(i + 1, 0, "");
             }
         }
-        const toCsv = (rawHead, rawBody) => {
-            const head = [];
-            const body = [];
-            rawHead.forEach(h => head.push(h.join(";")));
-            rawBody.forEach(b => body.push(b.join(";")));
-            return head.concat(body).join("\n");
-        };
+        return [main, sub];
+    }
+
+    toCsv(rawHead, rawBody) {
+        const head = [];
+        const body = [];
+        rawHead.forEach(h => head.push(h.join(";")));
+        rawBody.forEach(b => body.push(b.join(";")));
+        return head.concat(body).join("\n");
+    }
+
+    downloadCSV() {
+        const table = tableHelper.getTable();
+        //If no table return
+        if (!table) return;
+        const tHead = this.prepareHeaders(table);
+
         const api = new ApiHelper();
         api.get("/billed_meals", [{ key: "paginate", value: "-1" }]).then(({ pages }) => {
             const tBody = pages.map(meal => {
@@ -47,7 +54,7 @@ export default class DownloadHelper {
                     delta
                 ];
             });
-            const csv = toCsv(tableHelper.values([main, sub]), tBody);
+            const csv = this.toCsv(tableHelper.values(tHead), tBody);
             const charset = getOS()
                 .toLowerCase()
                 .includes("windows")
@@ -88,6 +95,22 @@ export default class DownloadHelper {
         download.href = `${type},${data}`;
         download.click();
         document.body.removeChild(download);
+    }
+
+    tableToCsv() {
+        const table = tableHelper.getTable();
+        if (!table) return;
+
+        const tHead = this.prepareHeaders(table);
+        const tBody = Array.from(table.rows).filter(v => v.rowIndex > 1);
+
+        const csv = this.toCsv(tableHelper.values(tHead), tableHelper.values(tBody));
+        const charset = getOS()
+            .toLowerCase()
+            .includes("windows")
+            ? "windows-1251"
+            : "utf-8";
+        this.download(csv, "csv.csv", `data:text/csv;charset=${charset}`);
     }
 }
 

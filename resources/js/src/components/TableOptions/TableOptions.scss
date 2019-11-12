@@ -19,7 +19,7 @@
   }
 
   &__download{
-      @include flex();
+      @include flex(column);
       align-self: flex-end;
 
       &__pdf, &__xml, &__csv{
@@ -38,6 +38,11 @@
           }
           font-size: 12px;
       }
+  }
+
+  &__buttons{
+    @include flex();
+    margin: 5px;
   }
 
   &__datepicker__render{

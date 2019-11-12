@@ -7,21 +7,28 @@ const downloadHelper = new DownloadHelper();
 export default function ExportOptions(props) {
     return (
         <section className="options__download">
-            <button className="options__download__pdf" onClick={() => downloadHelper.downloadPDF()}>
-                Download PDF
-            </button>
-            <button className="options__download__xml" onClick={() => downloadHelper.downloadXML()}>
-                Download XML
-            </button>
-            <button className="options__download__csv" onClick={() => downloadHelper.downloadCSV()}>
-                Download CSV
-            </button>
-            <button className="options__download__csv" onClick={() => props.fetchAllData()}>
-                Get all meals
-            </button>
-            <button className={`options__download__csv ${!props.external ? "hidden" : ""}`} onClick={() => props.stopRenderImport()}>
-                Delete import data
-            </button>
+            <div className="options__buttons">
+                <button className="options__download__pdf" onClick={() => downloadHelper.downloadPDF()}>
+                    Download PDF
+                </button>
+                <button className="options__download__xml" onClick={() => downloadHelper.downloadXML()}>
+                    Download XML
+                </button>
+                <button className="options__download__csv" onClick={() => downloadHelper.downloadCSV()}>
+                    Download CSV
+                </button>
+                <button className="options__download__csv" onClick={() => props.fetchAllData()}>
+                    Get all meals
+                </button>
+            </div>
+            <div className="options__buttons">
+                <button className={`options__download__csv`} onClick={() => downloadHelper.tableToCsv()}>
+                    Convert table to CSV
+                </button>
+                <button className={`options__download__csv ${!props.external ? "hidden" : ""}`} onClick={() => props.stopRenderImport()}>
+                    Delete import data
+                </button>
+            </div>
         </section>
     );
 }
