@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 
 import "./TableOptions.scss";
 
-import Filters from "../Filters/Filters.js";
-import ExportOptions from "./ExportOptions.js";
+import Filters from "../Filters/Filters";
+import ExportOptions from "./ExportOptions";
 
 const TableOptions = props => {
     const filtersMemo = useMemo(

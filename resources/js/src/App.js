@@ -2,14 +2,14 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import ReactDOM from "react-dom";
 
-import './App.scss';
+import "./App.scss";
 
 import Nav from "./components/Nav/Nav.js";
 import routes from "./routes.js";
 
 import ApiHelper from "@helpers/ApiHelper";
 import TableHelper from "@helpers/TableHelper.js";
-const apiHelper = new ApiHelper("localhost:8000");
+const apiHelper = new ApiHelper();
 
 export default class App extends Component {
     constructor(props) {
@@ -21,7 +21,7 @@ export default class App extends Component {
             isFiltering: false,
             external: {
                 table: false,
-                render: false,
+                render: false
             }
         };
         this.fetchTable = this.fetchTable.bind(this);
@@ -70,7 +70,7 @@ export default class App extends Component {
         this.fetchTable(1, -1).then(({ table }) => this.setState({ external: { table, render: true } }));
     }
 
-    setFetch(fetch){
+    setFetch(fetch) {
         apiHelper.setFetch(fetch);
     }
 
@@ -122,7 +122,7 @@ export default class App extends Component {
 
     fetchTable(page, pagination) {
         return apiHelper
-            .get(`${apiHelper.url}/billed_meals`, [
+            .get(`/billed_meals`, [
                 {
                     key: "paginate",
                     value: pagination

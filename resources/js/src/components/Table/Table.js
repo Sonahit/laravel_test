@@ -6,7 +6,7 @@ import "./Table.scss";
 
 import TableBody from "./TableBody";
 import TableHead from "./TableHead";
-import TableOptions from "../Options/TableOptions";
+import TableOptions from "../TableOptions/TableOptions";
 import Modal from "../Modal/Modal.js";
 import tHead from "./headRows.js";
 
