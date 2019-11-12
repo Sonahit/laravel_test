@@ -1,13 +1,16 @@
 import TableHelper from "./TableHelper.js";
+import ApiHelper from "./ApiHelper.js";
 
 export default class DownloadHelper {
     downloadCSV() {
-        const table = TableHelper.prototype.getTable();
+        const tableHelper = new TableHelper();
+
+        const table = tableHelper.getTable();
         //If no table return
         if (!table) return;
 
         const tHead = Array.from(table.rows).filter(v => v.rowIndex <= 1);
-        const tBody = Array.from(table.rows).filter(v => v.rowIndex > 1);
+        // const tBody = Array.from(table.rows).filter(v => v.rowIndex > 1);
         const [main, sub] = [Array.from(tHead[0].children), Array.from(tHead[1].children)];
         for (let i = 0; i < main.length - 1; i++) {
             if (main[i].rowSpan === 2) {
@@ -17,7 +20,6 @@ export default class DownloadHelper {
                 main.splice(i + 1, 0, "");
             }
         }
-        const tableHelper = new TableHelper();
         const toCsv = (rawHead, rawBody) => {
             const head = [];
             const body = [];
@@ -25,13 +27,34 @@ export default class DownloadHelper {
             rawBody.forEach(b => body.push(b.join(";")));
             return head.concat(body).join("\n");
         };
-        const csv = toCsv(tableHelper.values([main, sub]), tableHelper.values(tBody));
-        const charset = getOS()
-            .toLowerCase()
-            .includes("windows")
-            ? "windows-1251"
-            : "utf-8";
-        this.download(csv, "csv.csv", `data:text/csv;charset=${charset}`);
+        const api = new ApiHelper();
+        api.get("/billed_meals", [{ key: "paginate", value: "-1" }]).then(({ pages }) => {
+            const tBody = pages.map(meal => {
+                const { id, date, type, plan_attributes, fact_attributes } = meal;
+                const nom_class = meal.class;
+                const delta = (plan_attributes.price - fact_attributes.price).toFixed(2);
+                return {
+                    id: id,
+                    date: date,
+                    class: nom_class,
+                    type: type,
+                    plan_codes: plan_attributes.codes.join(", ") || "NO DATA",
+                    fact_codes: fact_attributes.codes.join(", "),
+                    plan_qty: plan_attributes.qty,
+                    fact_qty: fact_attributes.qty,
+                    plan_price: plan_attributes.price.toFixed(2),
+                    fact_price: fact_attributes.price.toFixed(2),
+                    delta: delta
+                };
+            });
+            const csv = toCsv(tableHelper.values([main, sub]), tableHelper.values(tBody));
+            const charset = getOS()
+                .toLowerCase()
+                .includes("windows")
+                ? "windows-1251"
+                : "utf-8";
+            this.download(csv, "csv.csv", `data:text/csv;charset=${charset}`);
+        });
     }
 
     downloadPDF() {

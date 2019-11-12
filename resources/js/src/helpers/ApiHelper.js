@@ -1,7 +1,7 @@
 export const apiPath = "/api/v1";
 
 export class ApiHelper {
-    constructor(base, path = apiPath) {
+    constructor(base = location.origin, path = apiPath) {
         this.base = base;
         this.apiPath = path;
         this.isFetching = false;
@@ -11,14 +11,14 @@ export class ApiHelper {
         return `${this.base}${apiPath}`;
     }
 
-    setFetch(fetch){
+    setFetch(fetch) {
         this.isFetching = fetch;
     }
 
     get(url, params) {
         const query = params.map(param => `${param.key}=${param.value}`).join("&");
         this.isFetching = true;
-        return fetch(`http://${url}?${query}`, {
+        return fetch(`${this.base}${this.apiPath}${url}?${query}`, {
             method: "GET"
         })
             .then(data => {
