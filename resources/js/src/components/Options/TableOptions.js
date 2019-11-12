@@ -15,16 +15,16 @@ const TableOptions = props => {
                 handleFilterSelect={props.handleFilterSelect}
                 handleFilterReset={props.handleFilterReset}
                 handleFilterValue={props.handleFilterValue}
+                resetAllFilters={props.resetAllFilters}
+                reset={props.reset}
             />
         ),
-        [props.method, props.filters, props.handleFilterReset, props.handleFilterValue, props.handleFilterSelect]
+        [props.method, props.filters, props.handleFilterSelect, props.handleFilterReset, props.handleFilterValue, props.resetAllFilters, props.reset]
     );
 
     return (
         <section className="options">
-            <section className="options__filtering">
-                {filtersMemo}
-            </section>
+            <section className="options__filtering">{filtersMemo}</section>
             <section className="options__files">
                 <ExportOptions external={props.external} stopRenderImport={props.stopRenderImport} fetchAllData={props.fetchAllData} />
             </section>
@@ -42,6 +42,8 @@ TableOptions.propTypes = {
     handleFilterReset: PropTypes.func.isRequired,
     handleImportCSV: PropTypes.func.isRequired,
     stopRenderImport: PropTypes.func.isRequired,
+    resetAllFilters: PropTypes.func.isRequired,
     fetchAllData: PropTypes.func.isRequired,
-    external: PropTypes.bool
+    external: PropTypes.bool,
+    reset: PropTypes.bool
 };

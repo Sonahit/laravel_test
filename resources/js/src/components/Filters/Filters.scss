@@ -1,4 +1,12 @@
 .filtering{
+    width: 100%;
+    display: inline-flex;
+    flex: 0 1 auto;
+    flex-direction: column;
+    margin: 5px;
+    &__wrapper{
+        margin-bottom: 5px;
+    }
     &__select{
         & .active{
             background-color: coral;

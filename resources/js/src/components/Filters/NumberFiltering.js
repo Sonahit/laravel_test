@@ -1,15 +1,22 @@
+"use strict";
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 const NumberFiltering = props => {
-    const {filteringKey, method, filter} = props;
+    const { filteringKey, method, filter, reset } = props;
     let startValue, endValue;
-    if(filter){ 
+    if (filter) {
         startValue = filter.startValue;
         endValue = filter.endValue;
     }
     const [startNumber, setStartNumber] = useState(!isNaN(startValue) ? startValue : Number.MIN_SAFE_INTEGER);
     const [endNumber, setEndNumber] = useState(!isNaN(endValue) ? endValue : Number.MAX_SAFE_INTEGER);
+    if (reset && startNumber !== Number.MIN_SAFE_INTEGER) {
+        setStartNumber(Number.MIN_SAFE_INTEGER);
+    }
+    if (reset && endNumber !== Number.MAX_SAFE_INTEGER) {
+        setEndNumber(Number.MAX_SAFE_INTEGER);
+    }
     useEffect(() => {
         if (isNaN(startNumber)) {
             props.handleFilterReset(filteringKey);
@@ -25,7 +32,7 @@ const NumberFiltering = props => {
                         placeholder="От"
                         style={{ margin: "0 3px" }}
                         onChange={({ target }) => setStartNumber(isNaN(parseInt(target.value)) ? Number.MIN_SAFE_INTEGER : parseInt(target.value))}
-                        value={startNumber === Number.MIN_SAFE_INTEGER ? '' : startNumber}
+                        value={startNumber === Number.MIN_SAFE_INTEGER ? "" : startNumber}
                     />
                 </div>
             </div>
@@ -35,7 +42,7 @@ const NumberFiltering = props => {
                         placeholder="До"
                         style={{ margin: "0 3px" }}
                         onChange={({ target }) => setEndNumber(isNaN(parseInt(target.value)) ? Number.MAX_SAFE_INTEGER : parseInt(target.value))}
-                        value={endNumber === Number.MAX_SAFE_INTEGER ? '' : endNumber}
+                        value={endNumber === Number.MAX_SAFE_INTEGER ? "" : endNumber}
                     />
                 </div>
             </div>
@@ -47,8 +54,9 @@ export default NumberFiltering;
 
 NumberFiltering.propTypes = {
     method: PropTypes.string.isRequired,
-    filter: PropTypes.object,
+    filter: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
     filteringKey: PropTypes.string.isRequired,
     handleFilterValue: PropTypes.func.isRequired,
-    handleFilterReset: PropTypes.func.isRequired
+    handleFilterReset: PropTypes.func.isRequired,
+    reset: PropTypes.bool
 };

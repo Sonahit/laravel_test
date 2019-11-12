@@ -1,3 +1,4 @@
+"use strict";
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
@@ -17,8 +18,8 @@ export default class Table extends Component {
                 method: false,
                 dataSort: false
             },
-            //TODO: Multiple filters
             methodFilterSelect: "date",
+            reset: false,
             filters: {}
             /*
             Example filter
@@ -39,16 +40,7 @@ export default class Table extends Component {
         this.handleFilterReset = this.handleFilterReset.bind(this);
         this.handleFilterSelect = this.handleFilterSelect.bind(this);
         this.handleFilterValue = this.handleFilterValue.bind(this);
-    }
-
-    shouldComponentUpdate(prevProps, prevState){
-        const prevSt = JSON.stringify(prevState);
-        const currSt = JSON.stringify(this.state);
-        const prevPr = JSON.stringify(prevProps);
-        const currPr = JSON.stringify(this.props);
-        if(prevSt !== currSt) return true;
-        if(prevPr !== currPr) return true;
-        return false;
+        this.resetAllFilters = this.resetAllFilters.bind(this);
     }
 
     handleSort(e, method, dataSort) {
@@ -64,22 +56,31 @@ export default class Table extends Component {
                 [key]: false
             }
         }));
-        Object.keys(this.state.filters).every(filterKey => !this.state.filters[filterKey])
     }
 
-    handleFilterSelect(_, method){
-        this.setState(({
+    resetAllFilters() {
+        this.setState(prev => ({
+            ...prev,
+            reset: true,
+            filters: {}
+        }));
+    }
+
+    handleFilterSelect(_, method) {
+        this.setState({
+            reset: false,
             methodFilterSelect: method
-        }))
+        });
     }
 
     handleFilterValue(key, method, startValue, endValue, initStartValue, initEndValue) {
-        this.setState(prev =>({
+        this.setState(prev => ({
             ...prev,
             method,
+            reset: false,
             filters: {
                 ...prev.filters,
-                [key] : {
+                [key]: {
                     method: (prev.filters[key] && prev.filters[key].method) || method,
                     startValue,
                     endValue,
@@ -90,7 +91,7 @@ export default class Table extends Component {
                 }
             }
         }));
-        if(startValue.toString() === initStartValue.toString() && endValue.toString() === initEndValue.toString()){
+        if (startValue.toString() === initStartValue.toString() && endValue.toString() === initEndValue.toString()) {
             this.props.setFetch(false);
         } else {
             this.props.setFetch(true);
@@ -117,6 +118,8 @@ export default class Table extends Component {
                     stopRenderImport={this.props.stopRenderImport}
                     fetchAllData={this.props.fetchAllData}
                     external={this.props.external}
+                    resetAllFilters={this.resetAllFilters}
+                    reset={this.state.reset}
                 />
                 {this.props.table ? (
                     <table className="main-table">
@@ -150,7 +153,7 @@ Table.propTypes = {
     isUpdating: PropTypes.bool
 };
 
-function changeArrowDirection(e){
+function changeArrowDirection(e) {
     const node = e.target;
     const parent = node.parentNode;
     let asc = false;
