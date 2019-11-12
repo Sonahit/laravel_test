@@ -33,21 +33,21 @@ export default class DownloadHelper {
                 const { id, date, type, plan_attributes, fact_attributes } = meal;
                 const nom_class = meal.class;
                 const delta = (plan_attributes.price - fact_attributes.price).toFixed(2);
-                return {
-                    id: id,
-                    date: date,
-                    class: nom_class,
-                    type: type,
-                    plan_codes: plan_attributes.codes.join(", ") || "NO DATA",
-                    fact_codes: fact_attributes.codes.join(", "),
-                    plan_qty: plan_attributes.qty,
-                    fact_qty: fact_attributes.qty,
-                    plan_price: plan_attributes.price.toFixed(2),
-                    fact_price: fact_attributes.price.toFixed(2),
-                    delta: delta
-                };
+                return [
+                    id,
+                    date,
+                    nom_class,
+                    type,
+                    plan_attributes.codes.join(", ") || "NO DATA",
+                    fact_attributes.codes.join(", "),
+                    plan_attributes.qty,
+                    fact_attributes.qty,
+                    plan_attributes.price.toFixed(2),
+                    fact_attributes.price.toFixed(2),
+                    delta
+                ];
             });
-            const csv = toCsv(tableHelper.values([main, sub]), tableHelper.values(tBody));
+            const csv = toCsv(tableHelper.values([main, sub]), tBody);
             const charset = getOS()
                 .toLowerCase()
                 .includes("windows")
