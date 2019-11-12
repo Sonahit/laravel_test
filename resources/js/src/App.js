@@ -94,30 +94,30 @@ export default class App extends Component {
     }
 
     group(prevTable, table) {
-        const concatLast = (minus, prevTable, table) => prevTable.filter((_, i) => i > prevTable.length - minus).concat(table);
+        const concatLast = (minus, prevTable, table) => prevTable.slice(prevTable.length - minus, prevTable.length).concat(table);
         const groupBy = (xs, key) => {
             return xs.reduce((rv, x) => {
                 (rv[x[key]] = rv[x[key]] || []).push(x);
                 return rv;
             }, {});
         };
-        const groupIdTable = groupBy(concatLast(6, prevTable, table), "id");
+        const startLast = 6;
+        const groupIdTable = groupBy(concatLast(startLast, prevTable, table), "id");
         const groupIdDateTable = Object.keys(groupIdTable).reduce((acc, id) => {
             acc[id] = groupBy(groupIdTable[id], "date");
             return acc;
         }, {});
         //Grouping by data according to table headers
-        return prevTable.concat(
-            Object.keys(groupIdDateTable)
-                .map(id => {
-                    return Object.keys(groupIdDateTable[id]).map(date => {
-                        const values = groupIdDateTable[id][date];
-                        const accum = TableHelper.prototype.sumAndGroup(values);
-                        return accum;
-                    });
-                })
-                .flat()
-        );
+        const groupedTable = Object.keys(groupIdDateTable)
+            .map(id => {
+                return Object.keys(groupIdDateTable[id]).map(date => {
+                    const values = groupIdDateTable[id][date];
+                    const accum = TableHelper.prototype.sumAndGroup(values);
+                    return accum;
+                });
+            })
+            .flat();
+        return prevTable.slice(0, prevTable.length - startLast).concat(groupedTable);
     }
 
     fetchTable(page, pagination) {
