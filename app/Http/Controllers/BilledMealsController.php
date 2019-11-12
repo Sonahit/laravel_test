@@ -8,6 +8,7 @@ use App\Utils\Helpers\RequestHelper;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class BilledMealsController extends Controller
 {
@@ -81,25 +82,25 @@ class BilledMealsController extends Controller
         if(!$asc) $asc = 1;
 
         $relations = [
-            "flight_load" => function ($q){
-              $q -> select("business");
-            },
             "billed_meals_info" => function ($q){
-              $q -> select(
-                "name",
-               "iata_code");
+                $q -> select(
+                    "name",
+                    "iata_code"
+                );
             },
             "billed_meals_prices" => function($q){
-              $q -> select("billed_meals_id", 
-              "qty", 
-              "price_per_one");
+                $q -> select("billed_meals_id", 
+                    "qty", 
+                    "price_per_one"
+                );
             },
             "new_matrix" => function($q){
-              $q -> select(
-                "new_matrix.meal_id",
-                "new_matrix.iata_code",
-                "new_matrix.meal_qty",
-                "new_matrix.passenger_amount");
+                $q -> select(
+                    "new_matrix.meal_id",
+                    "new_matrix.iata_code",
+                    "new_matrix.meal_qty",
+                    "new_matrix.passenger_amount",
+                );
             }
         ];
 
@@ -109,6 +110,9 @@ class BilledMealsController extends Controller
             })
             ->with($relations)
             ->sort($asc);
+        // dd($billed_meals_collect);
+        // $test = $billed_meals_collect->paginate($paginate);
+        // dd($test);
         if($paginate < 1) return $billed_meals_collect->get();
         return $billed_meals_collect->paginate($paginate);
     }    

@@ -27,14 +27,14 @@ class Billed_Meals extends Model
 
     public static function selectDefault($q){
         return $q ->select(
-                    'id',
-                    'flight_id',
-                    'flight_date',
-                    'flight_load_id',
-                    'name',
-                    'delivery_number',
-                    'class',
-                    'type'
+            'id',
+            'flight_id',
+            'flight_date',
+            'flight_load_id',
+            "name",
+            'delivery_number',
+            'class',
+            'type'
         );
     }
     public static function scopeSort($q, $asc){
@@ -50,7 +50,7 @@ class Billed_Meals extends Model
 
     public function billed_meals_info()
     {
-        return $this->belongsTo('App\Models\Billed_Meals_Info', 'name', 'name');
+        return $this->hasOne('App\Models\Billed_Meals_Info', 'name', 'name');
     }
 
     public function billed_meals_prices()
@@ -67,7 +67,7 @@ class Billed_Meals extends Model
             'id',
             'iata_code')
         ->join('flight_load as fload', 'fload.id', '=', 'billed_meals.flight_load_id')
-        ->with('meal_info.business_meal_prices')
+        ->with('business_meal_prices')
         ->where('new_matrix.passenger_amount', DB::raw("`fload`.`business`"));
     }
 }

@@ -13,12 +13,13 @@ class New_Matrix_Collection extends Collection{
         "price" => 0
       ];
       $nm = $this->first();
-      if(!$nm) return $no_values;
+      if(!$nm){
+         return $no_values;
+      }
       $code = $nm->iata_code;
       $qty = $this->sum("meal_qty");
-      $overall_price = $this->reduce(function($accum, $new_matrix){
-          $price = $new_matrix->meal_info->business_meal_prices->price;
-          return $accum + $price * $new_matrix->meal_qty;
+      $overall_price = $this->sum(function($item){
+        return $item->meal_qty * $item->business_meal_prices->price;
       });
       $new_matrix = [
         "codes" => [$code],
