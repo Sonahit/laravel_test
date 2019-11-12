@@ -21,6 +21,7 @@ Route::group(['middleware' => 'api'], function(){
     
     Route::get('/billed_meals', "BilledMealsController@index");
     Route::get('/pdf', 'ConverterController@pdf');
+    Route::post('/pdf', 'ConverterController@index');
 
 });
 
