@@ -25,6 +25,7 @@ class BilledMealsController extends Controller
         if(!$paginate) $paginate = 40;
         $key = "{$paginate}={$page}";
         $keyTotal = "{$paginate}=total";
+        $start = now();
         if(Cache::has($key) && Cache::has($keyTotal)){
             $billed_meals_transformed = json_decode(Cache::get($key));
             if($paginate < 0) return $this->getResponse(['pages' => $billed_meals_transformed], 200);
@@ -36,12 +37,16 @@ class BilledMealsController extends Controller
                 ->formatByDate()
                 ->flatten(1);
             Cache::put($key, json_encode($billed_meals_transformed), $time);
+            $end = now();
+            $computeTime = abs($end->millisecond - $start->millisecond);
             if($billed_meals_collection instanceof Billed_Meals_Collection) {
                 Cache::put($keyTotal,$billed_meals_collection->count(), $time);
-                return $this->getResponse(['pages' => $billed_meals_transformed], 200);
+                return $this->getResponse(['pages' => $billed_meals_transformed, 'time' => $computeTime], 200);
             };
             Cache::put($keyTotal,$billed_meals_collection->total(), $time);
         }
+        $end = now();
+        $computeTime = abs($end->millisecond - $start->millisecond);
         $total = Cache::get($keyTotal);
         $pages = new \Illuminate\Pagination\LengthAwarePaginator(
             $billed_meals_transformed,
@@ -57,12 +62,12 @@ class BilledMealsController extends Controller
         );
         return $this->getResponse([
             'pages' => $pages,
-            'html' => $pages->links()->toHtml()
+            'time' => $computeTime
         ], 200);
     }
 
     protected function getResponse($data, int $code){
-        return new Response(json_encode($data), $code);
+        return new Response(json_encode($data), $code,['Content-Type' => "application/json"]);
     }
     
     /**

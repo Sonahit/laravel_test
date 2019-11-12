@@ -135,7 +135,7 @@ export default class App extends Component {
             .then(response => {
                 const pages = response.pages;
                 let table = "";
-                if (response.html) {
+                if (!Array.isArray(pages)) {
                     table = pages.data;
                 } else {
                     table = pages;
