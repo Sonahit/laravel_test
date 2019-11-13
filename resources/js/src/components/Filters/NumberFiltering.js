@@ -10,8 +10,8 @@ const NumberFiltering = props => {
     const [filter, setFilter] = useState(filteringKey);
     if(filter !== filteringKey){
         setFilter(filteringKey);
-        setStartNumber(startValue);
-        setEndNumber(endValue);
+        setStartNumber(isNaN(parseInt(startValue)) ? Number.MIN_SAFE_INTEGER : startValue);
+        setEndNumber(isNaN(parseInt(endValue)) ? Number.MIN_SAFE_INTEGER : endValue);
     }
     if(reset){
         if (startNumber !== Number.MIN_SAFE_INTEGER) {
