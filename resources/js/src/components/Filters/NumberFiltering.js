@@ -5,8 +5,8 @@ import PropTypes from "prop-types";
 const NumberFiltering = props => {
     const { filteringKey, method, startValue, endValue, reset } = props;
     //TODO: fix filter //TOO MANY RERENDERS
-    const [startNumber, setStartNumber] = useState(!isNaN(parseInt(startValue)) ? startValue : Number.MIN_SAFE_INTEGER);
-    const [endNumber, setEndNumber] = useState(!isNaN(parseInt(endValue)) ? endValue : Number.MAX_SAFE_INTEGER);
+    const [startNumber, setStartNumber] = useState(Number.MIN_SAFE_INTEGER);
+    const [endNumber, setEndNumber] = useState(Number.MAX_SAFE_INTEGER);
     const [filter, setFilter] = useState(filteringKey);
     if(filter !== filteringKey){
         setFilter(filteringKey);

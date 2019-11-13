@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 const StringFiltering = props => {
     const { filteringKey, method, startValue, reset } = props;
-    const [string, setString] = useState(startValue || "");
+    const [string, setString] = useState("");
     const [filter, setFilter] = useState(filteringKey);
     if(filter !== filteringKey){
         setFilter(filteringKey);
