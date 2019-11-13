@@ -22,13 +22,14 @@ const Filters = props => {
 
     const isNotInitValue = filter => {
         const { init, startValue, endValue } = filter;
-        return init.startValue.toString() !== startValue.toString() || init.endValue.toString() !== endValue.toString();
+        return init.startValue !== startValue || init.endValue !== endValue;
     };
 
     const hasFilter = key => Object.keys(props.filters).some(k => k === key && props.filters[k] && isNotInitValue(props.filters[k]));
 
     const getFilter = key => props.filters[Object.keys(props.filters).find(k => k === key)];
     const filter = getFilter(filteringKey);
+    const {startValue = "", endValue = ""} = filter || {};
 
     const filtersMemo = useMemo(
         () => (
@@ -37,12 +38,13 @@ const Filters = props => {
                 filteringKey={filteringKey}
                 handleFilterReset={props.handleFilterReset}
                 handleFilterValue={props.handleFilterValue}
-                filter={filter}
+                startValue={startValue}
+                endValue={endValue}
                 reset={props.reset}
             />
         ),
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [props.method, filteringKey, props.reset]
+        [props.method, filteringKey, props.reset, startValue, endValue]
     );
 
     return (
@@ -99,11 +101,12 @@ Filters.propTypes = {
     reset: PropTypes.bool
 };
 
-const FilteringMethod = ({ filter, reset, method, filteringKey, handleFilterValue, handleFilterReset }) => {
+const FilteringMethod = ({ startValue, endValue, reset, method, filteringKey, handleFilterValue, handleFilterReset }) => {
     if (method === "date") {
         return (
             <DateFiltering
-                filter={filter}
+                startValue={startValue} 
+                endValue={endValue}
                 method={method}
                 filteringKey={filteringKey}
                 handleFilterReset={handleFilterReset}
@@ -115,7 +118,8 @@ const FilteringMethod = ({ filter, reset, method, filteringKey, handleFilterValu
     if (method === "string") {
         return (
             <StringFiltering
-                filter={filter}
+                startValue={startValue} 
+                endValue={endValue}
                 method={method}
                 filteringKey={filteringKey}
                 handleFilterReset={handleFilterReset}
@@ -127,7 +131,8 @@ const FilteringMethod = ({ filter, reset, method, filteringKey, handleFilterValu
     if (method === "number") {
         return (
             <NumberFiltering
-                filter={filter}
+                startValue={startValue} 
+                endValue={endValue}
                 method={method}
                 filteringKey={filteringKey}
                 handleFilterReset={handleFilterReset}
