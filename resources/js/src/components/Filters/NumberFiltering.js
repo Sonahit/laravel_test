@@ -11,7 +11,7 @@ const NumberFiltering = props => {
     if(filter !== filteringKey){
         setFilter(filteringKey);
         setStartNumber(isNaN(parseInt(startValue)) ? Number.MIN_SAFE_INTEGER : startValue);
-        setEndNumber(isNaN(parseInt(endValue)) ? Number.MIN_SAFE_INTEGER : endValue);
+        setEndNumber(isNaN(parseInt(endValue)) ? Number.MAX_SAFE_INTEGER : endValue);
     }
     if(reset){
         if (startNumber !== Number.MIN_SAFE_INTEGER) {
