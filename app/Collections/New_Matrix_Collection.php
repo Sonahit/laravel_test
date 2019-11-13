@@ -18,7 +18,9 @@ class New_Matrix_Collection extends Collection{
       }
       $code = $nm->iata_code;
       $qty = $this->sum("meal_qty");
-      $overall_price = $qty * $nm->business_meal_prices->price;
+      $overall_price = $this->reduce(function($acc, $item){
+        return $acc + $item->business_meal_prices->price * $item->meal_qty;
+      });
       $new_matrix = [
         "codes" => [$code],
         "qty" => $qty,
