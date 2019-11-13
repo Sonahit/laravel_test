@@ -45,23 +45,23 @@ class Billed_Meals extends Model
 
     public function flight_load()
     {
-        return $this->hasOne('App\Models\Flight_Load', 'id', 'flight_load_id');
+        return $this->hasOne(Flight_Load::class, 'id', 'flight_load_id');
     }
 
     public function billed_meals_info()
     {
-        return $this->hasOne('App\Models\Billed_Meals_Info', 'name', 'name');
+        return $this->hasOne(Billed_Meals_Info::class, 'name', 'name');
     }
 
     public function billed_meals_prices()
     {
-        return $this->hasOne('App\Models\Billed_Meals_Prices', 'billed_meals_id');
+        return $this->hasOne(Billed_Meals_Prices::class, 'billed_meals_id');
     }
 
     public function new_matrix(){
         return $this->hasManyThrough(
-            'App\Models\New_Matrix',
-            'App\Models\Billed_Meals',
+            New_Matrix::class,
+            Billed_Meals::class,
             'id',
             'iata_code',
             'id',

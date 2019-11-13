@@ -10,6 +10,6 @@ class Business_Meal_Prices extends Model
 
     public function new_matrix()
     {
-        return $this->belongsTo('App\New_Matrix', 'nomenclature', 'nomenclature');
+        return $this->belongsTo(New_Matrix::class, 'nomenclature', 'nomenclature');
     }
 }

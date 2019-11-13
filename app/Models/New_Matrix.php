@@ -17,16 +17,9 @@ class New_Matrix extends Model
 
     public function business_meal_prices()
     {
-        return $this->hasOneThrough(Business_Meal_Prices::class,
-             Meal_Info::class,
-            'meal_id',
+        return $this->hasOne(
+            Business_Meal_Prices::class,
             'nomenclature',
-            'meal_id',
             'nomenclature');
-    }
-
-    public function meal_info()
-    {
-        return $this->hasOne('App\Models\Meal_Info','meal_id','meal_id');
     }
 }

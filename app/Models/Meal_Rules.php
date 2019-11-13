@@ -12,22 +12,22 @@ class Meal_Rules extends Model
 
     public function new_matrix(){
         return $this
-            ->hasMany('App\Models\New_Matrix','iata_code', 'iata_code')
+            ->hasMany(New_Matrix::class,'iata_code', 'iata_code')
             ->with('meal_info.business_meal_prices');
     }
 
     public function billed_meals()
     {
-        $this->belongsToMany('App\Billed_Meals', 'billed_meals','flight_id', 'flight_id');
+        $this->belongsToMany(Billed_Meals::class, 'billed_meals','flight_id', 'flight_id');
     }
 
     public function billed_meals_info()
     {
-        $this->belongsToMany('App\Billed_Meals_Info', 'billed_meals_info', 'iata_code', 'iata_code');
+        $this->belongsToMany(Billed_Meals_Info::class, 'billed_meals_info', 'iata_code', 'iata_code');
     }
 
     public function flight_load()
     {
-        $this->belongsToMany('App\Flight_Load','flight_load', 'weeknumber', DB::raw("IF(WEEK('{flight_date}') % 2 = 0, 1, 2)"));
+        $this->belongsToMany(Flight_Load::class,'flight_load', 'weeknumber', DB::raw("IF(WEEK('{flight_date}') % 2 = 0, 1, 2)"));
     }
 }
