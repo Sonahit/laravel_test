@@ -65,9 +65,6 @@ class Billed_Meals extends Model
             'id',
             'iata_code',
             'id',
-            'iata_code')
-        ->join('flight_load as fload', 'fload.id', '=', 'billed_meals.flight_load_id')
-        ->with('business_meal_prices')
-        ->where('new_matrix.passenger_amount', DB::raw("`fload`.`business`"));
+            'iata_code');
     }
 }

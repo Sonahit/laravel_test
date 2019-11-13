@@ -99,8 +99,16 @@ class BilledMealsController extends Controller
                     "new_matrix.meal_id",
                     "new_matrix.iata_code",
                     "new_matrix.meal_qty",
-                    "new_matrix.passenger_amount",
+                    "new_matrix.passenger_amount"
                 );
+                $q->join('flight_load as fload', function ($join){
+                    $join->on('fload.id', '=', 'billed_meals.flight_load_id');
+                    $join->on('new_matrix.passenger_amount', '=', 'fload.business');
+                })
+                ->with(['business_meal_prices' => function($with){
+                    $with->select(DB::raw("`business_meal_prices`.`nomenclature`") , DB::raw('SUM(`business_meal_prices`.`price`) as price'));
+                    $with->groupBy('business_meal_prices.nomenclature');
+                }]);
             }
         ];
 
