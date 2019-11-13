@@ -7,20 +7,23 @@ import "react-datepicker/dist/react-datepicker.css";
 
 let initEndDate;
 const DateFiltering = props => {
-    const { filteringKey, method, filter, reset } = props;
-    let startValue, endValue;
-    if (filter) {
-        startValue = filter.startValue;
-        endValue = filter.endValue;
+    const { filteringKey, method, startValue, endValue, reset } = props;
+    const [startDate, setStartDate] = useState(new Date("2017/01/01"));
+    const [endDate, setEndDate] = useState(new Date(new Date().setHours(0, 0, 0)));
+    const [filter, setFilter] = useState(filteringKey);
+    if(filter !== filteringKey){
+        setFilter(filteringKey);
+        setStartDate(startValue);
+        setEndDate(endValue);
     }
-    const [startDate, setStartDate] = useState(startValue || new Date("2017/01/01"));
-    const [endDate, setEndDate] = useState(endValue || new Date(new Date().setHours(0, 0, 0)));
     if (!initEndDate) initEndDate = endDate;
-    if (reset && startDate.toString() !== new Date("2017/01/01").toString()) {
-        setStartDate(new Date("2017/01/01"));
-    }
-    if (reset && endDate.toString() !== new Date(new Date().setHours(0, 0, 0)).toString()) {
-        setEndDate(new Date(new Date().setHours(0, 0, 0)));
+    if(reset){
+        if (startDate.toString() !== new Date("2017/01/01").toString()) {
+            setStartDate(new Date("2017/01/01"));
+        }
+        if (endDate.toString() !== new Date(new Date().setHours(0, 0, 0)).toString()) {
+            setEndDate(new Date(new Date().setHours(0, 0, 0)));
+        }
     }
     useEffect(() => {
         if (!startDate) {
@@ -57,7 +60,8 @@ export default DateFiltering;
 
 DateFiltering.propTypes = {
     method: PropTypes.string.isRequired,
-    filter: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+    startValue: PropTypes.any,
+    endValue: PropTypes.any,
     filteringKey: PropTypes.string.isRequired,
     handleFilterValue: PropTypes.func.isRequired,
     handleFilterReset: PropTypes.func.isRequired,

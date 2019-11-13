@@ -5,47 +5,49 @@ import PropTypes from "prop-types";
 const NumberFiltering = props => {
     const { filteringKey, method, startValue, endValue, reset } = props;
     //TODO: fix filter //TOO MANY RERENDERS
-    const [startNumber, setStartNumber] = useState(!isNaN(startValue) ? startValue : Number.MIN_SAFE_INTEGER);
-    const [endNumber, setEndNumber] = useState(!isNaN(endValue) ? endValue : Number.MAX_SAFE_INTEGER);
-    if (reset && startNumber !== Number.MIN_SAFE_INTEGER) {
-        setStartNumber(Number.MIN_SAFE_INTEGER);
+    const [startNumber, setStartNumber] = useState(!isNaN(parseInt(startValue)) ? startValue : Number.MIN_SAFE_INTEGER);
+    const [endNumber, setEndNumber] = useState(!isNaN(parseInt(endValue)) ? endValue : Number.MAX_SAFE_INTEGER);
+    const [filter, setFilter] = useState(filteringKey);
+    if(filter !== filteringKey){
+        setFilter(filteringKey);
+        setStartNumber(startValue);
+        setEndNumber(endValue);
     }
-    if (reset && endNumber !== Number.MAX_SAFE_INTEGER) {
-        setEndNumber(Number.MAX_SAFE_INTEGER);
+    if(reset){
+        if (startNumber !== Number.MIN_SAFE_INTEGER) {
+            setStartNumber(Number.MIN_SAFE_INTEGER);
+        }
+        if (endNumber !== Number.MAX_SAFE_INTEGER) {
+            setEndNumber(Number.MAX_SAFE_INTEGER);
+        }
     }
-    if(!reset){
-        if(startNumber !== startValue && !isNaN(startValue) && startNumber !== '-' && startNumber !== "") setStartNumber(startValue);
-        if(endNumber !== endValue && !isNaN(endValue) && endNumber !== '-' && endNumber !== "") setEndNumber(endValue);
-    }
-    
     useEffect(() => {
-        if (isNaN(startNumber) && startNumber !== '-') {
+        if(startNumber === '-' || endNumber === '-') return;
+
+        if (isNaN(startNumber)) {
             props.handleFilterReset(filteringKey);
         } else {
-            const start = !isNaN(startNumber) && startNumber !== '-' && startNumber !== ""? startNumber : Number.MIN_SAFE_INTEGER;
-            const end = !isNaN(endNumber) && endNumber !== '-' && endNumber !== "" ? endNumber : Number.MAX_SAFE_INTEGER;
-            props.handleFilterValue(filteringKey, method, start, end, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
+            props.handleFilterValue(filteringKey, method, startNumber, endNumber, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
         } 
     })
+
     const handleStartValue = ({target}) => {
-        setStartNumber(isNaN(target.value) && target.value !== '-'? Number.MIN_SAFE_INTEGER : target.value)
-        if (isNaN(target.value) && target.value !== '-') {
-            props.handleFilterReset(filteringKey);
+        if(target.value === '-'){
+            setStartNumber(target.value);
         } else {
-            const start = target.value === '-' ? 0 : parseInt(target.value);
-            const end = isNaN(endNumber) && endNumber !== '-' ? endNumber : Number.MAX_SAFE_INTEGER;
-            props.handleFilterValue(filteringKey, method, start, end, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
-        }
+            const v = parseInt(target.value);
+            const start = v <= endNumber ? v : endNumber;
+            setStartNumber(!isNaN(v) ? start : Number.MIN_SAFE_INTEGER );
+        } 
     }
 
     const handleEndValue = ({target}) => {
-        setEndNumber(isNaN(target.value) && target.value !== '-' ? Number.MAX_SAFE_INTEGER : target.value)
-        if (isNaN(target.value) && target.value !== '-') {
-            props.handleFilterReset(filteringKey);
+        if(target.value === '-') {
+            setEndNumber(target.value)
         } else {
-            const start = isNaN(startNumber) && startNumber !== '-' ? startNumber : Number.MIN_SAFE_INTEGER;
-            const end = target.value === '-' ? 0 : parseInt(target.value);
-            props.handleFilterValue(filteringKey, method, start, end, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
+            const v = parseInt(target.value);
+            const end = v >= startNumber ? v : startNumber;
+            setEndNumber(!isNaN(v) ? end : Number.MAX_SAFE_INTEGER );
         }
     }
     return (

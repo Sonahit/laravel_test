@@ -3,10 +3,13 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 const StringFiltering = props => {
-    const { filteringKey, method, filter, reset } = props;
-    let startValue;
-    if (filter) startValue = filter.startValue;
+    const { filteringKey, method, startValue, reset } = props;
     const [string, setString] = useState(startValue || "");
+    const [filter, setFilter] = useState(filteringKey);
+    if(filter !== filteringKey){
+        setFilter(filteringKey);
+        setString(startValue);
+    }
     if (reset && string !== "") {
         setString(new Date(""));
     }
@@ -37,7 +40,8 @@ export default StringFiltering;
 
 StringFiltering.propTypes = {
     method: PropTypes.string.isRequired,
-    filter: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+    startValue: PropTypes.any,
+    endValue: PropTypes.any,
     filteringKey: PropTypes.string.isRequired,
     handleFilterValue: PropTypes.func.isRequired,
     handleFilterReset: PropTypes.func.isRequired,
