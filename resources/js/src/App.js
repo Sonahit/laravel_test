@@ -21,6 +21,7 @@ export default class App extends Component {
             fetch_table: false || this.props.initTable,
             error: false,
             isUpdating: false,
+            shouldUpdate: true,
             isFiltering: false,
             external: {
                 table: false,
@@ -40,8 +41,8 @@ export default class App extends Component {
 
     componentDidMount() {
         const url = new URL(location.href);
-        const page = localStorage.getItem("page") || url.searchParams.get("page") || 1;
-        const paginate = localStorage.getItem("paginate") || url.searchParams.get("paginate") || 40;
+        const page = url.searchParams.get("page") || 1;
+        const paginate = url.searchParams.get("paginate") || 40;
         sessionStorage.setItem("paginate", paginate);
         sessionStorage.setItem("page", page);
         const table = JSON.parse(localStorage.getItem("table"));
@@ -88,19 +89,11 @@ export default class App extends Component {
         this.forceUpdate();
     }
 
-    tableFromLocalStorage() {
-        const table = localStorage.getItem("table");
-        const page = localStorage.getItem("page");
-        return {
-            table,
-            page
-        };
-    }
-
     fetchAllData() {
-        sessionStorage.setItem("paginate", -1);
-        this.setState({ external: { render: true } });
-        this.fetchTable(1, -1).then(({ table }) => this.setState({ external: { table, render: true } }));
+        const paginate = -1;
+        sessionStorage.setItem("paginate", paginate);
+        this.setState({ fetch_table: false });
+        this.fetchTable(1, paginate).then(({ table }) => this.setState({ fetch_table: table }));
     }
 
     setFetch(fetch) {
@@ -111,20 +104,34 @@ export default class App extends Component {
         const scroll = window.scrollY;
         const height = window.innerHeight;
         const doUpdate = (scroll, height) => scroll > height * 0.9;
-        if (!this.state.error && !this.state.external.render && !this.state.isFiltering && !apiHelper.isFetching && doUpdate(scroll, height)) {
+        const { external, error, isFiltering, shouldUpdate } = this.state;
+        //If application neither filtering
+        // nor filtering
+        // nor has error
+        // nor api is already fetching data
+        // nor fetched the last chunk of data
+        if (!shouldUpdate && !error && !external.render && !isFiltering && !apiHelper.isFetching && doUpdate(scroll, height)) {
             apiHelper.isFetching = true;
             const nextPage = parseInt(sessionStorage.getItem("page")) + 1;
             sessionStorage.setItem("page", nextPage);
             this.setState({ isUpdating: true });
-            this.fetchTable(nextPage, sessionStorage.getItem("paginate")).then(({ pages, table }) => {
+            this.fetchTable(nextPage, sessionStorage.getItem("paginate")).then(data => {
                 this.setState(prevState => {
+                    //If no data from api
+                    if (!data && !data.table) {
+                        return {
+                            fetch_table: prevState.fetch_table,
+                            isUpdating: false,
+                            noUpdate: true
+                        };
+                    }
+                    const { table } = data;
                     const fetch_table = this.group(prevState.fetch_table, table);
                     if (localStorage.getItem("table")) {
                         localStorage.setItem("table", JSON.stringify(fetch_table));
                         localStorage.setItem("page", nextPage);
                     }
                     return {
-                        pages,
                         fetch_table,
                         isUpdating: false
                     };
@@ -181,8 +188,7 @@ export default class App extends Component {
                     table = pages;
                 }
                 return {
-                    pages,
-                    table
+                    table: table || []
                 };
             })
             .catch(e => {
@@ -191,10 +197,10 @@ export default class App extends Component {
     }
 
     handleRefresh() {
-        this.setState({ error: false });
+        this.setState({ error: false, fetch_table: false });
         const page = localStorage.getItem("page") || sessionStorage.getItem("page");
         const paginate = localStorage.getItem("paginate") || sessionStorage.getItem("paginate");
-        this.fetchTable(1, paginate * page).then(({ pages, table }) => this.setState({ pages, fetch_table: table }));
+        this.fetchTable(1, paginate * page).then(({ table }) => this.setState({ fetch_table: table }));
     }
 
     render() {
