@@ -22,12 +22,16 @@ class BilledMealsController extends Controller
         $query = RequestHelper::get_params_as_array($request, "paginate", "sort", "asc", "page");
         $paginate = $query['paginate'];
         $page = $query['page'];
-        if($page > 1 && $paginate < 0) return $this->getResponse([], 204);
+        //If fetching all data but $page = 2 return empty array
+        if($page > 1 && $paginate < 0){
+            return $this->getResponse([], 204);
+        }
         if($paginate === 0 || !$paginate || !$page) $page = 1;
         if(!$paginate) $paginate = 40;
         $key = "{$paginate}={$page}";
         $keyTotal = "{$paginate}=total";
         $start = now();
+        //If is in cache
         if(Cache::has($key) && Cache::has($keyTotal)){
             $billed_meals_transformed = json_decode(Cache::get($key));
             if($paginate < 0){
@@ -36,6 +40,7 @@ class BilledMealsController extends Controller
                 ], 200);
             }
         } else {
+            //If not
             $cacheTime = now()->addMinutes(2);
             $billed_meals_collection = $this->getData($billed_meals, $query);
             $billed_meals_transformed = $billed_meals_collection
@@ -57,6 +62,7 @@ class BilledMealsController extends Controller
         $end = now();
         $computeTime = abs($end->millisecond - $start->millisecond);
         $total = Cache::get($keyTotal);
+        //Create paginator again
         $pages = new \Illuminate\Pagination\LengthAwarePaginator(
             $billed_meals_transformed,
             $total,
