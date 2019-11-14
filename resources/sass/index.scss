@@ -18,6 +18,23 @@
     animation: spin 2s linear infinite;
 }
 
+.processing{
+    animation: blink 2s infinite;
+}
+
+@keyframes blink{
+    0%{
+        background-color: buttonface;
+    }
+    50%{
+        background-color: rgb(168, 219, 91);
+    }
+
+    100%{
+        background-color: buttonface;
+    }
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

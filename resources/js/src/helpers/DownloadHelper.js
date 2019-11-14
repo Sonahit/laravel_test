@@ -28,7 +28,8 @@ export default class DownloadHelper {
         return head.concat(body).join("\n");
     }
 
-    downloadCSV() {
+    downloadCSV(button) {
+        button.classList.toggle("processing");
         const table = tableHelper.getTable();
         //If no table return
         if (!table) return;
@@ -54,6 +55,7 @@ export default class DownloadHelper {
                     delta
                 ];
             });
+            button.classList.toggle("processing");
             const csv = this.toCsv(tableHelper.values(tHead), tBody);
             const charset = getOS()
                 .toLowerCase()

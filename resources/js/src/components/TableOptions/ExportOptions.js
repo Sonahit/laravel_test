@@ -14,7 +14,7 @@ export default function ExportOptions(props) {
                 <button className="options__download__xml" onClick={() => downloadHelper.downloadXML()}>
                     Download XML
                 </button>
-                <button className="options__download__csv" onClick={() => downloadHelper.downloadCSV()}>
+                <button className="options__download__csv" onClick={({ target }) => downloadHelper.downloadCSV(target)}>
                     Download CSV
                 </button>
                 <button className="options__download__csv" onClick={() => props.fetchAllData()}>
