@@ -31,20 +31,25 @@ export default class App extends Component {
         this.handleRefresh = this.handleRefresh.bind(this);
         this.handleScroll = this.handleScroll.bind(this);
         this.setFetch = this.setFetch.bind(this);
+        this.rememberTable = this.rememberTable.bind(this);
     }
 
     componentDidMount() {
         const url = new URL(location.href);
-        const page = url.searchParams.get("page") || 1;
-        const paginate = url.searchParams.get("paginate") || 40;
+        const page = localStorage.getItem("page") || url.searchParams.get("page") || 1;
+        const paginate = localStorage.getItem("paginate") || url.searchParams.get("paginate") || 40;
         sessionStorage.setItem("paginate", paginate);
         sessionStorage.setItem("page", page);
-        this.fetchTable(page, paginate).then(({ pages, table }) => {
-            this.setState({
-                pages: pages,
-                fetch_table: table
+        const table = JSON.parse(localStorage.getItem("table"));
+        if (table) {
+            this.setState({ fetch_table: table });
+        } else {
+            this.fetchTable(page, paginate).then(({ table }) => {
+                this.setState({
+                    fetch_table: table
+                });
             });
-        });
+        }
         window.addEventListener("scroll", this.handleScroll);
     }
 
@@ -65,7 +70,29 @@ export default class App extends Component {
         this.setState({ external: { table: false, render: false } });
     }
 
+    rememberTable() {
+        localStorage.setItem("table", JSON.stringify(this.state.external.table || this.state.fetch_table));
+        localStorage.setItem("page", sessionStorage.getItem("page"));
+        localStorage.setItem("paginate", sessionStorage.getItem("paginate"));
+    }
+
+    forgetTable() {
+        localStorage.removeItem("paginate");
+        localStorage.removeItem("table");
+        localStorage.removeItem("page");
+    }
+
+    tableFromLocalStorage() {
+        const table = localStorage.getItem("table");
+        const page = localStorage.getItem("page");
+        return {
+            table,
+            page
+        };
+    }
+
     fetchAllData() {
+        sessionStorage.setItem("paginate", -1);
         this.setState({ external: { render: true } });
         this.fetchTable(1, -1).then(({ table }) => this.setState({ external: { table, render: true } }));
     }
@@ -152,9 +179,9 @@ export default class App extends Component {
 
     handleRefresh() {
         this.setState({ error: false });
-        this.fetchData(sessionStorage.getItem("page"), sessionStorage.getItem("paginate")).then(({ pages, table }) =>
-            this.setState({ pages, fetch_table: table })
-        );
+        const page = localStorage.getItem("page") || sessionStorage.getItem("page");
+        const paginate = localStorage.getItem("paginate") || sessionStorage.getItem("paginate");
+        this.fetchTable(1, paginate * page).then(({ pages, table }) => this.setState({ pages, fetch_table: table }));
     }
 
     render() {
@@ -177,6 +204,8 @@ export default class App extends Component {
                                     stopRenderImport={this.stopRenderImport}
                                     fetchAllData={this.fetchAllData}
                                     setFetch={this.setFetch}
+                                    rememberTable={this.rememberTable}
+                                    forgetTable={this.forgetTable}
                                 />
                             </Route>
                         ))}

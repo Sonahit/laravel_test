@@ -121,6 +121,9 @@ export default class Table extends Component {
                     fetchAllData={this.props.fetchAllData}
                     external={this.props.external}
                     resetAllFilters={this.resetAllFilters}
+                    rememberTable={this.props.rememberTable}
+                    refreshTable={this.props.handleRefresh}
+                    forgetTable={this.props.forgetTable}
                     reset={this.state.reset}
                 />
                 {this.props.table ? (
@@ -150,6 +153,8 @@ Table.propTypes = {
     stopRenderImport: PropTypes.func.isRequired,
     fetchAllData: PropTypes.func.isRequired,
     setFetch: PropTypes.func.isRequired,
+    rememberTable: PropTypes.func.isRequired,
+    forgetTable: PropTypes.func.isRequired,
     external: PropTypes.bool,
     error: PropTypes.any,
     isUpdating: PropTypes.bool

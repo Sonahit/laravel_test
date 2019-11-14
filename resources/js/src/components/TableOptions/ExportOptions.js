@@ -22,6 +22,15 @@ export default function ExportOptions(props) {
                 </button>
             </div>
             <div className="options__buttons">
+                <button className={`options__download__csv`} onClick={() => props.rememberTable()}>
+                    Remember Table
+                </button>
+                <button className={`options__download__csv`} onClick={() => props.forgetTable()}>
+                    Forget Table
+                </button>
+                <button className={`options__download__csv`} onClick={() => props.refreshTable()}>
+                    Refresh Table
+                </button>
                 <button className={`options__download__csv`} onClick={() => downloadHelper.tableToCsv()}>
                     Convert table to CSV
                 </button>
@@ -35,6 +44,9 @@ export default function ExportOptions(props) {
 
 ExportOptions.propTypes = {
     fetchAllData: PropTypes.func.isRequired,
+    rememberTable: PropTypes.func.isRequired,
+    forgetTable: PropTypes.func.isRequired,
+    refreshTable: PropTypes.func.isRequired,
     stopRenderImport: PropTypes.func,
     external: PropTypes.bool
 };

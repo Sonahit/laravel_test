@@ -1,6 +1,11 @@
 import React from "react";
 import App from "@src/App.js";
 import { render, fireEvent, cleanup } from "@testing-library/react";
+import data from "./__mocks__/fetchMock";
+
+beforeAll(() => {
+    fetch.mockResponse(data);
+});
 
 afterEach(() => {
     cleanup();

@@ -6,5 +6,7 @@ module.exports = {
         "^@src(.*)$": `${__dirname}/resources/js/src$1`,
         "^@helpers(.*)$": `${__dirname}/resources/js/src/helpers$1`
     },
-    setupFiles: ["./setupJest.js"]
+    automock: false,
+    setupFiles: ["./setupJest.js"],
+    setupFilesAfterEnv: ["./setupJest.js"]
 };

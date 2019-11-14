@@ -8,7 +8,7 @@ const TableBody = props => {
     const { table, filters, sort } = props;
     const tBody = filterTable(sortTable(table, sort), filters);
     return (
-        <tbody className="main-table__tbody">
+        <tbody role="table-body" className="main-table__tbody">
             {tBody.map((tr, i) => (
                 <TableElement key={i} {...tr} />
             ))}

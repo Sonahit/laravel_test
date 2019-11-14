@@ -26,7 +26,14 @@ const TableOptions = props => {
         <section className="options">
             <section className="options__filtering">{filtersMemo}</section>
             <section className="options__files">
-                <ExportOptions external={props.external} stopRenderImport={props.stopRenderImport} fetchAllData={props.fetchAllData} />
+                <ExportOptions
+                    external={props.external}
+                    stopRenderImport={props.stopRenderImport}
+                    fetchAllData={props.fetchAllData}
+                    rememberTable={props.rememberTable}
+                    forgetTable={props.forgetTable}
+                    refreshTable={props.refreshTable}
+                />
             </section>
         </section>
     );
@@ -44,6 +51,9 @@ TableOptions.propTypes = {
     stopRenderImport: PropTypes.func.isRequired,
     resetAllFilters: PropTypes.func.isRequired,
     fetchAllData: PropTypes.func.isRequired,
+    rememberTable: PropTypes.func.isRequired,
+    forgetTable: PropTypes.func.isRequired,
+    refreshTable: PropTypes.func.isRequired,
     external: PropTypes.bool,
     reset: PropTypes.bool
 };

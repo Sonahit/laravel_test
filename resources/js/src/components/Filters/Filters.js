@@ -29,7 +29,7 @@ const Filters = props => {
 
     const getFilter = key => props.filters[Object.keys(props.filters).find(k => k === key)];
     const filter = getFilter(filteringKey);
-    const {startValue = "", endValue = ""} = filter || {};
+    const { startValue = "", endValue = "" } = filter || {};
 
     const filtersMemo = useMemo(
         () => (
@@ -52,7 +52,7 @@ const Filters = props => {
             <div className="filtering">
                 <div className="filtering__wrapper">
                     <span style={{ marginRight: 5 }}>Фильтрация по</span>
-                    <select onChange={e => handleSelect(e)} className="filtering__select">
+                    <select role={"filters"} onChange={e => handleSelect(e)} className="filtering__select">
                         <option className={`${hasFilter("flight_date") ? "active" : "disabled"}`} defaultValue value="flight_date" method="date">
                             Датам
                         </option>
@@ -105,7 +105,7 @@ const FilteringMethod = ({ startValue, endValue, reset, method, filteringKey, ha
     if (method === "date") {
         return (
             <DateFiltering
-                startValue={startValue} 
+                startValue={startValue}
                 endValue={endValue}
                 method={method}
                 filteringKey={filteringKey}
@@ -118,7 +118,7 @@ const FilteringMethod = ({ startValue, endValue, reset, method, filteringKey, ha
     if (method === "string") {
         return (
             <StringFiltering
-                startValue={startValue} 
+                startValue={startValue}
                 endValue={endValue}
                 method={method}
                 filteringKey={filteringKey}
@@ -131,7 +131,7 @@ const FilteringMethod = ({ startValue, endValue, reset, method, filteringKey, ha
     if (method === "number") {
         return (
             <NumberFiltering
-                startValue={startValue} 
+                startValue={startValue}
                 endValue={endValue}
                 method={method}
                 filteringKey={filteringKey}
