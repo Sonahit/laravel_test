@@ -8,7 +8,7 @@ use App\Utils\Helpers\RequestHelper;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class BilledMealsController extends Controller
 {
@@ -22,7 +22,8 @@ class BilledMealsController extends Controller
         $query = RequestHelper::get_params_as_array($request, "paginate", "sort", "asc", "page");
         $paginate = $query['paginate'];
         $page = $query['page'];
-        if($paginate < 0 || !$paginate) $page = 1;
+        if($page > 1 && $paginate < 0) return $this->getResponse([], 204);
+        if($paginate === 0 || !$paginate || !$page) $page = 1;
         if(!$paginate) $paginate = 40;
         $key = "{$paginate}={$page}";
         $keyTotal = "{$paginate}=total";
@@ -31,20 +32,20 @@ class BilledMealsController extends Controller
             $billed_meals_transformed = json_decode(Cache::get($key));
             if($paginate < 0) return $this->getResponse(['pages' => $billed_meals_transformed], 200);
         } else {
-            $time = now()->addMinutes(2);
+            $cacheTime = now()->addMinutes(2);
             $billed_meals_collection = $this->getData($billed_meals, $query);
             $billed_meals_transformed = $billed_meals_collection
                 ->groupBy("flight_id")
                 ->formatByDate()
                 ->flatten(1);
-            Cache::put($key, json_encode($billed_meals_transformed), $time);
+            Cache::put($key, json_encode($billed_meals_transformed), $cacheTime);
             $end = now();
             $computeTime = abs($end->millisecond - $start->millisecond);
             if($billed_meals_collection instanceof Billed_Meals_Collection) {
-                Cache::put($keyTotal,$billed_meals_collection->count(), $time);
+                Cache::put($keyTotal,$billed_meals_collection->count(), $cacheTime);
                 return $this->getResponse(['pages' => $billed_meals_transformed, 'time' => $computeTime], 200);
             };
-            Cache::put($keyTotal,$billed_meals_collection->total(), $time);
+            Cache::put($keyTotal,$billed_meals_collection->total(), $cacheTime);
         }
         $end = now();
         $computeTime = abs($end->millisecond - $start->millisecond);
@@ -68,7 +69,8 @@ class BilledMealsController extends Controller
     }
 
     protected function getResponse($data, int $code){
-        return new Response(json_encode($data), $code,['Content-Type' => "application/json"]);
+        Log::info("Sending response", ['code' => $code]);
+        return new Response(json_encode($data), $code, ['Content-Type' => "application/json"]);
     }
     
     /**
@@ -76,8 +78,8 @@ class BilledMealsController extends Controller
      */
     public function getData(Billed_Meals $billed_meals, array $query)
     {
-        $paginate = $query["paginate"];
-        $asc = $query["asc"];
+        $paginate = intval($query["paginate"]);
+        $asc = boolval($query["asc"]);
         if(!$paginate) $paginate = $billed_meals->getPerPage();
         if(!$asc) $asc = 1;
 
@@ -127,6 +129,7 @@ class BilledMealsController extends Controller
      */
     public function show()
     {
+        Log::info('Serving index.php');
         return view("index");
     }   
 }
