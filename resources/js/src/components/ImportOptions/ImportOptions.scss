@@ -5,6 +5,21 @@
 }
 
 .import{
+  &__button{
+    font-size: 14px;
+    padding: 5px;
+    background-color: rgb(226, 226, 226);
+    color: black;
+  
+    transition: all .5s;
+    cursor: pointer;
+    white-space: nowrap;
+    &:hover{
+      background-color: rgb(148, 148, 148);
+      color: white;
+      transition: all .5s;
+    }
+  }
   &__form{
     @include flex();
     margin: 20px 20px 0px 20px;

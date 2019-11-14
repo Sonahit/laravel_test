@@ -3,7 +3,11 @@ import React from "react";
 import { render, fireEvent, cleanup, wait } from "@testing-library/react";
 import App from "@src/App.js";
 
+import { Router } from "react-router-dom";
+import { createMemoryHistory } from "history";
+
 import data from "./__mocks__/fetchMock";
+import csv from "./__mocks__/csvMock";
 
 beforeAll(() => {
     fetch.mockResponse(data);
@@ -65,11 +69,24 @@ describe("when has data", () => {
 });
 
 describe("import data", () => {
-    test("should navigate to /import and get data from import", () => {
-        expect(2).toBe(2);
-    });
-
-    test("should replace main table with import data", () => {
-        expect(2).toBe(2);
+    test("should upload csv file", () => {
+        const app = render(<App />);
+        fireEvent.click(app.getByText("Import"));
+        return wait(() => app.rerender(<App />)).then(() => {
+            expect(location.href).toMatch("import");
+            const file = new File([csv], "csv", {
+                type: "text/csv"
+            });
+            const input = app.getByLabelText("Choose File");
+            fireEvent.click(input, "files", {
+                value: [file]
+            });
+            expect(input.value).toBeDefined();
+            const impBtn = app.getByRole("import");
+            fireEvent.click(impBtn);
+            expect(location.href).not.toMatch("import");
+            app.rerender(<App />);
+            expect(app.getByRole("table-body").children.length).toBeGreaterThan(1);
+        });
     });
 });

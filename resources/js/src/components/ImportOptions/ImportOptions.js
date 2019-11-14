@@ -14,14 +14,21 @@ function ImportOptions(props) {
                     <legend>Import CSV to Table</legend>
                     <section className="import__options">
                         <div className="import__options__choose">
-                            <button className="import__options__csv" onClick={() => importCSV(props.handleImportCSV)}>
+                            <label htmlFor="input_csv" className="import__button">
                                 Choose File
-                            </button>
-                            <input id="input_csv" type="file" className="hidden" />
+                            </label>
+                            <input
+                                id="input_csv"
+                                type="file"
+                                className="hidden"
+                                onChange={function(e) {
+                                    handleSelectCSV.call(this, e, props.handleImportCSV);
+                                }}
+                            />
                             <span className="import__data">Choose file</span>
                         </div>
                         <div className="import__reset">
-                            <button className="import__options__csv" onClick={() => props.history.push("/")}>
+                            <button role="import" className="import__options__button" onClick={() => props.history.push("/")}>
                                 Import
                             </button>
                             <button
@@ -47,12 +54,6 @@ ImportOptions.propTypes = {
     handleImportCSV: PropTypes.func.isRequired,
     stopRenderImport: PropTypes.func.isRequired,
     history: PropTypes.object
-};
-
-const importCSV = handleImport => {
-    const input_csv = document.getElementById("input_csv");
-    input_csv.addEventListener("change", e => handleSelectCSV.call(this, e, handleImport));
-    input_csv.click();
 };
 
 const clearImport = () => {
