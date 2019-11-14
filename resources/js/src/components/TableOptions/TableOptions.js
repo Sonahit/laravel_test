@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import "./TableOptions.scss";
 
-import Filters from "../Filters/Filters";
+import Filters from "@components/Filters/Filters";
 import ExportOptions from "./ExportOptions";
 
 const TableOptions = props => {

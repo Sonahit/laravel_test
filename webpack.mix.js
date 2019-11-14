@@ -12,7 +12,9 @@ const fs = require("fs");
  */
 require("laravel-mix-alias");
 mix.alias({
-    "@helpers": "resources/js/src/helpers"
+    "@helpers": "resources/js/src/helpers",
+    "@handlers": "resources/js/src/handlers",
+    "@components": "resources/js/src/components"
 });
 
 mix.react("resources/js/app.js", "public/js");

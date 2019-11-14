@@ -5,12 +5,12 @@ import PropTypes from "prop-types";
 
 import "./App.scss";
 
-import Nav from "./components/Nav/Nav.js";
+import Nav from "@components/Nav/Nav.js";
 import routes from "./routes.js";
 
 import ApiHelper from "@helpers/ApiHelper";
 import TableHelper from "@helpers/TableHelper.js";
-import ErrorHandler from "@helpers/ErrorHandler.js";
+import ErrorHandler from "@handlers/ErrorHandler.js";
 
 const apiHelper = new ApiHelper();
 

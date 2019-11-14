@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import ApiHelper from "./ApiHelper";
+import ApiHelper from "@helpers/ApiHelper";
 
 export default class ErrorHandler extends Component {
     constructor(props) {

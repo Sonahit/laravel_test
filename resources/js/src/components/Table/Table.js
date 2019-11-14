@@ -6,8 +6,8 @@ import "./Table.scss";
 
 import TableBody from "./TableBody";
 import TableHead from "./TableHead";
-import TableOptions from "../TableOptions/TableOptions";
-import Modal from "../Modal/Modal.js";
+import TableOptions from "@components/TableOptions/TableOptions";
+import Modal from "@components/Modal/Modal.js";
 import tHead from "./headRows.js";
 
 export default class Table extends Component {
