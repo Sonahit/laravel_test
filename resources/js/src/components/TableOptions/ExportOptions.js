@@ -22,21 +22,27 @@ export default function ExportOptions(props) {
                 </button>
             </div>
             <div className="options__buttons">
-                <button className={`options__download__csv`} onClick={() => props.rememberTable()}>
-                    Remember Table
-                </button>
-                <button className={`options__download__csv`} onClick={() => props.forgetTable()}>
-                    Forget Table
-                </button>
+                {!localStorage.getItem("table") && (
+                    <button className={`options__download__csv`} onClick={() => props.rememberTable()}>
+                        Remember Table
+                    </button>
+                )}
+                {localStorage.getItem("table") && (
+                    <button className={`options__download__csv`} onClick={() => props.forgetTable()}>
+                        Forget Table
+                    </button>
+                )}
                 <button className={`options__download__csv`} onClick={() => props.refreshTable()}>
                     Refresh Table
                 </button>
                 <button className={`options__download__csv`} onClick={() => downloadHelper.tableToCsv()}>
                     Convert table to CSV
                 </button>
-                <button className={`options__download__csv ${!props.external ? "hidden" : ""}`} onClick={() => props.stopRenderImport()}>
-                    Delete import data
-                </button>
+                {props.external && (
+                    <button className={`options__download__csv`} onClick={() => props.stopRenderImport()}>
+                        Delete import data
+                    </button>
+                )}
             </div>
         </section>
     );

@@ -4,16 +4,15 @@ import PropTypes from "prop-types";
 
 const NumberFiltering = props => {
     const { filteringKey, method, startValue, endValue, reset } = props;
-    //TODO: fix filter //TOO MANY RERENDERS
     const [startNumber, setStartNumber] = useState(Number.MIN_SAFE_INTEGER);
     const [endNumber, setEndNumber] = useState(Number.MAX_SAFE_INTEGER);
     const [filter, setFilter] = useState(filteringKey);
-    if(filter !== filteringKey){
+    if (filter !== filteringKey) {
         setFilter(filteringKey);
         setStartNumber(isNaN(parseInt(startValue)) ? Number.MIN_SAFE_INTEGER : startValue);
         setEndNumber(isNaN(parseInt(endValue)) ? Number.MAX_SAFE_INTEGER : endValue);
     }
-    if(reset){
+    if (reset) {
         if (startNumber !== Number.MIN_SAFE_INTEGER) {
             setStartNumber(Number.MIN_SAFE_INTEGER);
         }
@@ -22,34 +21,34 @@ const NumberFiltering = props => {
         }
     }
     useEffect(() => {
-        if(startNumber === '-' || endNumber === '-') return;
+        if (startNumber === "-" || endNumber === "-") return;
 
         if (isNaN(startNumber)) {
             props.handleFilterReset(filteringKey);
         } else {
             props.handleFilterValue(filteringKey, method, startNumber, endNumber, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
-        } 
-    })
+        }
+    });
 
-    const handleStartValue = ({target}) => {
-        if(target.value === '-'){
+    const handleStartValue = ({ target }) => {
+        if (target.value === "-") {
             setStartNumber(target.value);
         } else {
             const v = parseInt(target.value);
             const start = v <= endNumber ? v : endNumber;
-            setStartNumber(!isNaN(v) ? start : Number.MIN_SAFE_INTEGER );
-        } 
-    }
+            setStartNumber(!isNaN(v) ? start : Number.MIN_SAFE_INTEGER);
+        }
+    };
 
-    const handleEndValue = ({target}) => {
-        if(target.value === '-') {
-            setEndNumber(target.value)
+    const handleEndValue = ({ target }) => {
+        if (target.value === "-") {
+            setEndNumber(target.value);
         } else {
             const v = parseInt(target.value);
             const end = v >= startNumber ? v : startNumber;
-            setEndNumber(!isNaN(v) ? end : Number.MAX_SAFE_INTEGER );
+            setEndNumber(!isNaN(v) ? end : Number.MAX_SAFE_INTEGER);
         }
-    }
+    };
     return (
         <div className="flex_wrapper">
             <div className="input_wrapper">

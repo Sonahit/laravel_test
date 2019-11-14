@@ -32,6 +32,7 @@ export default class App extends Component {
         this.handleScroll = this.handleScroll.bind(this);
         this.setFetch = this.setFetch.bind(this);
         this.rememberTable = this.rememberTable.bind(this);
+        this.forgetTable = this.forgetTable.bind(this);
     }
 
     componentDidMount() {
@@ -74,12 +75,14 @@ export default class App extends Component {
         localStorage.setItem("table", JSON.stringify(this.state.external.table || this.state.fetch_table));
         localStorage.setItem("page", sessionStorage.getItem("page"));
         localStorage.setItem("paginate", sessionStorage.getItem("paginate"));
+        this.forceUpdate();
     }
 
     forgetTable() {
         localStorage.removeItem("paginate");
         localStorage.removeItem("table");
         localStorage.removeItem("page");
+        this.forceUpdate();
     }
 
     tableFromLocalStorage() {
