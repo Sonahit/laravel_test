@@ -30,7 +30,11 @@ class BilledMealsController extends Controller
         $start = now();
         if(Cache::has($key) && Cache::has($keyTotal)){
             $billed_meals_transformed = json_decode(Cache::get($key));
-            if($paginate < 0) return $this->getResponse(['pages' => $billed_meals_transformed], 200);
+            if($paginate < 0){
+                return $this->getResponse([
+                    'pages' => $billed_meals_transformed
+                ], 200);
+            }
         } else {
             $cacheTime = now()->addMinutes(2);
             $billed_meals_collection = $this->getData($billed_meals, $query);
@@ -43,7 +47,10 @@ class BilledMealsController extends Controller
             $computeTime = abs($end->millisecond - $start->millisecond);
             if($billed_meals_collection instanceof Billed_Meals_Collection) {
                 Cache::put($keyTotal,$billed_meals_collection->count(), $cacheTime);
-                return $this->getResponse(['pages' => $billed_meals_transformed, 'time' => $computeTime], 200);
+                return $this->getResponse([
+                    'pages' => $billed_meals_transformed,
+                    'time' => $computeTime
+                ], 200);
             };
             Cache::put($keyTotal,$billed_meals_collection->total(), $cacheTime);
         }
