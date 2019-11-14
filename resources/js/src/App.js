@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
 
 import "./App.scss";
 
@@ -9,13 +10,15 @@ import routes from "./routes.js";
 
 import ApiHelper from "@helpers/ApiHelper";
 import TableHelper from "@helpers/TableHelper.js";
+import ErrorHandler from "@helpers/ErrorHandler.js";
+
 const apiHelper = new ApiHelper();
 
 export default class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            fetch_table: false,
+            fetch_table: false || this.props.initTable,
             error: false,
             isUpdating: false,
             isFiltering: false,
@@ -114,11 +117,18 @@ export default class App extends Component {
             sessionStorage.setItem("page", nextPage);
             this.setState({ isUpdating: true });
             this.fetchTable(nextPage, sessionStorage.getItem("paginate")).then(({ pages, table }) => {
-                this.setState(prevState => ({
-                    pages,
-                    fetch_table: this.group(prevState.fetch_table, table),
-                    isUpdating: false
-                }));
+                this.setState(prevState => {
+                    const fetch_table = this.group(prevState.fetch_table, table);
+                    if (localStorage.getItem("table")) {
+                        localStorage.setItem("table", JSON.stringify(fetch_table));
+                        localStorage.setItem("page", nextPage);
+                    }
+                    return {
+                        pages,
+                        fetch_table,
+                        isUpdating: false
+                    };
+                });
             });
         }
     }
@@ -219,7 +229,16 @@ export default class App extends Component {
     }
 }
 
+App.propTypes = {
+    initTable: PropTypes.any
+};
+
 const el = document.querySelector("#root");
 if (el) {
-    ReactDOM.render(<App />, el);
+    ReactDOM.render(
+        <ErrorHandler>
+            <App />
+        </ErrorHandler>,
+        el
+    );
 }
