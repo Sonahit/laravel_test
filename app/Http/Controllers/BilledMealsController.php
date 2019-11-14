@@ -116,9 +116,6 @@ class BilledMealsController extends Controller
             })
             ->with($relations)
             ->sort($asc);
-        // dd($billed_meals_collect);
-        // $test = $billed_meals_collect->paginate($paginate);
-        // dd($test);
         if($paginate < 1) return $billed_meals_collect->get();
         return $billed_meals_collect->paginate($paginate);
     }    

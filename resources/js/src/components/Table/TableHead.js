@@ -3,13 +3,13 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const TableHead = props => {
-    const thead = props.tHead;
+    const { tHead, handleSort } = props;
     return (
         <thead className="main-table__thead">
-            {thead.map((tr, i) => (
+            {tHead.map((tr, i) => (
                 <tr key={`${tr.length}__${i}`}>
                     {tr.map((th, j) => (
-                        <Th key={`${i}_${j}`} handleSort={props.handleSort} {...th} />
+                        <Th key={`${i}_${j}`} handleSort={handleSort} {...th} />
                     ))}
                 </tr>
             ))}
@@ -25,7 +25,15 @@ TableHead.propTypes = {
 };
 
 const Th = props => {
-    const { sortable, type, dataSort, text, colSpan, rowSpan, handleSort } = props;
+    const {
+        sortable,
+        type,
+        dataSort,
+        text,
+        colSpan,
+        rowSpan,
+        handleSort
+    } = props;
     return (
         <th
             className={sortable ? "main-table__th--sortable" : "main-table__th"}
@@ -33,7 +41,11 @@ const Th = props => {
             data-sort={dataSort || ""}
             rowSpan={rowSpan || 1}
             colSpan={colSpan || 1}
-            onClick={sortable ? e => handleSort(e, type, dataSort) : e => handleSort(e, false, false)}
+            onClick={
+                sortable
+                    ? e => handleSort(e, type, dataSort)
+                    : e => handleSort(e, false, false)
+            }
         >
             <span className={sortable ? "asc" : ""}>{text}</span>
         </th>

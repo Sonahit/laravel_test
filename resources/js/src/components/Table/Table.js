@@ -45,7 +45,9 @@ export default class Table extends Component {
 
     handleSort(e, method, dataSort) {
         if (!method || !dataSort) return;
-        this.setState({ sort: { method, dataSort, asc: changeArrowDirection(e) } });
+        this.setState({
+            sort: { method, dataSort, asc: changeArrowDirection(e) }
+        });
     }
 
     handleFilterReset(key) {
@@ -211,11 +213,9 @@ function toDesc(node) {
 }
 
 function active(node) {
-    if (!node.classList.contains("active")) {
-        const prevActive = document.getElementsByClassName("active")[0];
-        if (prevActive) {
-            prevActive.classList.remove("active");
-        }
-        node.classList.add("active");
+    const prevActive = Array.from(document.getElementsByClassName("active"));
+    if (prevActive) {
+        prevActive.forEach(prev => prev.classList.remove("active"));
     }
+    node.classList.toggle("active");
 }
