@@ -102,8 +102,8 @@ export default class App extends Component {
 
     handleScroll() {
         const scroll = window.scrollY;
-        const height = document.body.clientHeight;
-        const doUpdate = (scroll, height) => scroll > height * 0.7;
+        const height = document.querySelector(".main-table").clientHeight;
+        const doUpdate = (scroll, height) => scroll > height * 0.5;
         const { external, error, isFiltering, shouldUpdate } = this.state;
         //If application neither filtering
         // nor filtering
@@ -135,7 +135,7 @@ export default class App extends Component {
                     return {
                         fetch_table,
                         isUpdating: false,
-                        error: false,
+                        error: false
                     };
                 });
             });
