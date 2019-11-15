@@ -102,8 +102,8 @@ export default class App extends Component {
 
     handleScroll() {
         const scroll = window.scrollY;
-        const height = window.innerHeight;
-        const doUpdate = (scroll, height) => scroll > height * 0.9;
+        const height = document.body.clientHeight;
+        const doUpdate = (scroll, height) => scroll > height * 0.7;
         const { external, error, isFiltering, shouldUpdate } = this.state;
         //If application neither filtering
         // nor filtering
@@ -118,11 +118,12 @@ export default class App extends Component {
             this.fetchTable(nextPage, sessionStorage.getItem("paginate")).then(data => {
                 this.setState(prevState => {
                     //If no data from api
-                    if (!data && !data.table) {
+                    if (!data || !data.table) {
                         return {
+                            error: false,
                             fetch_table: prevState.fetch_table,
                             isUpdating: false,
-                            noUpdate: true
+                            shouldUpdate: false
                         };
                     }
                     const { table } = data;
@@ -133,7 +134,8 @@ export default class App extends Component {
                     }
                     return {
                         fetch_table,
-                        isUpdating: false
+                        isUpdating: false,
+                        error: false,
                     };
                 });
             });
@@ -141,6 +143,7 @@ export default class App extends Component {
     }
 
     group(prevTable, table) {
+        if (!prevTable || !table) return prevTable;
         const concatLast = (minus, prevTable, table) => prevTable.slice(prevTable.length - minus, prevTable.length).concat(table);
         const groupBy = (xs, key) => {
             return xs.reduce((rv, x) => {

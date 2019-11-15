@@ -23,6 +23,7 @@ export class ApiHelper {
         })
             .then(data => {
                 this.isFetching = false;
+                if (data.status === 204) return [];
                 if (data.ok) return data.json();
                 throw new Error(data.statusText);
             })
