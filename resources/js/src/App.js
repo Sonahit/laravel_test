@@ -92,7 +92,7 @@ export default class App extends Component {
     fetchAllData() {
         const paginate = -1;
         sessionStorage.setItem("paginate", paginate);
-        this.setState({ fetch_table: false });
+        this.setState({ fetch_table: false, isUpdating: false });
         this.fetchTable(1, paginate).then(({ table }) => this.setState({ fetch_table: table }));
     }
 
@@ -102,7 +102,7 @@ export default class App extends Component {
 
     handleScroll() {
         const scroll = window.scrollY;
-        const height = document.querySelector(".main-table").clientHeight;
+        const height = document.querySelector(".main-table").clientHeight || document.body.clientHeight;
         const doUpdate = (scroll, height) => scroll > height * 0.5;
         const { external, error, isFiltering, shouldUpdate } = this.state;
         //If application neither filtering
