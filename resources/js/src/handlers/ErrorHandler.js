@@ -13,7 +13,7 @@ export default class ErrorHandler extends Component {
         const url = new URL(location.href);
         const page = localStorage.getItem("page") || url.searchParams.get("page") || 1;
         const paginate = localStorage.getItem("paginate") || url.searchParams.get("paginate") || 40;
-        return apiHelper
+        apiHelper
             .get(`/billed_meals`, [
                 {
                     key: "paginate",

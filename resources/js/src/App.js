@@ -110,7 +110,7 @@ export default class App extends Component {
         // nor has error
         // nor api is already fetching data
         // nor fetched the last chunk of data
-        if (!shouldUpdate && !error && !external.render && !isFiltering && !apiHelper.isFetching && doUpdate(scroll, height)) {
+        if (shouldUpdate && !error && !external.render && !isFiltering && !apiHelper.isFetching && doUpdate(scroll, height)) {
             apiHelper.isFetching = true;
             const nextPage = parseInt(sessionStorage.getItem("page")) + 1;
             sessionStorage.setItem("page", nextPage);
