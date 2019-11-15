@@ -6,7 +6,7 @@ const StringFiltering = props => {
     const { filteringKey, method, startValue, reset } = props;
     const [string, setString] = useState("");
     const [filter, setFilter] = useState(filteringKey);
-    if(filter !== filteringKey){
+    if (filter !== filteringKey) {
         setFilter(filteringKey);
         setString(startValue);
     }
@@ -19,7 +19,8 @@ const StringFiltering = props => {
         } else {
             props.handleFilterValue(filteringKey, method, string, "", "", "");
         }
-    });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filteringKey, string]);
     return (
         <div className="input_container">
             <div className="input_wrapper">

@@ -181,15 +181,10 @@ export default class App extends Component {
             ])
             .then(response => {
                 const pages = response.pages;
-                let table = "";
                 if (!Array.isArray(pages)) {
-                    table = pages.data;
-                } else {
-                    table = pages;
+                    return { table: pages.data };
                 }
-                return {
-                    table: table || []
-                };
+                return { table: pages || [] };
             })
             .catch(e => {
                 this.setState({ error: e.message });

@@ -28,7 +28,8 @@ const NumberFiltering = props => {
         } else {
             props.handleFilterValue(filteringKey, method, startNumber, endNumber, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
         }
-    });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filteringKey, startNumber, endNumber]);
 
     const handleStartValue = ({ target }) => {
         if (target.value === "-") {

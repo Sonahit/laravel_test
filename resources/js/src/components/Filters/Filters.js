@@ -7,7 +7,62 @@ import { DateFiltering, StringFiltering, NumberFiltering } from "./Filtering.js"
 
 const Filters = props => {
     const [filteringKey, setFilteringKey] = useState("flight_date");
-
+    const options = [
+        {
+            value: "flight_date",
+            defaultValue: true,
+            method: "date",
+            text: "Датам"
+        },
+        {
+            value: "flight_id",
+            defaultValue: false,
+            method: "number",
+            text: "Номеру полёта"
+        },
+        {
+            value: "plan_code",
+            defaultValue: false,
+            method: "string",
+            text: "Коду план"
+        },
+        {
+            value: "fact_code",
+            defaultValue: false,
+            method: "string",
+            text: "Коду факт"
+        },
+        {
+            value: "plan_qty",
+            defaultValue: false,
+            method: "number",
+            text: "Количеству план"
+        },
+        {
+            value: "fact_qty",
+            defaultValue: false,
+            method: "number",
+            text: "Количеству факт"
+        },
+        {
+            value: "plan_price",
+            defaultValue: false,
+            method: "number",
+            text: "Цене план"
+        },
+        {
+            value: "fact_price",
+            defaultValue: false,
+            method: "number",
+            text: "Цене факт"
+        },
+        {
+            value: "delta",
+            defaultValue: false,
+            method: "number",
+            text: "Дельте"
+        }
+    ];
     const handleSelect = ({ target }) => {
         const option = Array.from(target.children).find(option => option.selected === true);
         const key = option.getAttribute("value");
@@ -52,34 +107,23 @@ const Filters = props => {
             <div className="filtering">
                 <div className="filtering__wrapper">
                     <span style={{ marginRight: 5 }}>Фильтрация по</span>
-                    <select role={"filters"} onChange={e => handleSelect(e)} className="filtering__select">
-                        <option className={`${hasFilter("flight_date") ? "active" : "disabled"}`} defaultValue value="flight_date" method="date">
-                            Датам
-                        </option>
-                        <option className={`${hasFilter("flight_id") ? "active" : "disabled"}`} value="flight_id" method="number">
-                            Номеру полёта
-                        </option>
-                        <option className={`${hasFilter("plan_code") ? "active" : "disabled"}`} value="plan_code" method="string">
-                            Коду план
-                        </option>
-                        <option className={`${hasFilter("plan_qty") ? "active" : "disabled"}`} value="plan_qty" method="number">
-                            Количество план
-                        </option>
-                        <option className={`${hasFilter("plan_price") ? "active" : "disabled"}`} value="plan_price" method="number">
-                            Цене план
-                        </option>
-                        <option className={`${hasFilter("fact_code") ? "active" : "disabled"}`} value="fact_code" method="string">
-                            Коду факт
-                        </option>
-                        <option className={`${hasFilter("fact_qty") ? "active" : "disabled"}`} value="fact_qty" method="number">
-                            Количеству факт
-                        </option>
-                        <option className={`${hasFilter("fact_price") ? "active" : "disabled"}`} value="fact_price" method="number">
-                            Цене факт
-                        </option>
-                        <option className={`${hasFilter("delta") ? "active" : "disabled"}`} value="delta" method="number">
-                            Дельте
-                        </option>
+                    {/* prettier-ignore */}
+                    <select 
+                        role={"filters"} 
+                        onChange={e => handleSelect(e)} 
+                        className="filtering__select"
+                        selected={options[0].value}
+                    >
+                        {options.map((option => (
+                            <option 
+                                key={`${option.value}_${option.method}`} 
+                                className={`${hasFilter(option.value) ? "active" : "disabled"}`}  
+                                value={option.value} 
+                                method={option.method}
+                            >
+                                {option.text}
+                            </option>
+                        )))} 
                     </select>
                 </div>
                 <button onClick={handleResetAllFilters}>Обнулить все фильтры</button>
