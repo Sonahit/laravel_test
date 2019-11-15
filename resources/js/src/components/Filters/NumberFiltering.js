@@ -25,6 +25,12 @@ const NumberFiltering = props => {
 
         if (isNaN(startNumber)) {
             props.handleFilterReset(filteringKey);
+        } else if (startNumber >= endNumber) {
+            const end = endNumber >= startNumber ? endNumber : Number.MAX_SAFE_INTEGER;
+            props.handleFilterValue(filteringKey, method, startNumber, end, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
+        } else if (endNumber <= startNumber) {
+            const start = startNumber <= endNumber ? startNumber : Number.MIN_SAFE_INTEGER;
+            props.handleFilterValue(filteringKey, method, start, endNumber, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
         } else {
             props.handleFilterValue(filteringKey, method, startNumber, endNumber, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
         }
@@ -36,8 +42,7 @@ const NumberFiltering = props => {
             setStartNumber(target.value);
         } else {
             const v = parseInt(target.value);
-            const start = v <= endNumber ? v : endNumber;
-            setStartNumber(!isNaN(v) ? start : Number.MIN_SAFE_INTEGER);
+            setStartNumber(!isNaN(v) ? v : Number.MIN_SAFE_INTEGER);
         }
     };
 
@@ -46,8 +51,7 @@ const NumberFiltering = props => {
             setEndNumber(target.value);
         } else {
             const v = parseInt(target.value);
-            const end = v >= startNumber ? v : startNumber;
-            setEndNumber(!isNaN(v) ? end : Number.MAX_SAFE_INTEGER);
+            setEndNumber(!isNaN(v) ? v : Number.MAX_SAFE_INTEGER);
         }
     };
     return (
