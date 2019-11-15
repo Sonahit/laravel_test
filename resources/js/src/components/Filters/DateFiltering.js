@@ -11,13 +11,13 @@ const DateFiltering = props => {
     const [startDate, setStartDate] = useState(new Date("2017/01/01"));
     const [endDate, setEndDate] = useState(new Date(new Date().setHours(0, 0, 0)));
     const [filter, setFilter] = useState(filteringKey);
-    if(filter !== filteringKey){
+    if (filter !== filteringKey) {
         setFilter(filteringKey);
         setStartDate(startValue);
         setEndDate(endValue);
     }
     if (!initEndDate) initEndDate = endDate;
-    if(reset){
+    if (reset) {
         if (startDate.toString() !== new Date("2017/01/01").toString()) {
             setStartDate(new Date("2017/01/01"));
         }
@@ -31,7 +31,8 @@ const DateFiltering = props => {
         } else {
             props.handleFilterValue(filteringKey, method, startDate, endDate || initEndDate, new Date("2017/01/01"), initEndDate);
         }
-    });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filteringKey, startDate, endDate]);
     const dateFormat = "yyyy-MM-dd";
     return (
         <div className="options__datepicker__render">

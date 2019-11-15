@@ -3,9 +3,6 @@ import React from "react";
 import { render, fireEvent, cleanup, wait } from "@testing-library/react";
 import App from "@src/App.js";
 
-import { Router } from "react-router-dom";
-import { createMemoryHistory } from "history";
-
 import data from "./__mocks__/fetchMock";
 import csv from "./__mocks__/csvMock";
 
