@@ -213,7 +213,7 @@ export default class Table extends Component {
           forgetTable={forgetTable}
           reset={reset}
         />
-        {table ? (
+        {Array.isArray(table) && table.length > 0 ? (
           <table className="main-table">
             <TableHead tHead={tHead} handleSort={this.handleSort} />
             <TableBody sort={sort} filters={filters} table={table} />
