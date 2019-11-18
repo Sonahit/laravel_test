@@ -94,7 +94,7 @@ export default class DownloadHelper {
   downloadPDF(button) {
     const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     button.classList.toggle('processing');
-    fetch(`${location.origin}/api/v1/pdf?pagination=-1&page=1`, {
+    fetch(`${location.origin}/api/v1/pdf?paginate=-1&page=1`, {
       method: 'POST',
       headers: {
         'X-CSRF-TOKEN': token,
@@ -123,11 +123,7 @@ export default class DownloadHelper {
     download.style.display = 'none';
     download.download = name;
     document.body.appendChild(download);
-    if (type.includes('pdf')) {
-      download.href = `${type},${encodeURI(data)}`;
-    } else {
-      download.href = `${type},${data}`;
-    }
+    download.href = `${type},${data}`;
     download.click();
     document.body.removeChild(download);
   }
