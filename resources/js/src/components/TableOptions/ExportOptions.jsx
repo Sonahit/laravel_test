@@ -1,0 +1,89 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import DownloadHelper from '@helpers/DownloadHelper';
+
+const downloadHelper = new DownloadHelper();
+
+export default function ExportOptions(props) {
+  return (
+    <section className="options__download">
+      <div className="options__buttons">
+        <button
+          type="button"
+          className="options__button options__download__pdf"
+          onClick={() => downloadHelper.downloadPDF()}
+        >
+          Download PDF
+        </button>
+        <button
+          type="button"
+          className="options__button options__download__csv"
+          onClick={({ target }) => downloadHelper.downloadCSV(target)}
+        >
+          Download CSV
+        </button>
+        <button
+          type="button"
+          className="options__button options__download__csv"
+          onClick={() => props.fetchAllData()}
+        >
+          Get all meals
+        </button>
+      </div>
+      <div className="options__buttons">
+        {!localStorage.getItem('table') && (
+          <button
+            type="button"
+            className="options__button options__download__csv"
+            onClick={() => props.rememberTable()}
+          >
+            Remember Table
+          </button>
+        )}
+        {localStorage.getItem('table') && (
+          <button
+            type="button"
+            className="options__button options__download__csv"
+            onClick={() => props.forgetTable()}
+          >
+            Forget Table
+          </button>
+        )}
+        <button
+          type="button"
+          className="options__button options__download__csv"
+          onClick={() => props.refreshTable()}
+        >
+          Refresh Table
+        </button>
+        <button
+          type="button"
+          className="options__button options__download__csv"
+          onClick={() => downloadHelper.tableToCsv()}
+        >
+          Convert table to CSV
+        </button>
+        {/* eslint-disable-next-line react/destructuring-assignment */}
+        {props.external && (
+          <button
+            type="button"
+            className="options__button options__download__csv"
+            onClick={() => props.stopRenderImport()}
+          >
+            Delete import data
+          </button>
+        )}
+      </div>
+    </section>
+  );
+}
+
+ExportOptions.propTypes = {
+  fetchAllData: PropTypes.func.isRequired,
+  rememberTable: PropTypes.func.isRequired,
+  forgetTable: PropTypes.func.isRequired,
+  refreshTable: PropTypes.func.isRequired,
+  external: PropTypes.bool.isRequired,
+  stopRenderImport: PropTypes.func.isRequired
+};
