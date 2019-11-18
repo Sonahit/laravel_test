@@ -55,7 +55,7 @@ function ImportOptions(props) {
         props.stopRenderImport();
     };
 
-    const inputHasText = (selector, text) => {
+    const inputDoesntHaveText = (selector, text) => {
         if (!document.querySelector(selector)) return true;
         return document.querySelector(selector).innerText.includes(text);
     };
@@ -84,7 +84,7 @@ function ImportOptions(props) {
                             <button
                                 role="import"
                                 className="import__button"
-                                disabled={inputHasText(".import__data", "Choose file")}
+                                disabled={inputDoesntHaveText(".import__data", "Choose file")}
                                 onClick={() => props.history.push("/")}
                             >
                                 Import
@@ -92,7 +92,7 @@ function ImportOptions(props) {
                             <button
                                 className="import__button import__options__delete"
                                 onClick={clearImport}
-                                disabled={inputHasText(".import__data", "Choose file")}
+                                disabled={inputDoesntHaveText(".import__data", "Choose file")}
                             >
                                 Delete Import CSV
                             </button>
