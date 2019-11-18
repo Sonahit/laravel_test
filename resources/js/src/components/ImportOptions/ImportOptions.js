@@ -84,7 +84,7 @@ function ImportOptions(props) {
                             <button
                                 role="import"
                                 className="import__button"
-                                disabled={inputHasText(".import__data", "Choose File")}
+                                disabled={inputHasText(".import__data", "Choose file")}
                                 onClick={() => props.history.push("/")}
                             >
                                 Import
@@ -92,7 +92,7 @@ function ImportOptions(props) {
                             <button
                                 className="import__button import__options__delete"
                                 onClick={clearImport}
-                                disabled={inputHasText(".import__data", "Choose File")}
+                                disabled={inputHasText(".import__data", "Choose file")}
                             >
                                 Delete Import CSV
                             </button>
