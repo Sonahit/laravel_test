@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './TableOptions.scss';
 
 import Filters from '@components/Filters/Filters';
-import ExportOptions from './ExportOptions';
+import Buttons from './Buttons';
 
 const TableOptions = props => {
   const {
@@ -43,7 +43,7 @@ const TableOptions = props => {
     <section className="options">
       <section className="options__filtering">{filtersMemo}</section>
       <section className="options__files">
-        <ExportOptions
+        <Buttons
           external={external}
           stopRenderImport={stopRenderImport}
           fetchAllData={fetchAllData}
