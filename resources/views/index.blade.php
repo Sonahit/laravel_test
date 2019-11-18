@@ -18,7 +18,7 @@
   <title>S7</title>
 </head>
 <body>
-  <noscript></noscript>
+  <noscript>Enable javascript to view this website</noscript>
   <div id="root"></div>
   <script src="js/app.js"></script>
 </body>

@@ -11,9 +11,6 @@ export default function ExportOptions(props) {
                 <button className="options__download__pdf" onClick={() => downloadHelper.downloadPDF()}>
                     Download PDF
                 </button>
-                <button className="options__download__xml" onClick={() => downloadHelper.downloadXML()}>
-                    Download XML
-                </button>
                 <button className="options__download__csv" onClick={({ target }) => downloadHelper.downloadCSV(target)}>
                     Download CSV
                 </button>
