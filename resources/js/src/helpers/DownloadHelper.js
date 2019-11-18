@@ -94,7 +94,9 @@ export default class DownloadHelper {
   downloadPDF(button) {
     const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     button.classList.toggle('processing');
-    fetch(`${location.origin}/api/v1/pdf?paginate=-1&page=1`, {
+    const page = sessionStorage.getItem('page');
+    const paginate = sessionStorage.getItem('paginate');
+    fetch(`${location.origin}/api/v1/pdf?paginate=${paginate * page}&page=1`, {
       method: 'POST',
       headers: {
         'X-CSRF-TOKEN': token,
