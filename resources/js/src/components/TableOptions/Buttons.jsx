@@ -24,13 +24,15 @@ export default function Buttons(props) {
         >
           Download CSV
         </button>
-        <button
-          type="button"
-          className="options__button options__download__csv"
-          onClick={() => props.fetchAllData()}
-        >
-          Get all meals
-        </button>
+        {!external && (
+          <button
+            type="button"
+            className="options__button options__download__csv"
+            onClick={() => props.fetchAllData()}
+          >
+            Get all meals
+          </button>
+        )}
       </div>
       <div className="options__buttons">
         {!external && !localStorage.getItem('table') && (
