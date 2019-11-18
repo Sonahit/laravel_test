@@ -5,7 +5,7 @@ import DownloadHelper from '@helpers/DownloadHelper';
 
 const downloadHelper = new DownloadHelper();
 
-export default function ExportOptions(props) {
+export default function Buttons(props) {
   return (
     <section className="options__download">
       <div className="options__buttons">
@@ -79,7 +79,7 @@ export default function ExportOptions(props) {
   );
 }
 
-ExportOptions.propTypes = {
+Buttons.propTypes = {
   fetchAllData: PropTypes.func.isRequired,
   rememberTable: PropTypes.func.isRequired,
   forgetTable: PropTypes.func.isRequired,
