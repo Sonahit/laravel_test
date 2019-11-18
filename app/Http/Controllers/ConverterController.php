@@ -26,7 +26,7 @@ class ConverterController extends Controller
         $controller = new BilledMealsController();
         $resp = $controller->index($billed_Meals, $request);
         $data = json_decode($resp->content());
-        if($data->html){
+        if(!is_array($data->pages)){
             $body = $data->pages->data;
         } else {
             $body = $data->pages;

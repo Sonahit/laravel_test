@@ -13,7 +13,7 @@ export default function Buttons(props) {
         <button
           type="button"
           className="options__button options__download__pdf"
-          onClick={() => downloadHelper.downloadPDF()}
+          onClick={({ target }) => downloadHelper.downloadPDF(target)}
         >
           Download PDF
         </button>
