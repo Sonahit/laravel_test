@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 
@@ -6,7 +6,13 @@ import TableHelper from '@helpers/TableHelper';
 
 import './ImportOptions.scss';
 
+function useForceUpdate() {
+  const [value, setValue] = useState(true); // boolean state
+  return () => setValue(!value); // toggle the state to force render
+}
+
 function ImportOptions(props) {
+  const forceUpdate = useForceUpdate();
   const handleSelectCSV = (ev, handleImport) => {
     const select = new File([ev.target.files[0]], ev.target.files[0].name, {
       type: ev.target.files[0].type
@@ -44,6 +50,7 @@ function ImportOptions(props) {
             )} кбайт. Количество строк ${tBody.length}`;
             docInfo.innerText = text;
             document.querySelector('.import__reset').style.width = '100%';
+            forceUpdate();
           }
         }
       };
@@ -57,11 +64,13 @@ function ImportOptions(props) {
     document.querySelector('.import__data').innerText = 'Choose file';
     document.querySelector('.import__reset').style.width = 'inherit';
     props.stopRenderImport();
+    forceUpdate();
   };
 
   const inputDoesntHaveText = (selector, text) => {
-    if (!document.querySelector(selector)) return true;
-    return document.querySelector(selector).innerText.includes(text);
+    const input = document.querySelector(selector);
+    if (!input) return true;
+    return input.innerText.includes(text);
   };
 
   return (
@@ -73,19 +82,21 @@ function ImportOptions(props) {
             <div className="import__options__choose">
               <label htmlFor="input_csv" className="import__button">
                 Choose File
+                <input
+                  id="input_csv"
+                  type="file"
+                  className="hidden"
+                  onChange={function handleFile(e) {
+                    handleSelectCSV.call(this, e, props.handleImportCSV);
+                  }}
+                />
               </label>
-              <input
-                id="input_csv"
-                type="file"
-                className="hidden"
-                onChange={function(e) {
-                  handleSelectCSV.call(this, e, props.handleImportCSV);
-                }}
-              />
+
               <span className="import__data">Choose file</span>
             </div>
             <div className="import__reset">
               <button
+                type="button"
                 role="import"
                 className="import__button"
                 disabled={inputDoesntHaveText('.import__data', 'Choose file')}
@@ -94,6 +105,7 @@ function ImportOptions(props) {
                 Import
               </button>
               <button
+                type="button"
                 className="import__button import__options__delete"
                 onClick={clearImport}
                 disabled={inputDoesntHaveText('.import__data', 'Choose file')}
@@ -113,5 +125,5 @@ export default withRouter(ImportOptions);
 ImportOptions.propTypes = {
   handleImportCSV: PropTypes.func.isRequired,
   stopRenderImport: PropTypes.func.isRequired,
-  history: PropTypes.object
+  history: PropTypes.object.isRequired
 };
