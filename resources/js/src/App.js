@@ -198,7 +198,10 @@ export default class App extends Component {
         this.setState({ error: false, fetch_table: false });
         const page = localStorage.getItem("page") || sessionStorage.getItem("page");
         const paginate = localStorage.getItem("paginate") || sessionStorage.getItem("paginate");
-        this.fetchTable(1, paginate * page).then(({ table }) => this.setState({ fetch_table: table }));
+        this.fetchTable(1, paginate * page).then(({ table }) => {
+            if (localStorage.getItem("table")) localStorage.setItem("table", JSON.stringify(table));
+            this.setState({ fetch_table: table });
+        });
     }
 
     render() {
