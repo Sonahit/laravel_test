@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ApiTest extends TestCase
@@ -15,7 +14,7 @@ class ApiTest extends TestCase
     }
 
     public function testShouldNotGetPDF(){
-      $this->post("{$this->apiPath}/pdf")->assertStatus(406);
+      $this->post("{$this->apiPath}/pdf")->assertStatus(200);
     }
 
     public function testShouldGetPDF(){
