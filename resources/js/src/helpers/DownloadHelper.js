@@ -68,13 +68,17 @@ export default class DownloadHelper {
 
     downloadPDF() {
         const token = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
-        fetch(`${location.origin}/api/v1/pdf?pagination=${sessionStorage.getItem("pagination") || 20}&page=${sessionStorage.getItem("page") || 1}`, {
-            method: "GET",
-            headers: {
-                "X-CSRF-TOKEN": token,
-                Cookie: document.cookie
+        fetch(
+            `${location.origin}/api/v1/pdf?pagination=${sessionStorage.getItem("pagination") * sessionStorage.getItem("page") ||
+                20}&page=${sessionStorage.getItem("page") || 1}`,
+            {
+                method: "GET",
+                headers: {
+                    "X-CSRF-TOKEN": token,
+                    Cookie: document.cookie
+                }
             }
-        })
+        )
             .then(data => data.text())
             .then(data => this.download(data, "pdf.pdf", "data:application/pdf"))
             .catch(err => {
