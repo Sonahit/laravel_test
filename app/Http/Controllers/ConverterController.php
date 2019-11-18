@@ -32,8 +32,8 @@ class ConverterController extends Controller
     {
       $body = $this->getTable($billed_Meals, $request);
       $pdf = PDF::loadView("templates.table", ['table_data' => $body]);
-      //TODO: Doesn't show at pdf viewer. Dunno why. FIXME
-      return $pdf->download();
+      $output = $pdf->output();
+      return base64_encode($output);
     }
 }
 

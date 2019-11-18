@@ -104,7 +104,7 @@ export default class DownloadHelper {
       .then(data => data.text())
       .then(data => {
         button.classList.toggle('processing');
-        this.download(data, 'pdf.pdf', 'data:application/pdf');
+        this.download(data, 'pdf.pdf', 'data:application/pdf;base64');
       })
       .catch(err => {
         throw err;
@@ -123,7 +123,11 @@ export default class DownloadHelper {
     download.style.display = 'none';
     download.download = name;
     document.body.appendChild(download);
-    download.href = `${type},${data}`;
+    if (type.includes('pdf')) {
+      download.href = `${type},${encodeURI(data)}`;
+    } else {
+      download.href = `${type},${data}`;
+    }
     download.click();
     document.body.removeChild(download);
   }
