@@ -6,6 +6,7 @@ import DownloadHelper from '@helpers/DownloadHelper';
 const downloadHelper = new DownloadHelper();
 
 export default function Buttons(props) {
+  const { external } = props;
   return (
     <section className="options__download">
       <div className="options__buttons">
@@ -32,7 +33,7 @@ export default function Buttons(props) {
         </button>
       </div>
       <div className="options__buttons">
-        {!localStorage.getItem('table') && (
+        {!external && !localStorage.getItem('table') && (
           <button
             type="button"
             className="options__button options__download__csv"
@@ -41,7 +42,7 @@ export default function Buttons(props) {
             Remember Table
           </button>
         )}
-        {localStorage.getItem('table') && (
+        {!external && localStorage.getItem('table') && (
           <button
             type="button"
             className="options__button options__download__csv"
@@ -50,13 +51,15 @@ export default function Buttons(props) {
             Forget Table
           </button>
         )}
-        <button
-          type="button"
-          className="options__button options__download__csv"
-          onClick={() => props.refreshTable()}
-        >
-          Refresh Table
-        </button>
+        {!external && (
+          <button
+            type="button"
+            className="options__button options__download__csv"
+            onClick={() => props.refreshTable()}
+          >
+            Refresh Table
+          </button>
+        )}
         <button
           type="button"
           className="options__button options__download__csv"
@@ -64,8 +67,7 @@ export default function Buttons(props) {
         >
           Convert table to CSV
         </button>
-        {/* eslint-disable-next-line react/destructuring-assignment */}
-        {props.external && (
+        {external && (
           <button
             type="button"
             className="options__button options__download__csv"
