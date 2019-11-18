@@ -126,7 +126,9 @@ const Filters = props => {
                         )))} 
                     </select>
                 </div>
-                <button onClick={handleResetAllFilters}>Обнулить все фильтры</button>
+                <button className="filtering__button" onClick={handleResetAllFilters}>
+                    Обнулить все фильтры
+                </button>
             </div>
             {filtersMemo}
         </>

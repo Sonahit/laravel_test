@@ -8,35 +8,35 @@ export default function ExportOptions(props) {
     return (
         <section className="options__download">
             <div className="options__buttons">
-                <button className="options__download__pdf" onClick={() => downloadHelper.downloadPDF()}>
+                <button className="options__button options__download__pdf" onClick={() => downloadHelper.downloadPDF()}>
                     Download PDF
                 </button>
-                <button className="options__download__csv" onClick={({ target }) => downloadHelper.downloadCSV(target)}>
+                <button className="options__button options__download__csv" onClick={({ target }) => downloadHelper.downloadCSV(target)}>
                     Download CSV
                 </button>
-                <button className="options__download__csv" onClick={() => props.fetchAllData()}>
+                <button className="options__button options__download__csv" onClick={() => props.fetchAllData()}>
                     Get all meals
                 </button>
             </div>
             <div className="options__buttons">
                 {!localStorage.getItem("table") && (
-                    <button className={`options__download__csv`} onClick={() => props.rememberTable()}>
+                    <button className={`options__button options__download__csv`} onClick={() => props.rememberTable()}>
                         Remember Table
                     </button>
                 )}
                 {localStorage.getItem("table") && (
-                    <button className={`options__download__csv`} onClick={() => props.forgetTable()}>
+                    <button className={`options__button options__download__csv`} onClick={() => props.forgetTable()}>
                         Forget Table
                     </button>
                 )}
-                <button className={`options__download__csv`} onClick={() => props.refreshTable()}>
+                <button className={`options__button options__download__csv`} onClick={() => props.refreshTable()}>
                     Refresh Table
                 </button>
-                <button className={`options__download__csv`} onClick={() => downloadHelper.tableToCsv()}>
+                <button className={`options__button options__download__csv`} onClick={() => downloadHelper.tableToCsv()}>
                     Convert table to CSV
                 </button>
                 {props.external && (
-                    <button className={`options__download__csv`} onClick={() => props.stopRenderImport()}>
+                    <button className={`options__button options__download__csv`} onClick={() => props.stopRenderImport()}>
                         Delete import data
                     </button>
                 )}

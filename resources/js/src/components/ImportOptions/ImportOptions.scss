@@ -1,67 +1,80 @@
-@mixin flex($flex-direction: row, $flex-wrap: nowrap, $flex: 0 1 auto){
-  display: flex;
-  flex-flow: $flex-direction $flex-wrap;
-  flex: $flex;
+@mixin flex($flex-direction: row, $flex-wrap: nowrap, $flex: 0 1 auto) {
+    display: flex;
+    flex-flow: $flex-direction $flex-wrap;
+    flex: $flex;
 }
 
-.import{
-  &__button{
-    font-size: 14px;
-    padding: 5px;
-    background-color: rgb(226, 226, 226);
-    color: black;
-  
-    transition: all .5s;
-    cursor: pointer;
-    white-space: nowrap;
-    &:hover{
-      background-color: rgb(148, 148, 148);
-      color: white;
-      transition: all .5s;
+.import {
+    &__button {
+        font-size: 14px;
+        padding: 5px;
+        background-color: rgb(226, 226, 226);
+        color: black;
+        border: 1px solid black;
+
+        transition: all 0.5s;
+        cursor: pointer;
+        white-space: nowrap;
+        &:not(:disabled):hover {
+            background-color: rgb(148, 148, 148);
+            color: white;
+            transition: all 0.5s;
+        }
+        &:disabled {
+            background-color: rgb(71, 71, 71);
+            color: rgb(148, 148, 148);
+            cursor: initial;
+        }
     }
-  }
-  &__form{
-    @include flex();
-    margin: 20px 20px 0px 20px;
-    justify-content: center;
-    fieldset{
-      width: 50%;
-      legend{
-        margin: 10px 20px;
-      }
+    &__form {
+        @include flex();
+        margin: 20px 20px 0px 20px;
+        justify-content: center;
+        fieldset {
+            width: 50%;
+            legend {
+                margin: 10px 20px;
+            }
+        }
     }
-  }
 
-  &__data{
-    padding: 20px;
-    font-size: 14px;
-    white-space: nowrap;
-  }
-  &__options{
-      @include flex(row);
-      justify-content: space-between;
-      margin: 20px; 
+    &__data {
+        padding: 20px;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+    &__options {
+        @include flex(row);
+        justify-content: space-between;
+        margin: 20px;
 
-      &__pdf, &__xml, &__csv, &__delete{
-        margin: 5px;
-      }
+        &__pdf,
+        &__xml,
+        &__csv,
+        &__delete {
+            margin: 5px;
+        }
 
-      &__delete{
-        align-self: flex-end;
-      }
-      
-      &__button{
-          margin-right: 3px;
-          margin-left: 3px;
-          padding: 3px;
-          background-color: rgb(243, 243, 243);
-          border: 1px black solid;
-          color: black;
-          &:link, &:visited{
-              text-decoration: none;
-          }
-          font-size: 12px;
-      }
-  }
+        &__button {
+            margin-right: 3px;
+            margin-left: 3px;
+            padding: 3px;
+            background-color: rgb(243, 243, 243);
+            border: 1px black solid;
+            color: black;
+            &:link,
+            &:visited {
+                text-decoration: none;
+            }
+            font-size: 12px;
+        }
+        &__choose {
+            display: flex;
+            align-items: center;
+        }
+    }
+    &__reset {
+        display: flex;
+        align-items: center;
+    }
 }
-

@@ -1,73 +1,79 @@
-@mixin flex($flex-direction: row, $flex-wrap: nowrap, $flex: 0 1 auto){
-  display: flex;
-  flex-flow: $flex-direction $flex-wrap;
-  flex: $flex;
+@mixin flex($flex-direction: row, $flex-wrap: nowrap, $flex: 0 1 auto) {
+    display: flex;
+    flex-flow: $flex-direction $flex-wrap;
+    flex: $flex;
 }
 
-.options{
-  @include flex(row, wrap, 0 1 25%);
-  justify-content: space-between;
-  margin: 20px 20px 0px 20px;
+.options {
+    @include flex(row, wrap, 0 1 25%);
+    justify-content: space-between;
+    margin: 20px 20px 0px 20px;
 
-  &__get-data{
-      @include flex(column);
-      align-self: flex-end;
-  }
+    &__get-data {
+        @include flex(column);
+        align-self: flex-end;
+    }
 
-  &__filtering{
-      align-self: flex-end;
-  }
+    &__filtering {
+        align-self: flex-end;
+    }
 
-  &__download{
-      @include flex(column);
-      align-self: flex-end;
+    &__download {
+        @include flex(column);
+        align-self: flex-end;
 
-      &__pdf, &__xml, &__csv{
-          margin-right: 3px;
-          margin-left: 3px;
-      }
-      &__button{
-          margin-right: 3px;
-          margin-left: 3px;
-          padding: 3px;
-          background-color: rgb(243, 243, 243);
-          border: 1px black solid;
-          color: black;
-          &:link, &:visited{
-              text-decoration: none;
-          }
-          font-size: 12px;
-      }
-  }
+        &__pdf,
+        &__xml,
+        &__csv {
+            margin-right: 3px;
+            margin-left: 3px;
+        }
+    }
 
-  &__buttons{
-    @include flex();
-    margin: 5px;
-  }
+    &__button {
+        margin-right: 3px;
+        margin-left: 3px;
+        padding: 3px;
+        background-color: rgb(243, 243, 243);
+        border: 1px black solid;
+        color: black;
+        font-size: 12px;
+        transition: all 0.5s;
+        cursor: pointer;
+        &:hover {
+            background-color: rgb(148, 148, 148);
+            color: white;
+            transition: all 0.5s;
+        }
+    }
 
-  &__datepicker__render{
-      @include flex(row);
-      *{
-          padding: 0px 3px;
-      }
-  }
+    &__buttons {
+        @include flex();
+        margin: 5px;
+    }
+
+    &__datepicker__render {
+        @include flex(row);
+        * {
+            padding: 0px 3px;
+        }
+    }
 }
 
-.flex_wrapper{
+.flex_wrapper {
     @include flex(row, nowrap, 0 1 auto);
 }
-.input{
-    &_wrapper{
+.input {
+    &_wrapper {
         padding: 0;
         border: 0;
-        &-container{
+        &-container {
             display: inline-block;
             position: relative;
             width: 100%;
         }
     }
-    &-container{
-        width: 100%
+    &-container {
+        width: 100%;
     }
 }
-
