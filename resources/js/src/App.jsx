@@ -105,7 +105,7 @@ export default class App extends Component {
 
   handleScroll() {
     const scroll = window.scrollY;
-    const height = document.body.clientHeight - window.innerHeight - 300;
+    const height = (document.body.clientHeight - window.innerHeight) * 0.8;
     const doUpdate = (scroll, height) => scroll > height;
     const { external, error, isFiltering, shouldUpdate } = this.state;
     // If application neither filtering
