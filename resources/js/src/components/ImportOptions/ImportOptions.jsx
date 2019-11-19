@@ -21,7 +21,7 @@ function ImportOptions(props) {
     if (window.FileReader && select) {
       const reader = new FileReader();
       reader.file_info = select;
-      if (!select.type.match(/\w+\/csv/gi)) return;
+      if (!select.name.match(/\w+(\.csv)/gi)) return;
       reader.onloadend = e => {
         if (e.target.readyState === FileReader.DONE) {
           const { result } = e.target;
