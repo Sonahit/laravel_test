@@ -70,7 +70,7 @@ describe('import data', () => {
     fireEvent.click(app.getByText('Import'));
     await wait(() => app.rerender(<App />));
     expect(location.href).toMatch('import');
-    const file = new File([csv], 'csv', {
+    const file = new File([csv], 'csv.csv', {
       type: 'text/csv'
     });
     const input = app.getByLabelText('Choose File');
