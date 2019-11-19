@@ -1,0 +1,105 @@
+@mixin colorBack($color, $background-color){
+  background-color: $background-color;
+  color: $color;
+}
+
+$arrow-right: -45;
+$arrow-left: 135;
+$arrow-down: 45;
+$arrow-up: -135;
+
+@mixin arrow($direction : 0, $color: black){
+  border: solid $color;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+  transform: rotate(#{$direction}deg);
+  -webkit-transform: rotate(#{$direction}deg);
+}
+
+
+.main-table{
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+
+  &__th{
+      padding: 10px;
+      border: 1px solid black;
+      @include colorBack(white, green);
+      &--sortable{
+          padding: 2px;
+          margin: 10px;
+          border: 1px solid black;
+          @include colorBack(white, rgb(0, 128, 70));
+          user-select: none;
+          transition: 0.5s all ease;
+          cursor: pointer;
+
+          &:hover{
+              background-color: rgb(0, 217, 255);
+          }
+
+          & span {
+
+              &.asc.active{
+
+                  &::after{
+                      content: "";
+                      margin: 0 5px 0 5px;
+                      @include arrow($arrow-down);
+                  }
+                  
+              }
+              &.desc.active{
+
+                  &::after{
+                      content: "";
+                      margin: 0 5px 0 5px;
+                      @include arrow($arrow-up);
+                  }
+
+              }
+
+              &.asc{
+
+                  &::after{
+                      content: "";
+                      margin: 0 5px 0 5px;
+                      @include arrow($arrow-down, green);
+                  }
+
+              }
+              &.desc{
+
+                  &::after{
+                      content: "";
+                      margin: 0 5px 0 5px;
+                      @include arrow($arrow-up, green);
+                  }
+
+              }
+          }           
+          
+      }
+  }
+
+  &__td{
+      padding: 10px 15px;
+  }
+
+  &__tr{
+      padding: 5px;
+  }
+
+  &__tbody{
+      tr {
+        transition: 0.5s all ease;
+        border-bottom: 1px solid black;
+          &:hover{
+            transition: 0.5s all ease;
+            background-color: #cfcfcf;
+          }
+      }
+  }
+}
