@@ -3,14 +3,26 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-
 class ApiTest extends TestCase
 {
     private $apiPath = "/api/v1";
     
+
     public function testShouldGetBilledMeals()
     {
-      $this->get("{$this->apiPath}/billed_meals")->assertOk();
+      $resp = $this->get("{$this->apiPath}/billed_meals");
+      $resp->assertOk();
+      $json = $resp->json();
+      $resp->assertJson($json);
+      $this->assertNotEmpty($json);
+    }
+
+    public function testShouldbeEmpty()
+    {
+      $resp = $this->get("{$this->apiPath}/billed_meals?page=2&paginate=-1");
+      $resp->assertStatus(204);
+      $data = $resp->baseResponse->getContent();
+      $this->assertEmpty($data);
     }
 
     public function testShouldNotGetPDF(){
