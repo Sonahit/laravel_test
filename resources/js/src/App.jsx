@@ -10,7 +10,6 @@ import Nav from '@components/Nav/Nav';
 import ApiHelper from '@helpers/ApiHelper';
 import TableHelper from '@helpers/TableHelper';
 import ErrorHandler from '@handlers/ErrorHandler';
-
 import routes from './routes';
 
 const apiHelper = new ApiHelper();

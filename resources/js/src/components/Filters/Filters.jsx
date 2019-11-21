@@ -6,7 +6,6 @@ import './Filters.scss';
 import { DateFiltering, StringFiltering, NumberFiltering } from './Filtering';
 
 const Filters = props => {
-  const [filteringKey, setFilteringKey] = useState('flight_date');
   const options = [
     {
       value: 'flight_date',
@@ -63,6 +62,7 @@ const Filters = props => {
       text: 'Дельте'
     }
   ];
+  const [filteringKey, setFilteringKey] = useState('flight_date');
   const handleSelect = ({ target }) => {
     const option = Array.from(target.children).find(option => option.selected === true);
     const key = option.getAttribute('value');

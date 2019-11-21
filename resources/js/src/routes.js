@@ -1,5 +1,5 @@
-import Table from './components/Table/Table';
-import ImportOptions from './components/ImportOptions/ImportOptions';
+import Table from '@components/Table/Table';
+import ImportOptions from '@components/ImportOptions/ImportOptions';
 
 const routes = [
   {
