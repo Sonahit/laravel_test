@@ -207,6 +207,7 @@ export default class Table extends Component {
           stopRenderImport={stopRenderImport}
           fetchAllData={fetchAllData}
           external={external}
+          error={error}
           resetAllFilters={this.resetAllFilters}
           rememberTable={rememberTable}
           refreshTable={handleRefresh}

@@ -50,17 +50,27 @@ export default class App extends Component {
     if (table) {
       this.setState({ fetch_table: table });
     } else {
-      this.fetchTable(page, paginate).then(({ table }) => {
-        this.setState({
-          fetch_table: table
+      this.fetchTable(page, paginate)
+        .then(({ table }) => {
+          this.setState({
+            fetch_table: table
+          });
+        })
+        .catch(e => {
+          this.setState({ error: e.message });
         });
-      });
     }
     window.addEventListener('scroll', this.handleScroll);
   }
 
   componentDidUpdate() {
     apiHelper.setFetch(false);
+    const url = new URL(location.href);
+    const { fetch_table, external } = this.state;
+    if (fetch_table || external.table) return;
+    const page = sessionStorage.getItem('page') || url.searchParams.get('page') || 1;
+    const paginate = sessionStorage.getItem('paginate') || url.searchParams.get('paginate') || 40;
+    this.fetchTable(page, paginate * page);
   }
 
   componentWillUnmount() {
@@ -99,7 +109,11 @@ export default class App extends Component {
     const paginate = -1;
     sessionStorage.setItem('paginate', paginate);
     this.setState({ fetch_table: false, isUpdating: false });
-    this.fetchTable(1, paginate).then(({ table }) => this.setState({ fetch_table: table }));
+    this.fetchTable(1, paginate)
+      .then(({ table }) => this.setState({ fetch_table: table }))
+      .catch(e => {
+        this.setState({ error: e.message });
+      });
   }
 
   handleScroll() {
@@ -124,30 +138,34 @@ export default class App extends Component {
       const nextPage = parseInt(sessionStorage.getItem('page'), 10) + 1;
       sessionStorage.setItem('page', nextPage);
       this.setState({ isUpdating: true });
-      this.fetchTable(nextPage, sessionStorage.getItem('paginate')).then(data => {
-        this.setState(prevState => {
-          // If no data from api
-          if (!data || !data.table) {
+      this.fetchTable(nextPage, sessionStorage.getItem('paginate'))
+        .then(data => {
+          this.setState(prevState => {
+            // If no data from api
+            if (!data || !data.table) {
+              return {
+                error: false,
+                fetch_table: prevState.fetch_table,
+                isUpdating: false,
+                shouldUpdate: false
+              };
+            }
+            const { table } = data;
+            const fetch_table = this.group(prevState.fetch_table, table);
+            if (localStorage.getItem('table')) {
+              localStorage.setItem('table', JSON.stringify(fetch_table));
+              localStorage.setItem('page', nextPage);
+            }
             return {
-              error: false,
-              fetch_table: prevState.fetch_table,
+              fetch_table,
               isUpdating: false,
-              shouldUpdate: false
+              error: false
             };
-          }
-          const { table } = data;
-          const fetch_table = this.group(prevState.fetch_table, table);
-          if (localStorage.getItem('table')) {
-            localStorage.setItem('table', JSON.stringify(fetch_table));
-            localStorage.setItem('page', nextPage);
-          }
-          return {
-            fetch_table,
-            isUpdating: false,
-            error: false
-          };
+          });
+        })
+        .catch(e => {
+          this.setState({ error: e.message, isUpdating: false });
         });
-      });
     }
   }
 
@@ -205,13 +223,22 @@ export default class App extends Component {
   }
 
   handleRefresh() {
+    const { external } = this.state;
     this.setState({ error: false, fetch_table: false });
-    const page = localStorage.getItem('page') || sessionStorage.getItem('page');
-    const paginate = localStorage.getItem('paginate') || sessionStorage.getItem('paginate');
-    this.fetchTable(1, paginate * page).then(({ table }) => {
-      if (localStorage.getItem('table')) localStorage.setItem('table', JSON.stringify(table));
+    const table = localStorage.getItem('table');
+    if (table) {
       this.setState({ fetch_table: table });
-    });
+    } else if (!external.table) {
+      const page = localStorage.getItem('page') || sessionStorage.getItem('page');
+      const paginate = localStorage.getItem('paginate') || sessionStorage.getItem('paginate');
+      this.fetchTable(1, paginate * page)
+        .then(({ table }) => {
+          this.setState({ fetch_table: table });
+        })
+        .catch(e => {
+          this.setState({ error: e.message });
+        });
+    }
   }
 
   render() {

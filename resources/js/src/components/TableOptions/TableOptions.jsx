@@ -37,7 +37,8 @@ const TableOptions = props => {
     fetchAllData,
     rememberTable,
     forgetTable,
-    refreshTable
+    refreshTable,
+    error
   } = props;
   return (
     <section className="options">
@@ -50,6 +51,7 @@ const TableOptions = props => {
           rememberTable={rememberTable}
           forgetTable={forgetTable}
           refreshTable={refreshTable}
+          error={error}
         />
       </section>
     </section>
@@ -60,7 +62,8 @@ export default TableOptions;
 
 TableOptions.defaultProps = {
   external: false,
-  reset: false
+  reset: false,
+  error: false
 };
 
 TableOptions.propTypes = {
@@ -76,5 +79,6 @@ TableOptions.propTypes = {
   forgetTable: PropTypes.func.isRequired,
   refreshTable: PropTypes.func.isRequired,
   external: PropTypes.bool,
-  reset: PropTypes.bool
+  reset: PropTypes.bool,
+  error: PropTypes.oneOfType([PropTypes.bool, PropTypes.string])
 };
