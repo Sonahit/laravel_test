@@ -66,8 +66,8 @@ export default class App extends Component {
   componentDidUpdate() {
     apiHelper.setFetch(false);
     const url = new URL(location.href);
-    const { fetch_table, external } = this.state;
-    if (fetch_table || external.table) return;
+    const { fetch_table, external, isUpdating } = this.state;
+    if (fetch_table || external.table || isUpdating) return;
     const page = sessionStorage.getItem('page') || url.searchParams.get('page') || 1;
     const paginate = sessionStorage.getItem('paginate') || url.searchParams.get('paginate') || 40;
     this.fetchTable(page, paginate * page);
