@@ -10,7 +10,7 @@ export default function Buttons(props) {
   return (
     <section className="options__download">
       <div className="options__buttons">
-        {error && (
+        {!error && (
           <button
             type="button"
             className="options__button options__download__pdf"
@@ -19,7 +19,7 @@ export default function Buttons(props) {
             Download PDF
           </button>
         )}
-        {error && (
+        {!error && (
           <button
             type="button"
             className="options__button options__download__csv"
