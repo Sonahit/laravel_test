@@ -10,7 +10,11 @@ use PDF;
 
 class ConverterController extends Controller
 {
-
+    /**
+     * @param App\Models\Billed_Meals $billed_Meals
+     * @param Illuminate\Http\Request $request
+     * @return array
+     */
     protected function getTable(Billed_Meals $billed_Meals, Request $request){
       $controller = new BilledMealsController();
       $resp = $controller->index($billed_Meals, $request);
@@ -39,6 +43,10 @@ class ConverterController extends Controller
       gc_enable();
       gc_collect_cycles();
       return base64_encode($output);
+    }
+    public function csv(Billed_Meals $billed_Meals, Request $request){
+      $body = $this->getTable($billed_Meals, $request);
+      return ["table" => $body];
     }
 }
 

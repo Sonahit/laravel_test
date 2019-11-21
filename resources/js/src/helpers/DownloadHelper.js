@@ -55,13 +55,12 @@ export default class DownloadHelper {
     const table = tableHelper.getTable();
 
     // If no table return
-
     if (!table) return;
-    const tHead = this.prepareHeaders(table);
 
+    const tHead = this.prepareHeaders(table);
     const api = new ApiHelper();
-    api.get('/billed_meals', [{ key: 'paginate', value: '-1' }]).then(({ pages }) => {
-      const tBody = pages.map(meal => {
+    api.get('/csv', [{ key: 'paginate', value: '-1' }]).then(({ table }) => {
+      const tBody = table.map(meal => {
         // eslint-disable-next-line camelcase
         const { id, date, type, plan_attributes, fact_attributes } = meal;
         const nomClass = meal.class;
@@ -82,12 +81,7 @@ export default class DownloadHelper {
       });
       button.classList.toggle('processing');
       const csv = this.toCsv(tableHelper.values(tHead), tBody);
-      const charset = getOS()
-        .toLowerCase()
-        .includes('windows')
-        ? 'windows-1251'
-        : 'utf-8';
-      this.download(csv, 'csv.csv', `data:text/csv;charset=${charset}`);
+      this.download(csv, 'csv.csv', `data:text/csv`);
     });
   }
 

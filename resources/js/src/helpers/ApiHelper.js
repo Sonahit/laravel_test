@@ -27,7 +27,9 @@ class ApiHelper {
         if (data.ok) return data.json();
         throw new Error(data.statusText);
       })
-      .then(json => json)
+      .then(json => {
+        return json;
+      })
       .catch(err => err);
   }
 
