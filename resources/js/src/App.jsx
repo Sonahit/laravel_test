@@ -234,9 +234,11 @@ export default class App extends Component {
       localStorage.getItem('paginate') || sessionStorage.getItem('paginate')
     );
     if (!external.table) {
+      this.setFetch(true);
       this.fetchTable(1, paginate * page)
         .then(({ table }) => {
           this.setState({ fetch_table: table });
+          this.setFetch(false);
         })
         .catch(e => {
           this.setState({ error: e.message });
