@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateBilledMealsInfo extends Migration
+class UpdateBusinessMealPrices extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class UpdateBilledMealsInfo extends Migration
      */
     public function up()
     {
-        Schema::table('billed_meals_info', function (Blueprint $table) {
-            $table->index('iata_code');
-            $table->index('name');
+        Schema::table('business_meal_prices', function (Blueprint $table) {
+            $table->index('nomenclature');
         });
     }
 
@@ -26,10 +25,8 @@ class UpdateBilledMealsInfo extends Migration
      */
     public function down()
     {
-        Schema::table('billed_meals_info', function (Blueprint $table) {
-            $table->dropIndex('iata_code');
-            $table->dropIndex('name');
-
-        });
+      Schema::table('business_meal_prices', function (Blueprint $table) {
+            $table->dropIndex('nomenclature');
+      });
     }
 }
