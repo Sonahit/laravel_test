@@ -76,7 +76,6 @@ export default class App extends Component {
 
   handleImportCSV(body) {
     this.setState({ external: { table: body, render: true } });
-    return true;
   }
 
   stopRenderImport() {

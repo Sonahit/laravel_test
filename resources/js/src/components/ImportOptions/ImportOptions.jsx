@@ -21,38 +21,55 @@ function ImportOptions(props) {
     if (window.FileReader && select) {
       const reader = new FileReader();
       reader.file_info = select;
-      if (!select.name.match(/\w+(\.csv)/gi)) return;
+      if (!select.name.match(/\w+(\.csv)/gi)) {
+        const span = document.querySelector('.import__data');
+        span.innerText = 'Wrong file extension';
+        return;
+      }
       reader.onloadend = e => {
         if (e.target.readyState === FileReader.DONE) {
           const { result } = e.target;
           // eslint-disable-next-line no-unused-vars
           const [_, body] = TableHelper.prototype.csvAsTable(result);
-          const tBody = body.map(row => ({
-            id: parseInt(row[0]),
-            date: row[1],
-            class: row[2],
-            type: row[3],
-            plan_attributes: {
-              codes: row[4].split(','),
-              qty: parseInt(row[6]),
-              price: parseInt(row[8])
-            },
-            fact_attributes: {
-              codes: row[5].split(','),
-              qty: parseInt(row[7]),
-              price: parseInt(row[9])
-            }
-          }));
+          const tBody = body.map(row => {
+            const [
+              id,
+              date,
+              nom_class,
+              type,
+              plan_codes,
+              fact_codes,
+              plan_qty,
+              fact_qty,
+              plan_price,
+              fact_price
+            ] = row;
+            return {
+              id: parseInt(id),
+              date,
+              class: nom_class,
+              type,
+              plan_attributes: {
+                codes: plan_codes.split(','),
+                qty: parseInt(plan_qty),
+                price: parseInt(plan_price)
+              },
+              fact_attributes: {
+                codes: fact_codes.split(','),
+                qty: parseInt(fact_qty),
+                price: parseInt(fact_price)
+              }
+            };
+          });
           const file = e.currentTarget.file_info;
-          if (props.handleImportCSV(tBody)) {
-            const text = `Файл ${file.name}, размером ${Math.round(
-              file.size / 1024
-            )} кбайт. Количество строк ${tBody.length}`;
-            const span = document.querySelector('.import__data');
-            span.innerText = text;
-            document.querySelector('.import__reset').style.width = '100%';
-            forceUpdate();
-          }
+          props.handleImportCSV(tBody);
+          const text = `Файл ${file.name}, размером ${Math.round(
+            file.size / 1024
+          )} кбайт. Количество строк ${tBody.length}`;
+          const span = document.querySelector('.import__data');
+          span.innerText = text;
+          document.querySelector('.import__reset').style.width = '100%';
+          forceUpdate();
         }
       };
       const blob = select.slice(0, select.size - 1);
