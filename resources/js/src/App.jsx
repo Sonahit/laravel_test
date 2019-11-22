@@ -135,10 +135,15 @@ export default class App extends Component {
       doUpdate(scroll, height)
     ) {
       apiHelper.isFetching = true;
-      const nextPage = parseInt(sessionStorage.getItem('page'), 10) + 1;
+      const nextPage =
+        parseInt(localStorage.getItem('page') || sessionStorage.getItem('page'), 10) + 1;
       sessionStorage.setItem('page', nextPage.toString());
+      if (localStorage.getItem('page')) localStorage.setItem('page', nextPage);
       this.setState({ isUpdating: true });
-      this.fetchTable(nextPage, sessionStorage.getItem('paginate'))
+      const paginate = parseInt(
+        localStorage.getItem('paginate') || sessionStorage.getItem('paginate')
+      );
+      this.fetchTable(nextPage, paginate)
         .then(data => {
           this.setState(prevState => {
             // If no data from api
@@ -225,14 +230,11 @@ export default class App extends Component {
   handleRefresh() {
     const { external } = this.state;
     this.setState({ error: false, fetch_table: false });
-    const table = localStorage.getItem('table');
-    if (table) {
-      this.setState({ fetch_table: table });
-    } else if (!external.table) {
-      const page = parseInt(localStorage.getItem('page') || sessionStorage.getItem('page'));
-      const paginate = parseInt(
-        localStorage.getItem('paginate') || sessionStorage.getItem('paginate')
-      );
+    const page = parseInt(localStorage.getItem('page') || sessionStorage.getItem('page'));
+    const paginate = parseInt(
+      localStorage.getItem('paginate') || sessionStorage.getItem('paginate')
+    );
+    if (!external.table) {
       this.fetchTable(1, paginate * page)
         .then(({ table }) => {
           this.setState({ fetch_table: table });

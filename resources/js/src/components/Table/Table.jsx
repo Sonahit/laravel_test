@@ -224,7 +224,7 @@ export default class Table extends Component {
             <div className="loader" />
           </Modal>
         )}
-        {isUpdating && (
+        {isUpdating && Array.isArray(table) && (
           <Modal relative>
             <div className="loader" />
           </Modal>
