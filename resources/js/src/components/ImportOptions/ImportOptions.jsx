@@ -99,7 +99,7 @@ function ImportOptions(props) {
                 disabled={!inputHasText('.import__data', 'Choose file')}
                 onClick={() => props.history.push('/')}
               >
-                Import
+                Import Data
               </button>
               <button
                 type="button"

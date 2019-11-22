@@ -2,15 +2,14 @@ import '@testing-library/jest-dom/extend-expect';
 import React from 'react';
 import { render, fireEvent, cleanup, wait } from '@testing-library/react';
 import App from '@src/App';
-import data from './__mocks__/fetchMock';
-import csv from './__mocks__/csvMock';
 import { Simulate } from 'react-dom/test-utils';
-describe("<App/>", () => {
 
+describe('<App/>', () => {
   beforeAll(() => {
+    const data = jest.genMockFromModule('./__mocks__/fetchMock');
     fetch.mockResponse(data);
   });
-  
+
   afterEach(() => {
     cleanup();
   });
@@ -31,8 +30,9 @@ describe("<App/>", () => {
       expect(app).toBeTruthy();
       const table = document.querySelector('.main-table');
       expect(table).toBeTruthy();
-      const selectOption = text => (app.getByText(text).selected = true);
-      selectOption('Номеру полёта');
+      const selectOption = text => app.getByText(text);
+      const option = selectOption('Номеру полёта');
+      option.selected = true;
       fireEvent.change(app.getByRole('filters'));
       await wait(() => app.rerender(<App />));
       expect(app.getByPlaceholderText('От')).toBeTruthy();
@@ -70,6 +70,7 @@ describe("<App/>", () => {
       fireEvent.click(app.getByText('Import'));
       await wait(() => app.rerender(<App />));
       expect(location.href).toMatch('import');
+      const csv = jest.genMockFromModule('./__mocks__/csvMock.js');
       const file = new File([csv], 'csv.csv', {
         type: 'text/csv'
       });
@@ -87,5 +88,4 @@ describe("<App/>", () => {
       expect(app.getByRole('table-body').children.length).toBeGreaterThan(1);
     });
   });
-
-})
+});

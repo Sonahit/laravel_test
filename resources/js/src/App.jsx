@@ -5,7 +5,6 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 import './App.scss';
-
 import Nav from '@components/Nav/Nav';
 import ApiHelper from '@helpers/ApiHelper';
 import TableHelper from '@helpers/TableHelper';
@@ -42,10 +41,10 @@ export default class App extends Component {
 
   componentDidMount() {
     const url = new URL(location.href);
-    const page = url.searchParams.get('page') || 1;
-    const paginate = url.searchParams.get('paginate') || 40;
-    sessionStorage.setItem('paginate', paginate);
-    sessionStorage.setItem('page', page);
+    const page = parseInt(url.searchParams.get('page')) || 1;
+    const paginate = parseInt(url.searchParams.get('paginate')) || 40;
+    sessionStorage.setItem('paginate', paginate.toString());
+    sessionStorage.setItem('page', page.toString());
     const table = JSON.parse(localStorage.getItem('table'));
     if (table) {
       this.setState({ fetch_table: table });
@@ -85,8 +84,9 @@ export default class App extends Component {
     const url = new URL(location.href);
     const { fetch_table, isUpdating, error } = this.state;
     if (fetch_table || isUpdating || error) return;
-    const page = sessionStorage.getItem('page') || url.searchParams.get('page') || 1;
-    const paginate = sessionStorage.getItem('paginate') || url.searchParams.get('paginate') || 40;
+    const page = parseInt(sessionStorage.getItem('page') || url.searchParams.get('page')) || 1;
+    const paginate =
+      parseInt(sessionStorage.getItem('paginate') || url.searchParams.get('paginate')) || 40;
     this.fetchTable(page, paginate * page);
   }
 
@@ -107,7 +107,7 @@ export default class App extends Component {
 
   fetchAllData() {
     const paginate = -1;
-    sessionStorage.setItem('paginate', paginate);
+    sessionStorage.setItem('paginate', paginate.toString());
     this.setState({ fetch_table: false, isUpdating: false });
     this.fetchTable(1, paginate)
       .then(({ table }) => this.setState({ fetch_table: table }))
@@ -136,7 +136,7 @@ export default class App extends Component {
     ) {
       apiHelper.isFetching = true;
       const nextPage = parseInt(sessionStorage.getItem('page'), 10) + 1;
-      sessionStorage.setItem('page', nextPage);
+      sessionStorage.setItem('page', nextPage.toString());
       this.setState({ isUpdating: true });
       this.fetchTable(nextPage, sessionStorage.getItem('paginate'))
         .then(data => {
@@ -154,7 +154,7 @@ export default class App extends Component {
             const fetch_table = this.group(prevState.fetch_table, table);
             if (localStorage.getItem('table')) {
               localStorage.setItem('table', JSON.stringify(fetch_table));
-              localStorage.setItem('page', nextPage);
+              localStorage.setItem('page', nextPage.toString());
             }
             return {
               fetch_table,
@@ -229,8 +229,10 @@ export default class App extends Component {
     if (table) {
       this.setState({ fetch_table: table });
     } else if (!external.table) {
-      const page = localStorage.getItem('page') || sessionStorage.getItem('page');
-      const paginate = localStorage.getItem('paginate') || sessionStorage.getItem('paginate');
+      const page = parseInt(localStorage.getItem('page') || sessionStorage.getItem('page'));
+      const paginate = parseInt(
+        localStorage.getItem('paginate') || sessionStorage.getItem('paginate')
+      );
       this.fetchTable(1, paginate * page)
         .then(({ table }) => {
           this.setState({ fetch_table: table });
