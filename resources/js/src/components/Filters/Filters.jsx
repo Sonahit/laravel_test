@@ -88,17 +88,26 @@ const Filters = props => {
   const getFilter = key => props.filters[Object.keys(props.filters).find(k => k === key)];
   const filter = getFilter(filteringKey);
   const { startValue = '', endValue = '' } = filter || {};
-  const { method, reset, quickFilter, handleQuickFiltering } = props;
+  const {
+    method,
+    reset,
+    quickFilter,
+    handleQuickFiltering,
+    setReset,
+    handleFilterValue,
+    handleFilterReset
+  } = props;
   const filtersMemo = useMemo(
     () => (
       <FilteringMethod
-        method={props.method}
+        method={method}
         filteringKey={filteringKey}
-        handleFilterReset={props.handleFilterReset}
-        handleFilterValue={props.handleFilterValue}
+        handleFilterReset={handleFilterReset}
+        handleFilterValue={handleFilterValue}
         startValue={startValue}
         endValue={endValue}
-        reset={props.reset}
+        reset={reset}
+        setReset={setReset}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -108,8 +117,9 @@ const Filters = props => {
     () => (
       <QuickFiltering
         startValue={quickFilter.startValue}
-        reset={props.reset}
+        reset={reset}
         handleQuickFiltering={handleQuickFiltering}
+        setReset={setReset}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -163,6 +173,7 @@ Filters.propTypes = {
   handleFilterReset: PropTypes.func.isRequired,
   resetAllFilters: PropTypes.func.isRequired,
   handleQuickFiltering: PropTypes.func.isRequired,
+  setReset: PropTypes.func.isRequired,
   quickFilter: PropTypes.shape({
     startValue: PropTypes.any
   }).isRequired,
@@ -176,7 +187,8 @@ const FilteringMethod = ({
   method,
   filteringKey,
   handleFilterValue,
-  handleFilterReset
+  handleFilterReset,
+  setReset
 }) => {
   if (method === 'date') {
     return (
@@ -188,6 +200,7 @@ const FilteringMethod = ({
         handleFilterReset={handleFilterReset}
         handleFilterValue={handleFilterValue}
         reset={reset}
+        setReset={setReset}
       />
     );
   }
@@ -201,6 +214,7 @@ const FilteringMethod = ({
         handleFilterReset={handleFilterReset}
         handleFilterValue={handleFilterValue}
         reset={reset}
+        setReset={setReset}
       />
     );
   }
@@ -214,6 +228,7 @@ const FilteringMethod = ({
         handleFilterReset={handleFilterReset}
         handleFilterValue={handleFilterValue}
         reset={reset}
+        setReset={setReset}
       />
     );
   }
@@ -227,5 +242,6 @@ FilteringMethod.propTypes = {
   method: PropTypes.string.isRequired,
   filteringKey: PropTypes.string.isRequired,
   handleFilterValue: PropTypes.func.isRequired,
-  handleFilterReset: PropTypes.func.isRequired
+  handleFilterReset: PropTypes.func.isRequired,
+  setReset: PropTypes.func.isRequired
 };

@@ -15,6 +15,7 @@ const TableOptions = props => {
     handleFilterSelect,
     resetAllFilters,
     reset,
+    setReset,
     quickFilter,
     handleQuickFiltering
   } = props;
@@ -28,6 +29,7 @@ const TableOptions = props => {
         handleFilterValue={handleFilterValue}
         resetAllFilters={resetAllFilters}
         reset={reset}
+        setReset={setReset}
         quickFilter={quickFilter}
         handleQuickFiltering={handleQuickFiltering}
       />
@@ -86,6 +88,7 @@ TableOptions.propTypes = {
     startValue: PropTypes.any
   }).isRequired,
   handleQuickFiltering: PropTypes.func.isRequired,
+  setReset: PropTypes.func.isRequired,
   external: PropTypes.bool,
   reset: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.bool, PropTypes.string])

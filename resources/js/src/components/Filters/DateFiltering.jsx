@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 let initEndDate;
 const DateFiltering = props => {
-  const { filteringKey, method, startValue, endValue, reset } = props;
+  const { filteringKey, method, startValue, endValue, reset, setReset } = props;
   const [startDate, setStartDate] = useState(new Date('2017/01/01'));
   const [endDate, setEndDate] = useState(new Date(new Date().setHours(0, 0, 0)));
   const [filter, setFilter] = useState(filteringKey);
@@ -25,6 +25,9 @@ const DateFiltering = props => {
     }
   }
   useEffect(() => {
+    if (reset) {
+      setReset(false);
+    }
     if (!startDate) {
       props.handleFilterReset(filteringKey);
     } else {
@@ -78,5 +81,6 @@ DateFiltering.propTypes = {
   filteringKey: PropTypes.string.isRequired,
   handleFilterValue: PropTypes.func.isRequired,
   handleFilterReset: PropTypes.func.isRequired,
+  setReset: PropTypes.func.isRequired,
   reset: PropTypes.bool
 };

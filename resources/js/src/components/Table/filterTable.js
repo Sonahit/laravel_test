@@ -68,30 +68,18 @@ function filterByDate(table, startDate, endDate, index, subIndex) {
 }
 
 export default function filterTable(table, filters, quickFilter) {
-  // const { startValue, endValue, key, method } = filter;
-  // if (!key || !method) return table;
-  // if (!startValue && startValue !== 0) return table;
-  // const [index, subIndex] = getIndex(key);
-  // if (!index) return table;
-  // if (method === "date") {
-  //     return filterByDate(table, startValue, endValue || startValue, index, subIndex);
-  // } else if (method === "number") {
-  //     return filterByNumber(table, startValue, endValue, index, subIndex);
-  // } else if (method === "string") {
-  //     return filterByString(table, startValue, index, subIndex);
-  // }
   const preFiltered = quickFilter.startValue
     ? table.filter(td => {
         const toArray = obj =>
           Object.keys(obj).map(key => {
             if (obj[key] instanceof Object) {
-              const subKeys = Object.keys(obj[key]);
-              return subKeys.map(subK => obj[key][subK]);
+              return toArray(obj[key]);
             }
             return obj[key];
           });
-        const temp = JSON.stringify(toArray(td));
-        return temp.includes(quickFilter.startValue);
+        return JSON.stringify(toArray(td))
+          .toLowerCase()
+          .includes(quickFilter.startValue);
       })
     : table;
   return Object.keys(filters).reduce((filteredTable, key) => {

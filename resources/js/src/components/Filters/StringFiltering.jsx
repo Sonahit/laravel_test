@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 const StringFiltering = props => {
-  const { filteringKey, method, startValue, reset } = props;
+  const { filteringKey, method, startValue, reset, setReset } = props;
   const [string, setString] = useState('');
   const [filter, setFilter] = useState(filteringKey);
   if (filter !== filteringKey) {
@@ -13,6 +13,9 @@ const StringFiltering = props => {
     setString(new Date(''));
   }
   useEffect(() => {
+    if (reset) {
+      setReset(false);
+    }
     if (!string) {
       props.handleFilterReset(filteringKey);
     } else {
@@ -49,5 +52,6 @@ StringFiltering.propTypes = {
   filteringKey: PropTypes.string.isRequired,
   handleFilterValue: PropTypes.func.isRequired,
   handleFilterReset: PropTypes.func.isRequired,
+  setReset: PropTypes.func.isRequired,
   reset: PropTypes.bool
 };

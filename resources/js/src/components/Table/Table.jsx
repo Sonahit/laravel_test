@@ -113,12 +113,17 @@ export default class Table extends Component {
         startValue: false
       */
     };
+    this.handleReset = this.handleReset.bind(this);
     this.handleSort = this.handleSort.bind(this);
     this.handleFilterReset = this.handleFilterReset.bind(this);
     this.handleFilterSelect = this.handleFilterSelect.bind(this);
     this.handleFilterValue = this.handleFilterValue.bind(this);
     this.handleQuickFiltering = this.handleQuickFiltering.bind(this);
     this.resetAllFilters = this.resetAllFilters.bind(this);
+  }
+
+  handleReset(reset) {
+    this.setState({ reset });
   }
 
   handleSort(e, method, dataSort) {
@@ -142,7 +147,13 @@ export default class Table extends Component {
     this.setState(prev => ({
       ...prev,
       reset: true,
-      filters: {}
+      filters: {},
+      quickFilter: {
+        startValue: false,
+        init: {
+          startValue: false
+        }
+      }
     }));
   }
 
@@ -229,6 +240,7 @@ export default class Table extends Component {
           refreshTable={handleRefresh}
           forgetTable={forgetTable}
           reset={reset}
+          setReset={this.handleReset}
         />
         {Array.isArray(table) && table.length > 0 ? (
           <table className="main-table">

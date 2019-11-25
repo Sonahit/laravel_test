@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 function QuickFiltering(props) {
-  const { startValue, reset } = props;
+  const { startValue, reset, setReset } = props;
   const [string, setString] = useState(startValue);
   useEffect(() => {
+    if (reset) {
+      setReset(false);
+    }
     if (string) {
       props.handleQuickFiltering(string);
     } else {
@@ -42,5 +45,6 @@ QuickFiltering.defaultProps = {
 QuickFiltering.propTypes = {
   startValue: PropTypes.any.isRequired,
   handleQuickFiltering: PropTypes.func.isRequired,
+  setReset: PropTypes.func.isRequired,
   reset: PropTypes.bool
 };
