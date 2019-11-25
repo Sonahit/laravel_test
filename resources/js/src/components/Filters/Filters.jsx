@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import './Filters.scss';
 
-import { DateFiltering, StringFiltering, NumberFiltering } from './Filtering';
+import { DateFiltering, StringFiltering, NumberFiltering, QuickFiltering } from './Filtering';
 
 const Filters = props => {
   const options = [
@@ -88,7 +88,7 @@ const Filters = props => {
   const getFilter = key => props.filters[Object.keys(props.filters).find(k => k === key)];
   const filter = getFilter(filteringKey);
   const { startValue = '', endValue = '' } = filter || {};
-  const { method, reset } = props;
+  const { method, reset, quickFilter, handleQuickFiltering } = props;
   const filtersMemo = useMemo(
     () => (
       <FilteringMethod
@@ -103,6 +103,17 @@ const Filters = props => {
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [method, filteringKey, reset, startValue, endValue]
+  );
+  const quickFilterMemo = useMemo(
+    () => (
+      <QuickFiltering
+        startValue={quickFilter.startValue}
+        reset={props.reset}
+        handleQuickFiltering={handleQuickFiltering}
+      />
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [reset, quickFilter.startValue]
   );
 
   return (
@@ -133,6 +144,7 @@ const Filters = props => {
         </button>
       </div>
       {filtersMemo}
+      {quickFilterMemo}
     </>
   );
 };
@@ -150,6 +162,10 @@ Filters.propTypes = {
   handleFilterValue: PropTypes.func.isRequired,
   handleFilterReset: PropTypes.func.isRequired,
   resetAllFilters: PropTypes.func.isRequired,
+  handleQuickFiltering: PropTypes.func.isRequired,
+  quickFilter: PropTypes.shape({
+    startValue: PropTypes.any
+  }).isRequired,
   reset: PropTypes.bool
 };
 

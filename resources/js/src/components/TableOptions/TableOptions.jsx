@@ -14,7 +14,9 @@ const TableOptions = props => {
     handleFilterValue,
     handleFilterSelect,
     resetAllFilters,
-    reset
+    reset,
+    quickFilter,
+    handleQuickFiltering
   } = props;
   const filtersMemo = useMemo(
     () => (
@@ -26,10 +28,12 @@ const TableOptions = props => {
         handleFilterValue={handleFilterValue}
         resetAllFilters={resetAllFilters}
         reset={reset}
+        quickFilter={quickFilter}
+        handleQuickFiltering={handleQuickFiltering}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [method, filters, reset]
+    [method, filters, reset, quickFilter.startValue]
   );
   const {
     external,
@@ -78,6 +82,10 @@ TableOptions.propTypes = {
   rememberTable: PropTypes.func.isRequired,
   forgetTable: PropTypes.func.isRequired,
   refreshTable: PropTypes.func.isRequired,
+  quickFilter: PropTypes.shape({
+    startValue: PropTypes.any
+  }).isRequired,
+  handleQuickFiltering: PropTypes.func.isRequired,
   external: PropTypes.bool,
   reset: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.bool, PropTypes.string])

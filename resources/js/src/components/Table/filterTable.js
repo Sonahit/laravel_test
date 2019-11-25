@@ -67,7 +67,7 @@ function filterByDate(table, startDate, endDate, index, subIndex) {
   });
 }
 
-export default function filterTable(table, filters) {
+export default function filterTable(table, filters, quickFilter) {
   // const { startValue, endValue, key, method } = filter;
   // if (!key || !method) return table;
   // if (!startValue && startValue !== 0) return table;
@@ -80,6 +80,20 @@ export default function filterTable(table, filters) {
   // } else if (method === "string") {
   //     return filterByString(table, startValue, index, subIndex);
   // }
+  const preFiltered = quickFilter.startValue
+    ? table.filter(td => {
+        const toArray = obj =>
+          Object.keys(obj).map(key => {
+            if (obj[key] instanceof Object) {
+              const subKeys = Object.keys(obj[key]);
+              return subKeys.map(subK => obj[key][subK]);
+            }
+            return obj[key];
+          });
+        const temp = JSON.stringify(toArray(td));
+        return temp.includes(quickFilter.startValue);
+      })
+    : table;
   return Object.keys(filters).reduce((filteredTable, key) => {
     const filter = filters[key];
     if (filter) {
@@ -97,5 +111,5 @@ export default function filterTable(table, filters) {
       }
     }
     return filteredTable;
-  }, table);
+  }, preFiltered);
 }

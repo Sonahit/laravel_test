@@ -27,3 +27,20 @@
         }
     }
 }
+
+.quick_filter{
+    width: 100%;
+    margin: 5px 0px;
+    .input{
+        &_container{
+            width: 100%;
+        }
+        &_wrapper{
+            &-container{
+
+            }
+        }   
+
+    }
+
+}

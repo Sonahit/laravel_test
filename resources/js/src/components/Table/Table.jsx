@@ -88,7 +88,7 @@ export default class Table extends Component {
       },
       methodFilterSelect: 'date',
       reset: false,
-      filters: {}
+      filters: {},
       /*
         Example filter
         filters: {
@@ -103,11 +103,21 @@ export default class Table extends Component {
             }
         }
       */
+      quickFilter: {
+        startValue: false,
+        init: {
+          startValue: false
+        }
+      }
+      /*
+        startValue: false
+      */
     };
     this.handleSort = this.handleSort.bind(this);
     this.handleFilterReset = this.handleFilterReset.bind(this);
     this.handleFilterSelect = this.handleFilterSelect.bind(this);
     this.handleFilterValue = this.handleFilterValue.bind(this);
+    this.handleQuickFiltering = this.handleQuickFiltering.bind(this);
     this.resetAllFilters = this.resetAllFilters.bind(this);
   }
 
@@ -141,6 +151,10 @@ export default class Table extends Component {
       reset: false,
       methodFilterSelect: method
     });
+  }
+
+  handleQuickFiltering(startValue) {
+    this.setState(prev => ({ quickFilter: { ...prev.quickFilter, startValue } }));
   }
 
   handleFilterValue(key, method, startValue, endValue, initStartValue, initEndValue) {
@@ -185,7 +199,7 @@ export default class Table extends Component {
       forgetTable,
       rememberTable
     } = this.props;
-    const { reset, methodFilterSelect, filters, sort } = this.state;
+    const { reset, methodFilterSelect, filters, sort, quickFilter } = this.state;
     if (error) {
       return (
         <Modal>
@@ -200,10 +214,12 @@ export default class Table extends Component {
         <TableOptions
           method={methodFilterSelect}
           filters={filters}
+          quickFilter={quickFilter}
           handleFilterValue={this.handleFilterValue}
           handleFilterReset={this.handleFilterReset}
           handleFilterSelect={this.handleFilterSelect}
           handleImportCSV={handleImportCSV}
+          handleQuickFiltering={this.handleQuickFiltering}
           stopRenderImport={stopRenderImport}
           fetchAllData={fetchAllData}
           external={external}
@@ -217,7 +233,7 @@ export default class Table extends Component {
         {Array.isArray(table) && table.length > 0 ? (
           <table className="main-table">
             <TableHead tHead={tHead} handleSort={this.handleSort} />
-            <TableBody sort={sort} filters={filters} table={table} />
+            <TableBody sort={sort} filters={filters} quickFilter={quickFilter} table={table} />
           </table>
         ) : (
           <Modal>
