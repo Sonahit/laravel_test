@@ -16,6 +16,9 @@
   <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('css/index.css') }}">
   <title>S7</title>
+  <script>
+    var public_path = '{{ url("/") }}';
+  </script>
 </head>
 <body>
   <noscript>Enable javascript to view this website</noscript>

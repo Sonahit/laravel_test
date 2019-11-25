@@ -12,7 +12,8 @@ import ErrorHandler from '@handlers/ErrorHandler';
 import routes from './routes';
 
 const apiHelper = new ApiHelper();
-
+// eslint-disable-next-line no-undef
+const rootPath = new URL(public_path).pathname;
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -250,7 +251,7 @@ export default class App extends Component {
     const { fetch_table, isUpdating, error, external } = this.state;
     const table = external.render ? external.table : fetch_table;
     return (
-      <Router>
+      <Router basename={rootPath}>
         <React.StrictMode>
           <Nav links={routes.map(route => ({ link: route.path, text: route.text }))} />
           <main>

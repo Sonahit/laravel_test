@@ -1,7 +1,9 @@
 export const apiPath = '/api/v1';
 
 class ApiHelper {
-  constructor(base = location.origin, path = apiPath) {
+  // See index.blade for public.path
+  // eslint-disable-next-line no-undef
+  constructor(base = public_path || location.origin, path = apiPath) {
     this.base = base;
     this.apiPath = path;
     this.isFetching = false;
