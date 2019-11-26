@@ -14,12 +14,4 @@ class New_Matrix extends Model
     {   
         return new New_Matrix_Collection($models);
     }
-
-    public function business_meal_prices()
-    {
-        return $this->hasOne(
-            Business_Meal_Prices::class,
-            'nomenclature',
-            'nomenclature');
-    }
 }
