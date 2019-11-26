@@ -46,13 +46,9 @@ export default class TableHelper {
         if (!accum.class) accum.class = v.class;
         if (!accum.type) accum.type = v.type;
         accum.plan_attributes = v.plan_attributes;
-        accum.fact_attributes.qty += v.fact_attributes.qty;
-        accum.fact_attributes.price += v.fact_attributes.price;
-        v.fact_attributes.codes.forEach(code => {
-          if (!accum.fact_attributes.codes.includes(code)) {
-            accum.fact_attributes.codes.push(code);
-          }
-        });
+        accum.fact_qty = v.fact_qty;
+        accum.fact_price = v.fact_price;
+        accum.fact_codes = v.fact_codes;
         return accum;
       },
       {

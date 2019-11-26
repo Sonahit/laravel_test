@@ -5,17 +5,17 @@ export function getIndex(key) {
     case 'flight_id':
       return ['id', false];
     case 'plan_code':
-      return ['plan_attributes', 'codes'];
+      return ['plan_code', false];
     case 'plan_qty':
-      return ['plan_attributes', 'qty'];
+      return ['plan_qty', false];
     case 'plan_price':
-      return ['plan_attributes', 'price'];
+      return ['plan_price', false];
     case 'fact_code':
-      return ['fact_attributes', 'codes'];
+      return ['fact_code', false];
     case 'fact_qty':
-      return ['fact_attributes', 'qty'];
+      return ['fact_qty', false];
     case 'fact_price':
-      return ['fact_attributes', 'price'];
+      return ['fact_price', false];
     case 'delta':
       return ['delta', false];
     default:
@@ -67,21 +67,21 @@ function filterByDate(table, startDate, endDate, index, subIndex) {
   });
 }
 
-export default function filterTable(table, filters, quickFilter) {
-  const preFiltered = quickFilter.startValue
-    ? table.filter(td => {
-        const toArray = obj =>
-          Object.keys(obj).map(key => {
-            if (obj[key] instanceof Object) {
-              return toArray(obj[key]);
-            }
-            return obj[key];
-          });
-        return JSON.stringify(toArray(td))
-          .toLowerCase()
-          .includes(quickFilter.startValue);
-      })
-    : table;
+export default function filterTable(table, filters) {
+  // const preFiltered = quickFilter.startValue
+  //   ? table.filter(td => {
+  //       const toArray = obj =>
+  //         Object.keys(obj).map(key => {
+  //           if (obj[key] instanceof Object) {
+  //             return toArray(obj[key]);
+  //           }
+  //           return obj[key];
+  //         });
+  //       return JSON.stringify(toArray(td))
+  //         .toLowerCase()
+  //         .includes(quickFilter.startValue.toLowerCase());
+  //     })
+  //   : table;
   return Object.keys(filters).reduce((filteredTable, key) => {
     const filter = filters[key];
     if (filter) {
@@ -99,5 +99,5 @@ export default function filterTable(table, filters, quickFilter) {
       }
     }
     return filteredTable;
-  }, preFiltered);
+  }, table);
 }

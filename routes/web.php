@@ -12,4 +12,4 @@
 */
 
 //SPA
-Route::get('/{any}', 'BilledMealsController@show')->where('any', '.*');
+Route::get('/{any}', 'ReportsController@show')->where('any', '.*');

@@ -91,7 +91,6 @@ const Filters = props => {
   const {
     method,
     reset,
-    quickFilter,
     handleQuickFiltering,
     setReset,
     handleFilterValue,
@@ -116,14 +115,13 @@ const Filters = props => {
   const quickFilterMemo = useMemo(
     () => (
       <QuickFiltering
-        startValue={quickFilter.startValue}
         reset={reset}
         handleQuickFiltering={handleQuickFiltering}
         setReset={setReset}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [reset, quickFilter.startValue]
+    [reset]
   );
 
   return (
@@ -174,9 +172,6 @@ Filters.propTypes = {
   resetAllFilters: PropTypes.func.isRequired,
   handleQuickFiltering: PropTypes.func.isRequired,
   setReset: PropTypes.func.isRequired,
-  quickFilter: PropTypes.shape({
-    startValue: PropTypes.any
-  }).isRequired,
   reset: PropTypes.bool
 };
 

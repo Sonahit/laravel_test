@@ -16,7 +16,6 @@ const TableOptions = props => {
     resetAllFilters,
     reset,
     setReset,
-    quickFilter,
     handleQuickFiltering
   } = props;
   const filtersMemo = useMemo(
@@ -30,12 +29,11 @@ const TableOptions = props => {
         resetAllFilters={resetAllFilters}
         reset={reset}
         setReset={setReset}
-        quickFilter={quickFilter}
         handleQuickFiltering={handleQuickFiltering}
       />
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [method, filters, reset, quickFilter.startValue]
+    [method, filters, reset]
   );
   const {
     external,
@@ -84,9 +82,6 @@ TableOptions.propTypes = {
   rememberTable: PropTypes.func.isRequired,
   forgetTable: PropTypes.func.isRequired,
   refreshTable: PropTypes.func.isRequired,
-  quickFilter: PropTypes.shape({
-    startValue: PropTypes.any
-  }).isRequired,
   handleQuickFiltering: PropTypes.func.isRequired,
   setReset: PropTypes.func.isRequired,
   external: PropTypes.bool,

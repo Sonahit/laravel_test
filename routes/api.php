@@ -19,7 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::group(['middleware' => 'api'], function(){
     
-    Route::get('/billed_meals', "BilledMealsController@index");
+    Route::get('/billed_meals', "ReportsController@index");
     Route::get('/pdf', 'ConverterController@pdf');
     Route::get('/csv', 'ConverterController@csv');
     

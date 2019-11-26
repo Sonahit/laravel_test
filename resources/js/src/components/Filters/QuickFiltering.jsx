@@ -2,22 +2,18 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 function QuickFiltering(props) {
-  const { startValue, reset, setReset } = props;
-  const [string, setString] = useState(startValue);
+  const { handleQuickFiltering } = props;
+  const [string, setString] = useState(
+    localStorage.getItem('searchParam') || sessionStorage.getItem('searchParam') || false
+  );
   useEffect(() => {
-    if (reset) {
-      setReset(false);
-    }
     if (string) {
-      props.handleQuickFiltering(string);
+      handleQuickFiltering(string.toUpperCase());
     } else {
-      props.handleQuickFiltering(false);
+      handleQuickFiltering(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [string]);
-  if (reset && string !== false) {
-    setString(false);
-  }
   return (
     <div className="quick_filter">
       <div className="input_container">
@@ -25,7 +21,7 @@ function QuickFiltering(props) {
           <div className="input_wrapper-container">
             <input
               style={{ width: '100%', margin: '0 3px' }}
-              placeholder="Быстрый фильтр"
+              placeholder="Search"
               onChange={({ target }) => setString(target.value)}
               value={string || ''}
             />
@@ -38,13 +34,6 @@ function QuickFiltering(props) {
 
 export default QuickFiltering;
 
-QuickFiltering.defaultProps = {
-  reset: false
-};
-
 QuickFiltering.propTypes = {
-  startValue: PropTypes.any.isRequired,
-  handleQuickFiltering: PropTypes.func.isRequired,
-  setReset: PropTypes.func.isRequired,
-  reset: PropTypes.bool
+  handleQuickFiltering: PropTypes.func.isRequired
 };
