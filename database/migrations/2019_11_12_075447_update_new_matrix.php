@@ -15,6 +15,7 @@ class UpdateNewMatrix extends Migration
     {
         Schema::table('new_matrix', function (Blueprint $table) {
             $table->index('iata_code');
+            $table->index('nomenclature');
         });
     }
 
@@ -27,6 +28,7 @@ class UpdateNewMatrix extends Migration
     {
         Schema::table('new_matrix', function (Blueprint $table) {
             $table->dropIndex('iata_code');
+            $table->dropIndex('nomenclature');
         });
     }
 }

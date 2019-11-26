@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Collections\Billed_Meals_Collection;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -33,11 +31,6 @@ class Billed_Meals extends Model
                 ->where('type', 'Комплект');
     }
 
-    public function newCollection(array $models = [])
-    {   
-        return new Billed_Meals_Collection($models);
-    }
-
     public function scopeNoALC($q){
         return $q->where('iata_code', '<>', "ALC");
     }
@@ -45,16 +38,6 @@ class Billed_Meals extends Model
     public function flight_load()
     {
         return $this->hasOne(Flight_Load::class, 'id', 'flight_load_id');
-    }
-
-    public function billed_meals_info()
-    {
-        return $this->hasOne(Billed_Meals_Info::class, 'name', 'name');
-    }
-
-    public function billed_meals_prices()
-    {
-        return $this->hasOne(Billed_Meals_Prices::class, 'billed_meals_id');
     }
 
     public function new_matrix(){
