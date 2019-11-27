@@ -58,7 +58,21 @@ class Flight_Load extends Model
             $join->on('business_meal_prices.nomenclature', '=', 'new_matrix.nomenclature');
         });
     }
-
+    
+    public function new_matrix_prices(){
+      return $this->hasManyThrough(
+          New_Matrix_Prices::class,
+          Billed_Meals::class,
+          'flight_load_id',
+          'iata_code',
+          'id',
+          'iata_code')
+          ->join('flight_load', function ($join){
+              $join
+                ->on('flight_load.id', '=', 'billed_meals.flight_load_id')
+                ->on('flight_load.business', '=', 'new_matrix_prices.passenger_amount');
+          });
+    }
     public function flight()
     {
         return $this->hasOne(Flight::class, 'id', 'flight_id');

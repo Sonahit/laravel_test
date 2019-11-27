@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,17 +30,16 @@ class AppServiceProvider extends ServiceProvider
         Builder::macro('whereLike', function (array $attributes, string $searchTerm) {
             $this->where(function (Builder $query) use ($attributes, $searchTerm) {
                 foreach ($attributes as $attribute) {
-                    $query->orWhere($attribute, 'LIKE', "%{$searchTerm}%");
+                    $query->orWhere(DB::raw($attribute), 'LIKE', "%{$searchTerm}%");
                 }
             });
             return $this;
         });
-        Builder::macro('havingBetween', function (array $attributes, string $searchParam) {
+        Builder::macro('havingLike', function (array $attributes, string $searchParam) {
             if(!intval($searchParam)) return $this;
-            $val = intval($searchParam);
             foreach ($attributes as $attribute) {
-                $this -> orHavingRaw("{$attribute} >= ?", [$val]);
-            }
+              $this->orHaving(DB::raw($attribute), "LIKE", "%{$searchParam}%");
+            };
             return $this;
         });
     }

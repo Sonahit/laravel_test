@@ -158,7 +158,7 @@ export default class App extends Component {
         .then(data => {
           this.setState(prevState => {
             // If no data from api
-            if (!data || !data.table) {
+            if (!data || !data.table || data.table.length <= 0) {
               return {
                 error: false,
                 fetch_table: prevState.fetch_table,
@@ -259,7 +259,7 @@ export default class App extends Component {
       this.setFetch(true);
       this.fetchTable(1, page * paginate, searchParam)
         .then(({ table }) => {
-          this.setState({ fetch_table: table, isUpdating: false });
+          this.setState({ fetch_table: table, isUpdating: false, shouldUpdate: true });
           this.setFetch(false);
         })
         .catch(e => {
