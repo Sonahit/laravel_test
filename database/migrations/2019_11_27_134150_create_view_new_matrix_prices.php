@@ -24,7 +24,7 @@ class CreateViewNewMatrixPrices extends Migration
                   `new_matrix`.`passenger_amount` AS `passenger_amount`,
                   SUM(`new_matrix`.`meal_qty`) AS `meal_qty`,
                   `new_matrix`.`nomenclature` AS `nomenclature`,
-                  SUM((`business_meal_prices`.`price` * `new_matrix`.`meal_qty`)) AS `price`
+                  ROUND(SUM((`business_meal_prices`.`price` * `new_matrix`.`meal_qty`)), 2) AS `price`
               FROM
                   (`new_matrix`
               JOIN `business_meal_prices` ON
