@@ -25,8 +25,8 @@ class UpdateFlightLoad extends Migration
      */
     public function down()
     {
-        Schema::table('flight_load', function (Blueprint $table) {
-            $table->dropIndex('flight_id');
-        });
+      Schema::table('flight_load', function (Blueprint $table) {
+          $table->dropIndex('flight_id');
+      });
     }
 }

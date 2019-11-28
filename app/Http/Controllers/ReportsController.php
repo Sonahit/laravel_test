@@ -106,7 +106,8 @@ class ReportsController extends Controller
                   ->january()
                   ->orWhereLike([
                     'flight_plan_prices.meal_qty',
-                    'flight_plan_prices.price'
+                    'flight_plan_prices.price',
+                    'flight_plan_prices.delta'
                   ], $searchParam);
               })
               ->orWhereHas('billed_meals', function($query) use($searchParam){

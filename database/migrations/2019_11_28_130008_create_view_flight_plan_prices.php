@@ -19,7 +19,8 @@ class CreateViewFlightPlanPrices extends Migration
             fl.flight_id,
             fl.flight_date,
             billed_meals.id as billed_meals_id,
-            new_matrix_prices.*
+            new_matrix_prices.*,
+	          billed_meals.qty * billed_meals.price_per_one - new_matrix_prices.price AS delta
           FROM
             flight_load AS fl
           INNER JOIN billed_meals ON
