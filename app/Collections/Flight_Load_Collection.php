@@ -17,17 +17,18 @@ class Flight_Load_Collection extends Collection{
           ->map(function($valuesByDate){
             return $valuesByDate->reduce(function($accum, $value){
                 $billed_meals = $value->billed_meals->first();
-                $new_matrix = $value->new_matrix_prices->first();
+                $flight_plan = $value->flight_plan_prices;
+                // $flight_plan = $value->flight_plan->first();
                 $accum["id"] = $value->flight_id;
                 $accum["date"] = $value->flight_date;
                 $accum["class"] = $billed_meals->class;
                 $accum["type"] = $billed_meals->type;      
-                if($new_matrix)                  {
-                  $accum["plan_codes"] = [explode(',', $new_matrix->iata_code)];
-                  $accum["plan_price"] = floatval($new_matrix->plan_price);
-                  $accum["plan_qty"] = floatval($new_matrix->plan_qty);
+                if($flight_plan)                  {
+                  $accum["plan_codes"] = [explode(',', $flight_plan->iata_code)];
+                  $accum["plan_price"] = floatval($flight_plan->price);
+                  $accum["plan_qty"] = floatval($flight_plan->meal_qty);
                 }
-                $accum["fact_codes"] = [explode(',', $billed_meals->fact_codes)];
+                $accum["fact_codes"] = [explode(',', $billed_meals->iata_code)];
                 $accum["fact_qty"] = floatval($billed_meals->fact_qty);
                 $accum["fact_price"] = floatval($billed_meals->fact_price);
                 $accum["delta"] = $accum["plan_price"] - $accum["fact_price"];

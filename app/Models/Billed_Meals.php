@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 
 class Billed_Meals extends Model
@@ -18,8 +17,8 @@ class Billed_Meals extends Model
         "flight_id",
         "flight_date",
         "iata_code",
-        "qty",
-        "total"
+        "class",
+        "type"
     ];
 
     public function scopeBusiness($q){
@@ -29,5 +28,14 @@ class Billed_Meals extends Model
 
     public function scopeNoALC($q){
         return $q->where('iata_code', '<>', "ALC");
+    }
+
+    public function new_matrix_prices()
+    {
+      return $this->hasMany(New_Matrix_Prices::class, 'iata_code', 'iata_code');
+    }
+
+    public function flight_load(){
+      return $this->belongsTo(Flight_Load::class, 'flight_load_id', 'id');
     }
 }

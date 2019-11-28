@@ -5,12 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Billed_Meals;
 use App\Models\Flight_Load;
 use App\Utils\Helpers\RequestHelper;
-use Dotenv\Regex\Regex;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use PDO;
 
 class ReportsController extends Controller
 {
@@ -44,7 +42,9 @@ class ReportsController extends Controller
         $computeTime = abs($end->millisecond - $start->millisecond);
         return $this->getResponse([
             "pages" => $flight_load_transformed,
-            "time" => $computeTime
+            "time" => $computeTime,
+            "page" => $page,
+            "perPage" => $paginate
         ], 200);
     }
 
@@ -60,7 +60,7 @@ class ReportsController extends Controller
     {
         $paginate = intval($query["paginate"]);
         $asc = $query["asc"];
-        if(is_null($paginate)) $paginate = $flight_load->getPerPage();
+        if(is_null($paginate) || !$paginate) $paginate = $flight_load->getPerPage();
         if(is_null($asc)) $asc = true;
         if($this->isDate($query["searchParam"])){
           $searchParam = $query["searchParam"];
@@ -80,21 +80,12 @@ class ReportsController extends Controller
                     DB::raw('ROUND(SUM(qty), 2) as fact_qty'),
                     'class',
                     'type',
-                    DB::raw('GROUP_CONCAT(DISTINCT iata_code) as fact_codes'),
+                    DB::raw('GROUP_CONCAT(DISTINCT iata_code) as iata_code'),
                     DB::raw('ROUND(SUM(qty * price_per_one), 2) as fact_price')
                   ])
                   ->groupBy("flight_id", "flight_date");
             },
-            'new_matrix' => function($q) {
-              $q->select(
-                "new_matrix.iata_code",
-                DB::raw("ROUND(SUM(new_matrix.meal_qty), 2) as plan_qty"),
-                "new_matrix.passenger_amount",
-                "new_matrix.nomenclature",
-                DB::raw("ROUND(SUM(business_meal_prices.price * new_matrix.meal_qty), 2) as plan_price")
-              )
-              ->groupBy("new_matrix.iata_code", "billed_meals.id");
-            }
+            'flight_plan_prices'
         ];
         
         $flight_load_collect = $flight_load
@@ -103,70 +94,30 @@ class ReportsController extends Controller
             ->sort($asc)
             ->where(function($sub) use($searchParam){
               $sub->whereHas('billed_meals', function($q) use($searchParam){
-                $q->business()  
+                $q
+                  ->business()
                   ->noALC()
-                  ->whereLike(Billed_Meals::searchableRows, $searchParam);
-              })
-              ->when(is_int($searchParam), function($q) use($searchParam){
-                $q->orWhereHas('new_matrix', function($query) use($searchParam){ 
-                    $query
-                    ->join('business_meal_prices', function ($join){
-                      $join->on('business_meal_prices.nomenclature', '=', 'new_matrix.nomenclature');
-                    })
-                    ->havingLike([
-                        'SUM(DISTINCT `new_matrix`.`meal_qty`)',
-                        'SUM(DISTINCT `business_meal_prices`.`price` * `new_matrix`.`meal_qty`)'
-                    ], $searchParam)
-                    ->groupBy('new_matrix.passenger_amount');
-                });
+                  ->orWhereLike(Billed_Meals::searchableRows, $searchParam);
               });
             })
-            ->with($relations)
-            ->groupBy("flight_id", "flight_date");
-        //     $relations = [
-        //     'billed_meals' => function($q) {
-        //         $q->business()
-        //           ->noALC()
-        //           ->select([
-        //             'flight_load_id',
-        //             DB::raw('ROUND(SUM(qty), 2) as fact_qty'),
-        //             'class',
-        //             'type',
-        //             DB::raw('GROUP_CONCAT(DISTINCT iata_code) as fact_codes'),
-        //             DB::raw('ROUND(SUM(qty * price_per_one), 2) as fact_price')
-        //           ])
-        //           ->groupBy("flight_id", "flight_date");
-        //     },
-        //     'new_matrix_prices' => function($q){
-        //       $q->select(
-        //       'iata_code',
-        //       'new_matrix_prices.meal_qty as plan_qty', 
-        //       'new_matrix_prices.passenger_amount', 
-        //       'new_matrix_prices.price as plan_price',
-        //       'new_matrix_prices.nomenclature');
-        //     }
-        // ];
-        
-        // $flight_load_collect = $flight_load
-        //     ->january()
-        //     ->business()
-        //     ->sort($asc)
-        //     ->where(function($sub) use($searchParam){
-        //       $sub->whereHas('billed_meals', function($q) use($searchParam){
-        //         $q->business()  
-        //           ->noALC()
-        //           ->whereLike(Billed_Meals::searchableRows, $searchParam);
-        //       })
-        //       ->when(is_int($searchParam), function($q) use($searchParam){
-        //         $q->orWhereHas('new_matrix_prices', function($query) use($searchParam){ 
-        //             $query
-        //             // ->where('flight_load.business', 'new_matrix_prices.passenger_amount')
-        //             ->whereLike(['new_matrix_prices.price', 'new_matrix_prices.meal_qty'], $searchParam);
-        //         });
-        //       });
-        //     })
-        //     ->with($relations)            
-        //     ->groupBy("flight_id", "flight_date");
+            ->when(is_int($searchParam) && !$this->isDate($searchParam), function($sub) use($searchParam){
+              $sub->orWhereHas('flight_plan_prices', function($query) use($searchParam){ 
+                $query
+                  ->january()
+                  ->orWhereLike([
+                    'flight_plan_prices.meal_qty',
+                    'flight_plan_prices.price'
+                  ], $searchParam);
+              })
+              ->orWhereHas('billed_meals', function($query) use($searchParam){
+                $query
+                  ->business()
+                  ->noALC()
+                  ->orHavingLike(['ROUND(SUM(qty * price_per_one), 2)', 'SUM(qty)'], $searchParam)
+                  ->groupBy("flight_id", "flight_date");
+              });
+            })
+            ->with($relations);
         if($paginate < 1) return $flight_load_collect->get();
         return $flight_load_collect->simplePaginate($paginate);
     }    

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Collections\Flight_Load_Collection;
-use Illuminate\Support\Facades\DB;
 
 class Flight_Load extends Model
 {
@@ -22,11 +21,6 @@ class Flight_Load extends Model
         return new Flight_Load_Collection($models);
     }
 
-    public function billed_meals()
-    {
-        return $this->hasMany(Billed_Meals::class, 'flight_load_id', 'id');
-    }
-
     public function scopeBusiness($q){
         return $q->select('id', 'flight_id', 'flight_date', 'business');
     }
@@ -35,28 +29,28 @@ class Flight_Load extends Model
         return $q->whereBetween('flight_date', ['20170101', '20170131']);
     }
 
-    public static function scopeSort($q, $asc){
-        return $q->orderBy('flight_id', $asc ? 'asc' : 'desc')
-             ->orderBy('flight_date', $asc ? 'asc' : 'desc');
+    public function scopeSort($q, $asc){
+        return $q
+              ->orderBy('flight_id', $asc ? 'asc' : 'desc')
+              ->orderBy('flight_date', $asc ? 'asc' : 'desc');
+    }
+
+    public function billed_meals()
+    {
+        return $this->hasMany(Billed_Meals::class, 'flight_load_id', 'id');
     }
 
     public function new_matrix()
     {
         return $this->hasManyThrough(
-            New_Matrix::class,
-            Billed_Meals::class,
-            'flight_load_id',
-            'iata_code',
-            'id',
-            'iata_code'
-        )->join('flight_load', function ($join){
-            $join
-                ->on('flight_load.id', '=', 'billed_meals.flight_load_id')
-                ->on('flight_load.business', '=', 'new_matrix.passenger_amount');
-        })
-        ->join('business_meal_prices', function ($join){
-            $join->on('business_meal_prices.nomenclature', '=', 'new_matrix.nomenclature');
-        });
+          New_Matrix::class,
+          Billed_Meals::class,
+          'flight_load_id',
+          'iata_code',
+          'id',
+          'iata_code'
+        )
+        ->with('business_meal_prices');
     }
     
     public function new_matrix_prices(){
@@ -66,13 +60,20 @@ class Flight_Load extends Model
           'flight_load_id',
           'iata_code',
           'id',
-          'iata_code')
-          ->join('flight_load', function ($join){
-              $join
-                ->on('flight_load.id', '=', 'billed_meals.flight_load_id')
-                ->on('flight_load.business', '=', 'new_matrix_prices.passenger_amount');
-          });
+          'iata_code');
     }
+
+    public function flight_plan_prices(){
+      return $this->hasOneThrough(
+        Flight_Plan_Prices::class,
+        Billed_Meals::class,
+        'flight_load_id',
+        'billed_meals_id',
+        'id',
+        'id'
+      );
+    }
+
     public function flight()
     {
         return $this->hasOne(Flight::class, 'id', 'flight_id');

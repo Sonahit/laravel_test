@@ -30,6 +30,14 @@ class AppServiceProvider extends ServiceProvider
         Builder::macro('whereLike', function (array $attributes, string $searchTerm) {
             $this->where(function (Builder $query) use ($attributes, $searchTerm) {
                 foreach ($attributes as $attribute) {
+                    $query->where(DB::raw($attribute), 'LIKE', "%{$searchTerm}%");
+                }
+            });
+            return $this;
+        });
+        Builder::macro('orWhereLike', function (array $attributes, string $searchTerm) {
+            $this->where(function (Builder $query) use ($attributes, $searchTerm) {
+                foreach ($attributes as $attribute) {
                     $query->orWhere(DB::raw($attribute), 'LIKE', "%{$searchTerm}%");
                 }
             });
@@ -37,8 +45,17 @@ class AppServiceProvider extends ServiceProvider
         });
         Builder::macro('havingLike', function (array $attributes, string $searchParam) {
             if(!intval($searchParam)) return $this;
+            $val = intval($searchParam);
             foreach ($attributes as $attribute) {
-              $this->orHaving(DB::raw($attribute), "LIKE", "%{$searchParam}%");
+              $this->having(DB::raw($attribute), "LIKE", "%{$val}%");
+            };
+            return $this;
+        });
+        Builder::macro('orHavingLike', function (array $attributes, string $searchParam) {
+            if(!intval($searchParam)) return $this;
+            $val = intval($searchParam);
+            foreach ($attributes as $attribute) {
+              $this->orHaving(DB::raw($attribute), "LIKE", "%{$val}%");
             };
             return $this;
         });
