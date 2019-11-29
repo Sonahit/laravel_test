@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-
 class Billed_Meals extends Model
 {
     protected $table = 'billed_meals';

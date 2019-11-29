@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Utils\Helpers\DatabaseHelper;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 class Flight_Plan_Prices extends Model
 {

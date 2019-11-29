@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Collections\Flight_Load_Collection;
+use App\Utils\Helpers\DatabaseHelper;
 
 class Flight_Load extends Model
 {
@@ -12,8 +13,8 @@ class Flight_Load extends Model
     protected $perPage = 40;
 
     public const searchableRows = [
-        "flight_id",
-        "flight_date"
+        "flight_load.flight_id",
+        "flight_load.flight_date"
     ];
 
     public function newCollection(array $models = [])
@@ -22,17 +23,30 @@ class Flight_Load extends Model
     }
 
     public function scopeBusiness($q){
-        return $q->select('id', 'flight_id', 'flight_date', 'business');
+        return $q->select('flight_load.id as id', 'flight_load.flight_id as flight_id', 'flight_load.flight_date as flight_date', 'business');
+    }
+
+    public function scopeSortBy($q, array $attributes = null, bool $desc = true){
+      if(is_null($attributes) || $attributes[0] === DatabaseHelper::COLUMN_DOESNT_EXIST) return $q;
+      foreach($attributes as $attribute){
+        [$tableName, $column] = explode('.', $attribute);
+        $selfTable = $this->getTable();
+        if($selfTable === $tableName){
+          $q->orderBy($column, $desc ? 'desc' : 'asc' );
+          continue;
+        }
+        $q->leftJoin($tableName, function($join) use($tableName, $selfTable){
+          $join ->on("{$tableName}.flight_date", '=', "{$selfTable}.flight_date");
+          if($tableName === 'billed_meals'){
+            $join->on("{$tableName}.flight_load_id", '=', "{$selfTable}.id");
+          }
+        })->orderBy("{$tableName}.{$column}", $desc ? 'desc' : 'asc');
+      }
+      return $q;
     }
 
     public function scopeJanuary($q){
-        return $q->whereBetween('flight_date', ['20170101', '20170131']);
-    }
-
-    public function scopeSort($q, $asc){
-        return $q
-              ->orderBy('flight_id', $asc ? 'asc' : 'desc')
-              ->orderBy('flight_date', $asc ? 'asc' : 'desc');
+        return $q->whereBetween('flight_load.flight_date', ['20170101', '20170131']);
     }
 
     public function billed_meals()

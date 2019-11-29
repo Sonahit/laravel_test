@@ -18,7 +18,9 @@ class ApiHelper {
   }
 
   get(url, params) {
-    const query = params.map(param => `${param.key}=${param.value}`).join('&');
+    const query = params
+      .map(param => `${param.key}=${param.value === null ? '' : param.value}`)
+      .join('&');
     this.isFetching = true;
     return fetch(`${this.base}${this.apiPath}${url}?${query}`, {
       method: 'GET'

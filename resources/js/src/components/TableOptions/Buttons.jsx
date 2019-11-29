@@ -57,7 +57,7 @@ export default function Buttons(props) {
             Forget Table
           </button>
         )}
-        {!external && (
+        {!external && !localStorage.getItem('table') && (
           <button
             type="button"
             className="options__button options__download__csv"

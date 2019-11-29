@@ -10,74 +10,6 @@ import TableBody from './TableBody';
 import TableHead from './TableHead';
 import tHead from './headRows';
 
-function toAsc(node) {
-  node.classList.remove('desc');
-  node.classList.add('asc');
-}
-
-function toDesc(node) {
-  node.classList.remove('asc');
-  node.classList.add('desc');
-}
-
-function active(node) {
-  const prevActive = Array.from(document.getElementsByClassName('active'));
-  if (prevActive) {
-    prevActive.forEach(prev => prev.classList.remove('active'));
-  }
-  node.classList.toggle('active');
-}
-
-function changeArrowDirection(e) {
-  const node = e.target;
-  const parent = node.parentNode;
-  let asc = false;
-  if (parent.classList.contains('main-table__th--sortable')) {
-    if (node.classList.contains('asc')) {
-      if (node.classList.contains('active')) {
-        asc = false;
-        toDesc(node);
-      } else {
-        asc = true;
-        toAsc(node);
-      }
-    } else if (
-      node.classList.contains('desc') &&
-      parent.classList.contains('main-table__th--sortable')
-    ) {
-      if (node.classList.contains('active')) {
-        asc = true;
-        toAsc(node);
-      } else {
-        asc = false;
-        toDesc(node);
-      }
-    }
-    active(node);
-  } else if (node.classList.contains('main-table__th--sortable')) {
-    const child = node.children[0];
-    if (child.classList.contains('desc')) {
-      if (child.classList.contains('active')) {
-        asc = true;
-        toAsc(child);
-      } else {
-        asc = false;
-        toDesc(child);
-      }
-    } else if (child.classList.contains('asc')) {
-      if (child.classList.contains('active')) {
-        asc = false;
-        toDesc(child);
-      } else {
-        asc = true;
-        toAsc(child);
-      }
-    }
-    active(child);
-  }
-  return asc;
-}
-
 export default class Table extends Component {
   constructor(props) {
     super(props);
@@ -105,7 +37,6 @@ export default class Table extends Component {
       */
     };
     this.handleReset = this.handleReset.bind(this);
-    this.handleSort = this.handleSort.bind(this);
     this.handleFilterReset = this.handleFilterReset.bind(this);
     this.handleFilterSelect = this.handleFilterSelect.bind(this);
     this.handleFilterValue = this.handleFilterValue.bind(this);
@@ -114,13 +45,6 @@ export default class Table extends Component {
 
   handleReset(reset) {
     this.setState({ reset });
-  }
-
-  handleSort(e, method, dataSort) {
-    if (!method || !dataSort) return;
-    this.setState({
-      sort: { method, dataSort, asc: changeArrowDirection(e) }
-    });
   }
 
   handleFilterReset(key) {
@@ -195,7 +119,9 @@ export default class Table extends Component {
       external,
       forgetTable,
       rememberTable,
-      handleQuickFiltering
+      handleQuickFiltering,
+      handleSort,
+      sortValue
     } = this.props;
     const { reset, methodFilterSelect, filters, sort } = this.state;
     if (error) {
@@ -230,7 +156,7 @@ export default class Table extends Component {
         />
         {Array.isArray(table) ? (
           <table className="main-table">
-            <TableHead tHead={tHead} handleSort={this.handleSort} />
+            <TableHead tHead={tHead} handleSort={handleSort} sortValue={sortValue} />
             <TableBody sort={sort} filters={filters} table={table} />
           </table>
         ) : (
@@ -260,10 +186,12 @@ Table.propTypes = {
   handleImportCSV: PropTypes.func.isRequired,
   stopRenderImport: PropTypes.func.isRequired,
   fetchAllData: PropTypes.func.isRequired,
+  sortValue: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).isRequired,
   setFetch: PropTypes.func.isRequired,
   rememberTable: PropTypes.func.isRequired,
   forgetTable: PropTypes.func.isRequired,
   handleQuickFiltering: PropTypes.func.isRequired,
+  handleSort: PropTypes.func.isRequired,
   external: PropTypes.bool,
   error: PropTypes.any,
   isUpdating: PropTypes.bool

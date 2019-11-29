@@ -9,11 +9,21 @@ import Nav from '@components/Nav/Nav';
 import ApiHelper from '@helpers/ApiHelper';
 import TableHelper from '@helpers/TableHelper';
 import ErrorHandler from '@handlers/ErrorHandler';
+import { changeArrowDirection } from '@components/Table/sortTable';
 import routes from './routes';
 
 const apiHelper = new ApiHelper();
 // eslint-disable-next-line no-undef
 const rootPath = new URL(public_path).pathname;
+
+function getParams() {
+  const page = parseInt(localStorage.getItem('page') || sessionStorage.getItem('page'));
+  const paginate = parseInt(localStorage.getItem('paginate') || sessionStorage.getItem('paginate'));
+  const searchParam = localStorage.getItem('searchParam') || sessionStorage.getItem('searchParam');
+  const sortParam = localStorage.getItem('sortParam') || sessionStorage.getItem('sortParam');
+  const asc = localStorage.getItem('asc') || sessionStorage.getItem('asc');
+  return { page, paginate, searchParam, sortParam, asc };
+}
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -28,6 +38,7 @@ export default class App extends Component {
         table: false,
         render: false
       },
+      sortValue: false,
       typingTimeout: false
       /*
         startValue: false
@@ -43,6 +54,7 @@ export default class App extends Component {
     this.rememberTable = this.rememberTable.bind(this);
     this.forgetTable = this.forgetTable.bind(this);
     this.handleQuickFiltering = this.handleQuickFiltering.bind(this);
+    this.handleSort = this.handleSort.bind(this);
   }
 
   componentDidMount() {
@@ -103,6 +115,7 @@ export default class App extends Component {
     localStorage.setItem('page', sessionStorage.getItem('page'));
     localStorage.setItem('paginate', sessionStorage.getItem('paginate'));
     localStorage.setItem('searchParam', sessionStorage.getItem('searchParam'));
+    localStorage.setItem('asc', sessionStorage.getItem('asc'));
     this.forceUpdate();
   }
 
@@ -111,6 +124,7 @@ export default class App extends Component {
     localStorage.removeItem('table');
     localStorage.removeItem('page');
     localStorage.removeItem('searchParam');
+    localStorage.removeItem('asc');
     this.forceUpdate();
   }
 
@@ -149,12 +163,8 @@ export default class App extends Component {
       sessionStorage.setItem('page', nextPage.toString());
       if (localStorage.getItem('page')) localStorage.setItem('page', nextPage);
       this.setState({ isUpdating: true });
-      const paginate = parseInt(
-        localStorage.getItem('paginate') || sessionStorage.getItem('paginate')
-      );
-      const searchParam =
-        localStorage.getItem('searchParam') || sessionStorage.getItem('searchParam');
-      this.fetchTable(nextPage, paginate, searchParam)
+      const { paginate, searchParam, sortParam, asc } = getParams();
+      this.fetchTable(nextPage, paginate, searchParam, sortParam, asc)
         .then(data => {
           this.setState(prevState => {
             // If no data from api
@@ -215,7 +225,7 @@ export default class App extends Component {
     return prevTable.slice(0, prevTable.length - startLast).concat(groupedTable);
   }
 
-  fetchTable(page, pagination, searchParam) {
+  fetchTable(page = 1, pagination = 40, searchParam = '', sortParam = '', asc = true) {
     return apiHelper
       .get(`/billed_meals`, [
         {
@@ -228,7 +238,15 @@ export default class App extends Component {
         },
         {
           key: 'searchParam',
-          value: searchParam || ''
+          value: searchParam
+        },
+        {
+          key: 'sortParam',
+          value: sortParam
+        },
+        {
+          key: 'asc',
+          value: asc
         }
       ])
       .then(response => {
@@ -246,20 +264,21 @@ export default class App extends Component {
   handleQuickFiltering(value) {
     const { typingTimeout } = this.state;
     if (typingTimeout) clearTimeout(typingTimeout);
-    const page = parseInt(localStorage.getItem('page') || sessionStorage.getItem('page'));
-    const paginate = parseInt(
-      localStorage.getItem('paginate') || sessionStorage.getItem('paginate')
-    );
+    const { page, paginate, sortParam, asc } = getParams();
     let searchParam = sessionStorage.getItem('searchParam') || '';
     if (value === searchParam) return;
-    searchParam = value;
-    sessionStorage.setItem('searchParam', searchParam || '');
+    searchParam = value || '';
+    sessionStorage.setItem('searchParam', searchParam);
     const timeoutId = setTimeout(() => {
       this.setState({ fetch_table: false });
       this.setFetch(true);
-      this.fetchTable(1, page * paginate, searchParam)
+      this.fetchTable(1, page * paginate, searchParam, sortParam, asc)
         .then(({ table }) => {
-          this.setState({ fetch_table: table, isUpdating: false, shouldUpdate: true });
+          this.setState({
+            fetch_table: table,
+            isUpdating: false,
+            shouldUpdate: true
+          });
           this.setFetch(false);
         })
         .catch(e => {
@@ -269,19 +288,31 @@ export default class App extends Component {
     this.setState({ typingTimeout: timeoutId });
   }
 
+  handleSort(e, method, dataSort) {
+    if (!method || !dataSort) return;
+    const asc = changeArrowDirection(e);
+    if (localStorage.getItem('asc')) {
+      localStorage.setItem('asc', asc);
+      localStorage.setItem('sortParam', dataSort);
+    }
+    sessionStorage.setItem('asc', asc);
+    sessionStorage.setItem('sortParam', dataSort);
+    this.setFetch(true);
+    const { page, paginate, searchParam, sortParam } = getParams();
+    this.setState({ isUpdating: true, fetch_table: false, sortValue: dataSort });
+    this.fetchTable(1, paginate * page, searchParam, sortParam, asc).then(({ table }) => {
+      this.setState({ fetch_table: table });
+      this.setFetch(false);
+    });
+  }
+
   handleRefresh() {
     const { external } = this.state;
     this.setState({ error: false, fetch_table: false });
-    const page = parseInt(localStorage.getItem('page') || sessionStorage.getItem('page'));
-    const searchParam = parseInt(
-      localStorage.getItem('searchParam') || sessionStorage.getItem('searchParam')
-    );
-    const paginate = parseInt(
-      localStorage.getItem('paginate') || sessionStorage.getItem('paginate')
-    );
+    const { page, paginate, searchParam, sortParam, asc } = getParams();
     if (!external.table) {
       this.setFetch(true);
-      this.fetchTable(1, paginate * page, searchParam)
+      this.fetchTable(1, paginate * page, searchParam, sortParam, asc)
         .then(({ table }) => {
           this.setState({ fetch_table: table });
           this.setFetch(false);
@@ -293,7 +324,7 @@ export default class App extends Component {
   }
 
   render() {
-    const { fetch_table, isUpdating, error, external } = this.state;
+    const { fetch_table, isUpdating, error, external, sortValue } = this.state;
     const table = external.render ? external.table : fetch_table;
     return (
       <Router basename={rootPath}>
@@ -314,7 +345,9 @@ export default class App extends Component {
                   setFetch={this.setFetch}
                   rememberTable={this.rememberTable}
                   forgetTable={this.forgetTable}
+                  handleSort={this.handleSort}
                   handleQuickFiltering={this.handleQuickFiltering}
+                  sortValue={sortValue}
                 />
               </Route>
             ))}
