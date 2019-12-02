@@ -15,9 +15,9 @@ class Flight_Load_Collection extends Collection{
   public function sortValues($callback, $ascending = false, $options = SORT_REGULAR)
   {
     if($callback === DatabaseHelper::COLUMN_DOESNT_EXIST || is_null($callback)) return $this;
-    return new Flight_Load_Collection($this->sortBy($callback, $options, $ascending)
+    return $this->sortBy($callback, $options, $ascending)
             ->values()
-            ->all());
+            ->all();
   }
 
   public function flatten($depth = INF)
@@ -39,11 +39,11 @@ class Flight_Load_Collection extends Collection{
               $accum["type"] = $billed_meals->type;      
               if($flight_plan)              
               {
-                $accum["plan_codes"] = [explode(',', $flight_plan->iata_code)];
+                $accum["plan_codes"] = explode(',', $flight_plan->iata_code);
                 $accum["plan_price"] = floatval($flight_plan->price);
                 $accum["plan_qty"] = floatval($flight_plan->meal_qty);
               }
-              $accum["fact_codes"] = [explode(',', $billed_meals->iata_code)];
+              $accum["fact_codes"] = explode(',', $billed_meals->iata_code);
               $accum["fact_qty"] = floatval($billed_meals->fact_qty);
               $accum["fact_price"] = floatval($billed_meals->fact_price);
               $accum["delta"] = $accum["plan_price"] - $accum["fact_price"];

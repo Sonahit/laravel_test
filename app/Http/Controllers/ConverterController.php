@@ -4,19 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Billed_Meals;
+use App\Models\Flight_Load;
 use PDF;
 
 class ConverterController extends Controller
 {
     /**
-     * @param App\Models\Billed_Meals $billed_Meals
+     * @param App\Models\Flight_Load $fl
      * @param Illuminate\Http\Request $request
      * @return array
      */
-    protected function getTable(Billed_Meals $billed_Meals, Request $request){
-      $controller = new BilledMealsController();
-      $resp = $controller->index($billed_Meals, $request);
+    protected function getTable(Flight_Load $fl, Request $request){
+      $controller = new ReportsController();
+      $resp = $controller->index($fl, $request);
       $data = json_decode($resp->content());
       if(!is_array($data->pages)){
           $body = $data->pages->data;
@@ -26,15 +26,15 @@ class ConverterController extends Controller
       return $body;
     }
 
-    public function index(Billed_Meals $billed_Meals, Request $request)
+    public function index(Flight_Load $flight_load, Request $request)
     {
-      $body = $this->getTable($billed_Meals, $request);
+      $body = $this->getTable($flight_load, $request);
       return view('templates.table', ["table_data" => $body]);
     }
     
-    public function pdf(Billed_Meals $billed_Meals, Request $request)
+    public function pdf(Flight_Load $flight_load, Request $request)
     {
-      $body = $this->getTable($billed_Meals, $request);
+      $body = $this->getTable($flight_load, $request);
       gc_disable();
       // It takes too long
       $pdf = PDF::loadView("templates.table", ['table_data' => $body]);
@@ -43,10 +43,12 @@ class ConverterController extends Controller
       gc_collect_cycles();
       return base64_encode($output);
     }
-    public function csv(Billed_Meals $billed_Meals, Request $request){
-      $body = $this->getTable($billed_Meals, $request);
+
+    public function csv(Flight_Load $flight_load, Request $request){
+      $body = $this->getTable($flight_load, $request);
       return ["table" => $body];
     }
+    
 }
 
 

@@ -17,7 +17,8 @@ describe('<TableOptions/>', () => {
       fetchAllData: jest.fn(),
       rememberTable: jest.fn(),
       forgetTable: jest.fn(),
-      refreshTable: jest.fn()
+      refreshTable: jest.fn(),
+      handleQuickFiltering: jest.fn()
     };
     test('should render', () => {
       const app = render(<TableOptions {...tableOptionsProps} />);

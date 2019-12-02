@@ -19,51 +19,6 @@ describe('<App/>', () => {
     expect(app).toBeTruthy();
   });
 
-  describe('when has data', () => {
-    beforeEach(() => {
-      cleanup();
-    });
-    test('should filter data', async () => {
-      const app = render(<App />);
-      await wait(() => app.rerender(<App />));
-      expect(fetch.mock.calls.length).toBeGreaterThan(0);
-      expect(app).toBeTruthy();
-      const table = document.querySelector('.main-table');
-      expect(table).toBeTruthy();
-      const selectOption = text => app.getByText(text);
-      const option = selectOption('Номеру полёта');
-      option.selected = true;
-      fireEvent.change(app.getByRole('filters'));
-      await wait(() => app.rerender(<App />));
-      expect(app.getByPlaceholderText('От')).toBeTruthy();
-      fireEvent.input(app.getByPlaceholderText('До'), { target: { value: 0 } });
-      await wait(() => app.rerender(<App />));
-      const tbody = app.getByRole('table-body');
-      expect(tbody.rows.length).toBeLessThanOrEqual(1);
-    });
-
-    test('should sort data', async () => {
-      const app = render(<App />);
-      await wait(() => app.rerender(<App />));
-      expect(fetch.mock.calls.length).toBeGreaterThan(0);
-      expect(app).toBeTruthy();
-      const table = document.querySelector('.main-table');
-      expect(table).toBeTruthy();
-      const tBody = () => Array.from(app.getByRole('table-body').children).map(tr => tr.outerHTML);
-      const tbody = tBody();
-      fireEvent.click(app.getByText('Номер полёта'));
-      await wait(() => app.rerender(<App />));
-      let span = app.getByText('Номер полёта');
-      expect(span.className).toMatch('asc');
-      fireEvent.click(app.getByText('Номер полёта'));
-      await wait(() => app.rerender(<App />));
-      span = app.getByText('Номер полёта');
-      expect(span.className).toMatch('desc');
-      const sortedTBody = tBody();
-      expect(sortedTBody).toEqual(tbody.reverse());
-    });
-  });
-
   describe('import data', () => {
     test('should upload csv file', async () => {
       const app = render(<App />);
@@ -78,7 +33,8 @@ describe('<App/>', () => {
       Simulate.change(input, {
         target: { files: [file] }
       });
-      await wait(() => app.rerender(<App />), { timeout: 5000 });
+      await wait(() => app.rerender(<App />));
+      await new Promise(resolve => setTimeout(resolve(), 5 * 1000));
       const impBtn = app.getByRole('import');
       const label = app.getByRole('import_data');
       expect(label.innerText).not.toMatch('Choose file');

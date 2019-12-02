@@ -2,26 +2,18 @@ import * as sortKeys from './SortKeys';
 
 export default class TableHelper {
   csvToJson(csv) {
-    return csv.map(el => {
-      const fact_attributes = {
-        codes: el[5].replace('s', '').split(','),
-        price: parseInt(el[9], 10),
-        qty: parseInt(el[7], 10)
-      };
-      const plan_attributes = {
-        codes: el[4].replace('s', '').split(','),
-        price: parseInt(el[8], 10),
-        qty: parseInt(el[6], 10)
-      };
-      return {
-        id: parseInt(el[0], 10),
-        date: el[1],
-        type: el[2],
-        class: el[3],
-        fact_attributes,
-        plan_attributes
-      };
-    });
+    return csv.map(el => ({
+      id: parseInt(el[0], 10),
+      date: el[1],
+      type: el[2],
+      class: el[3],
+      fact_codes: el[5].replace('s', '').split(','),
+      fact_price: parseInt(el[9], 10),
+      fact_qty: parseInt(el[7], 10),
+      plan_codes: el[4].replace('s', '').split(','),
+      plan_price: parseInt(el[8], 10),
+      plan_qty: parseInt(el[6], 10)
+    }));
   }
 
   getTable() {
@@ -36,38 +28,6 @@ export default class TableHelper {
     return Array.from(table.tHead.rows)
       .map(thead => Array.from(thead.children).map(tr => tr))
       .flat();
-  }
-
-  sumAndGroup(rows) {
-    return rows.reduce(
-      (accum, v) => {
-        if (!accum.id) accum.id = v.id;
-        if (!accum.date) accum.date = v.date;
-        if (!accum.class) accum.class = v.class;
-        if (!accum.type) accum.type = v.type;
-        accum.plan_attributes = v.plan_attributes;
-        accum.fact_qty = v.fact_qty;
-        accum.fact_price = v.fact_price;
-        accum.fact_codes = v.fact_codes;
-        return accum;
-      },
-      {
-        id: 0,
-        date: 0,
-        class: '',
-        type: '',
-        fact_attributes: {
-          qty: 0,
-          codes: [],
-          price: 0
-        },
-        plan_attributes: {
-          qty: 0,
-          codes: [],
-          price: 0
-        }
-      }
-    );
   }
 
   csvAsTable(rawCSV) {

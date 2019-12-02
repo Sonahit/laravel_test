@@ -8,7 +8,7 @@ class ApiTest extends TestCase
     private $apiPath = "/api/v1";
     
 
-    public function testShouldGetBilledMeals()
+    public function testShouldGetReport()
     {
       $resp = $this->get("{$this->apiPath}/billed_meals");
       $resp->assertOk();
@@ -20,8 +20,8 @@ class ApiTest extends TestCase
     public function testShouldbeEmpty()
     {
       $resp = $this->get("{$this->apiPath}/billed_meals?page=2&paginate=-1");
-      $resp->assertStatus(204);
-      $data = $resp->baseResponse->getContent();
+      $resp->assertStatus(200);
+      $data = json_decode($resp->baseResponse->getContent())->pages;
       $this->assertEmpty($data);
     }
 

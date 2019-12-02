@@ -2,12 +2,10 @@
 
 namespace Tests\Unit;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class WebTest extends TestCase
 {
-    private $rootPath = "/";
     /**
      * A basic test example.
      *

@@ -14,7 +14,8 @@ describe('<Table/>', () => {
       fetchAllData: jest.fn(),
       setFetch: jest.fn(),
       rememberTable: jest.fn(),
-      forgetTable: jest.fn()
+      forgetTable: jest.fn(),
+      handleQuickFiltering: jest.fn()
     };
     test('should render', () => {
       const app = render(<Table {...tableProps} />);

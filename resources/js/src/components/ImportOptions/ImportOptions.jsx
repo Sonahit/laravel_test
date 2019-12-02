@@ -49,16 +49,13 @@ function ImportOptions(props) {
               date,
               class: nom_class,
               type,
-              plan_attributes: {
-                codes: plan_codes.split(','),
-                qty: parseInt(plan_qty),
-                price: parseInt(plan_price)
-              },
-              fact_attributes: {
-                codes: fact_codes.split(','),
-                qty: parseInt(fact_qty),
-                price: parseInt(fact_price)
-              }
+              plan_codes: plan_codes.split(','),
+              plan_qty: parseInt(plan_qty),
+              plan_price: parseInt(plan_price),
+              fact_codes: fact_codes.split(','),
+              fact_qty: parseInt(fact_qty),
+              fact_price: parseInt(fact_price),
+              delta: parseInt(plan_price) - parseInt(fact_price)
             };
           });
           const file = e.currentTarget.file_info;

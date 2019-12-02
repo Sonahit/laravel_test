@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Collections\Flight_Load_Collection;
 use App\Models\Billed_Meals;
 use App\Models\Flight_Load;
 use App\Utils\Helpers\DatabaseHelper;
@@ -68,6 +69,9 @@ class ReportsController extends Controller
     public function getData(Flight_Load $flight_load, array $query)
     {
         $paginate = intval($query["paginate"]);
+        $page = intval($query["page"]);
+        if($page > 1 && $paginate < 1) return new Flight_Load_Collection();
+
         if(is_null($paginate) || !$paginate) $paginate = $flight_load->getPerPage();
         $searchParam = $this->resolveSearchParam($query["searchParam"]);
         $desc = is_null($query["asc"]) ? false : !$this->strToBool($query["asc"]);

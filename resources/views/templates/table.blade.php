@@ -38,13 +38,13 @@
             <td>  {{ $billed_meal->date }}</td>	            
             <td>  {{ $billed_meal->class }}</td>	          
             <td>  {{ $billed_meal->type }}</td>	           
-            <td>  {{ implode(", ",$billed_meal->plan_attributes->codes)}}</td>	            
-            <td>  {{ implode(", ",$billed_meal->fact_attributes->codes)}}</td>
-            <td>  {{ $billed_meal->plan_attributes->qty }}</td>	            
-            <td>  {{ $billed_meal->fact_attributes->qty }}</td>
-            <td>  {{ $billed_meal->plan_attributes->price}}</td>
-            <td>  {{ $billed_meal->fact_attributes->price }}</td>	   
-            <td>  {{ $billed_meal->plan_attributes->price - $billed_meal->fact_attributes->price }}</td>	          
+            <td>  {{ implode(',', $billed_meal->plan_codes)}}</td>	            
+            <td>  {{ implode(',', $billed_meal->fact_codes)}}</td>
+            <td>  {{ $billed_meal->plan_qty }}</td>	            
+            <td>  {{ $billed_meal->fact_qty }}</td>
+            <td>  {{ $billed_meal->plan_price}}</td>
+            <td>  {{ $billed_meal->fact_price }}</td>	   
+            <td>  {{ $billed_meal->plan_price - $billed_meal->fact_price }}</td>	          
           </tr>
         @endforeach
     </tbody>
