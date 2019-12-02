@@ -23,6 +23,8 @@ class ReportsController extends Controller
         $query = RequestHelper::get_params_as_array($request, RequestHelper::params);
         $paginate = $query["paginate"];
         $page = $query["page"];
+        $sortParam = $query['sortParam'];
+        $desc = !$this->strToBool(is_null($query['asc']) ? 'true' : $query['asc']);
         if($paginate === 0 || is_null($paginate) || is_null($page)) $page = 1;
         if(is_null($paginate)) $paginate = 40;
 
@@ -32,8 +34,8 @@ class ReportsController extends Controller
         $flight_load_transformed = $table
             ->groupBy(["flight_id", "flight_date"])
             ->formatByDate()
-            ->flatten(1);
-
+            ->flatten(1)
+            ->sortValues($sortParam, $desc);
         $end = now();
 
         $computeTime = abs($end->millisecond - $start->millisecond);
@@ -44,16 +46,22 @@ class ReportsController extends Controller
             "perPage" => $paginate
         ], 200);
     }
-
+    /**
+     * Get JSON responce
+     * 
+     * @param any $data
+     * @param int $code
+     */
     protected function getResponse($data, int $code){
         Log::info("Sending response", ["code" => $code]);
         return new Response(json_encode($data), $code, ["Content-Type" => "application/json"]);
     }
     
-    private function strToBool($str){
+    private function strToBool(String $str){
       if($str === "false") return false;
       return true;
     }
+
     /**
      * @return \Illuminate\Support\Collection|\Illuminate\Pagination\LengthAwarePaginator 
      */
@@ -83,13 +91,11 @@ class ReportsController extends Controller
         $flight_load_collect = $flight_load
             ->january()
             ->business()
-            ->where(function($sub) use($searchParam){
-              $sub->whereHas('billed_meals', function($q) use($searchParam){
+            ->whereHas('billed_meals', function($q) use($searchParam){
                 $q
                   ->business()
                   ->noALC()
                   ->orWhereLike(Billed_Meals::searchableRows, $searchParam);
-              });
             })
             ->when(is_int($searchParam) && !$this->isDate($searchParam), function($sub) use($searchParam){
               $sub->orWhereHas('flight_plan_prices', function($query) use($searchParam){ 
@@ -115,19 +121,15 @@ class ReportsController extends Controller
         return $flight_load_collect->simplePaginate($paginate);
     }    
 
-    /**
-     * Display the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-    private function isDate($value){
+    private function isDate(string $value = ''){
       $pattern = '/^(\d{4})-([01][0-9])-([0-2][0-9]|[3][0-1])/i';
       return preg_match($pattern, $value);
     }
 
     private function resolveSearchParam($value){
-      if($this->isDate($value)){
+      if(is_null($value)){
+        return "";
+      } else if($this->isDate($value)){
         return $value;
       } else if(is_numeric($value)){
         return intval($value);

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Collections\Flight_Load_Collection;
 use App\Utils\Helpers\DatabaseHelper;
+use Illuminate\Support\Facades\Schema;
 
 class Flight_Load extends Model
 {
@@ -28,17 +29,19 @@ class Flight_Load extends Model
 
     public function scopeSortBy($q, array $attributes = null, bool $desc = true){
       if(is_null($attributes) || $attributes[0] === DatabaseHelper::COLUMN_DOESNT_EXIST) return $q;
+      $selfTable = $this->getTable();
       foreach($attributes as $attribute){
         [$tableName, $column] = explode('.', $attribute);
-        $selfTable = $this->getTable();
         if($selfTable === $tableName){
           $q->orderBy($column, $desc ? 'desc' : 'asc' );
           continue;
         }
         $q->leftJoin($tableName, function($join) use($tableName, $selfTable){
-          $join ->on("{$tableName}.flight_date", '=', "{$selfTable}.flight_date");
-          if($tableName === 'billed_meals'){
+          if(Schema::hasColumn($tableName, 'flight_load_id')){
             $join->on("{$tableName}.flight_load_id", '=', "{$selfTable}.id");
+          } else {
+            $join ->on("{$tableName}.flight_date", '=', "{$selfTable}.flight_date");
+            $join ->on("{$tableName}.flight_id", '=', "{$selfTable}.flight_id");  
           }
         })->orderBy("{$tableName}.{$column}", $desc ? 'desc' : 'asc');
       }

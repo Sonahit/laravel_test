@@ -66,6 +66,10 @@ export default class App extends Component {
     const table = JSON.parse(localStorage.getItem('table'));
     const searchParam =
       localStorage.getItem('searchParam') || sessionStorage.getItem('searchParam') || '';
+    sessionStorage.removeItem('sortParam');
+    sessionStorage.removeItem('asc');
+    localStorage.removeItem('sortParam');
+    localStorage.removeItem('asc');
     if (table) {
       this.setState({ fetch_table: table });
     } else {
