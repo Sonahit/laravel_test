@@ -28,7 +28,7 @@ export default function Buttons(props) {
             Download CSV
           </button>
         )}
-        {!external && (
+        {/* {!external && (
           <button
             type="button"
             className="options__button options__download__csv"
@@ -36,7 +36,7 @@ export default function Buttons(props) {
           >
             Get all meals
           </button>
-        )}
+        )} */}
       </div>
       <div className="options__buttons">
         {!external && !localStorage.getItem('table') && (
@@ -88,7 +88,7 @@ export default function Buttons(props) {
 }
 
 Buttons.propTypes = {
-  fetchAllData: PropTypes.func.isRequired,
+  // fetchAllData: PropTypes.func.isRequired,
   rememberTable: PropTypes.func.isRequired,
   forgetTable: PropTypes.func.isRequired,
   refreshTable: PropTypes.func.isRequired,
