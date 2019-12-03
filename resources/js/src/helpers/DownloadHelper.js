@@ -100,7 +100,8 @@ export default class DownloadHelper {
     button.classList.toggle('processing');
     const page = sessionStorage.getItem('page');
     const paginate = sessionStorage.getItem('paginate');
-    fetch(`${location.origin}/api/v1/pdf?paginate=${paginate * page}&page=1`, {
+    // eslint-disable-next-line no-undef
+    fetch(`${public_path}/api/v1/pdf?paginate=${paginate * page}&page=1`, {
       method: 'POST',
       headers: {
         'X-CSRF-TOKEN': token,
