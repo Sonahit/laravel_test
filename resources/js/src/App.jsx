@@ -321,11 +321,11 @@ export default class App extends Component {
 
   handleRefresh() {
     const { external } = this.state;
-    this.setState({ error: false, fetch_table: false });
-    const { page, paginate, searchParam, sortParam, asc } = getParams();
+    this.setState({ error: false, fetch_table: false, sortValue: false });
+    const { page, paginate } = getParams();
     if (!external.table) {
       this.setFetch(true);
-      this.fetchTable(1, paginate * page, searchParam, sortParam, asc)
+      this.fetchTable(1, paginate * page)
         .then(({ table }) => {
           this.setState({ fetch_table: table });
           this.setFetch(false);
