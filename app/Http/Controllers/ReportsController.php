@@ -86,8 +86,6 @@ class ReportsController extends Controller
           ? ['flight_load.flight_id', 'flight_load.flight_date'] 
           : [DatabaseHelper::paramToColumn($query["sortParam"])];
 
-        if($page > 1 && $paginate < 1) return new Flight_Load_Collection();
-        
         $relations = [
           'billed_meals' => function($q){
               $q->business()
@@ -133,9 +131,11 @@ class ReportsController extends Controller
             })
             ->with($relations)
             ->sortBy($sortParam, $desc);
+        // if($page > 1 && $paginate < 1 && !is_null($sortParam)) return $flight_load_collect->get();
+        if($page > 1 && $paginate < 1) return new Flight_Load_Collection();
         if($paginate < 1) return $flight_load_collect->get();
         return $flight_load_collect->simplePaginate($paginate);
-    }    
+    }
 
     private function isDate(string $value = ''){
       $pattern = '/^(\d{4})-([01][0-9])-([0-2][0-9]|[3][0-1])/i';

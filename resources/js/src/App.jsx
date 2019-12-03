@@ -136,7 +136,8 @@ export default class App extends Component {
     const paginate = -1;
     sessionStorage.setItem('paginate', paginate.toString());
     this.setState({ fetch_table: false, isUpdating: false });
-    this.fetchTable(1, paginate)
+    const { searchParam, sortParam, asc } = getParams();
+    this.fetchTable(1, paginate, searchParam, sortParam, asc)
       .then(({ table }) => this.setState({ fetch_table: table }))
       .catch(e => {
         this.setState({ error: e.message });
@@ -148,6 +149,7 @@ export default class App extends Component {
     const height = (document.body.clientHeight - window.innerHeight) * 0.8;
     const doUpdate = (scroll, height) => scroll > height;
     const { external, error, isFiltering, shouldUpdate } = this.state;
+
     // If application neither filtering
     // nor filtering
     // nor has error
@@ -159,6 +161,8 @@ export default class App extends Component {
       !external.render &&
       !isFiltering &&
       !apiHelper.isFetching &&
+      getParams().paginate > 0 &&
+      getParams().page > 0 &&
       doUpdate(scroll, height)
     ) {
       apiHelper.isFetching = true;

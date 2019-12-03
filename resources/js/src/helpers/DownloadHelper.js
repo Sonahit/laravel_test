@@ -62,20 +62,30 @@ export default class DownloadHelper {
     api.get('/csv', [{ key: 'paginate', value: '-1' }]).then(({ table }) => {
       const tBody = table.map(meal => {
         // eslint-disable-next-line camelcase
-        const { id, date, type, plan_attributes, fact_attributes } = meal;
+        const {
+          id,
+          date,
+          type,
+          plan_codes,
+          plan_qty,
+          plan_price,
+          fact_codes,
+          fact_qty,
+          fact_price,
+          delta
+        } = meal;
         const nomClass = meal.class;
-        const delta = (plan_attributes.price - fact_attributes.price).toFixed(2);
         return [
           id,
           date,
           nomClass,
           type,
-          plan_attributes.codes.join(', ') || 'NO DATA',
-          fact_attributes.codes.join(', '),
-          plan_attributes.qty,
-          fact_attributes.qty,
-          plan_attributes.price.toFixed(2),
-          fact_attributes.price.toFixed(2),
+          plan_codes.join(', ') || 'NO DATA',
+          fact_codes.join(', '),
+          plan_qty,
+          fact_qty,
+          plan_price.toFixed(2),
+          fact_price.toFixed(2),
           delta
         ];
       });

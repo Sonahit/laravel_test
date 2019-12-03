@@ -15,8 +15,8 @@ class ConverterController extends Controller
      * @return array
      */
     protected function getTable(Flight_Load $fl, Request $request){
-      $controller = new ReportsController();
-      $resp = $controller->index($fl, $request);
+      $c = new ReportsController();
+      $resp = $c->index($fl, $request);
       $data = json_decode($resp->content());
       if(!is_array($data->pages)){
           $body = $data->pages->data;
@@ -29,18 +29,16 @@ class ConverterController extends Controller
     public function index(Flight_Load $flight_load, Request $request)
     {
       $body = $this->getTable($flight_load, $request);
-      return view('templates.table', ["table_data" => $body]);
+      $pdf = PDF::loadView("templates.table", ['table_data' => $body]);
+      $output = $pdf->output();
+      return base64_encode($output);
     }
     
     public function pdf(Flight_Load $flight_load, Request $request)
     {
       $body = $this->getTable($flight_load, $request);
-      gc_disable();
-      // It takes too long
       $pdf = PDF::loadView("templates.table", ['table_data' => $body]);
       $output = $pdf->output();
-      gc_enable();
-      gc_collect_cycles();
       return base64_encode($output);
     }
 
