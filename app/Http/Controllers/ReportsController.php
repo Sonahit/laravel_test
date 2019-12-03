@@ -64,33 +64,45 @@ class ReportsController extends Controller
     }
 
     /**
-     * @return \Illuminate\Support\Collection|\Illuminate\Pagination\LengthAwarePaginator 
+     * @param \App\Models\Flight_Load $flight_load
+     * @param array $query
+     * @return \App\Collections\Flight_Load_Collection|\Illuminate\Pagination\LengthAwarePaginator
      */
     public function getData(Flight_Load $flight_load, array $query)
     {
-        $paginate = intval($query["paginate"]);
-        $page = intval($query["page"]);
-        if($page > 1 && $paginate < 1) return new Flight_Load_Collection();
+        $paginate = is_null($query["paginate"]) || !$query["paginate"] 
+          ? $flight_load->getPerPage() 
+          : intval($query["paginate"]);
 
-        if(is_null($paginate) || !$paginate) $paginate = $flight_load->getPerPage();
+        $page = intval($query["page"]);
+
         $searchParam = $this->resolveSearchParam($query["searchParam"]);
-        $desc = is_null($query["asc"]) ? false : !$this->strToBool($query["asc"]);
-        $sortParam = is_null($query["sortParam"]) ? ['flight_load.flight_id', 'flight_load.flight_date'] : [DatabaseHelper::paramToColumn($query["sortParam"])];
+
+        $desc = is_null($query["asc"]) 
+          ? false 
+          : !$this->strToBool($query["asc"]);
+
+        $sortParam = is_null($query["sortParam"]) 
+          ? ['flight_load.flight_id', 'flight_load.flight_date'] 
+          : [DatabaseHelper::paramToColumn($query["sortParam"])];
+
+        if($page > 1 && $paginate < 1) return new Flight_Load_Collection();
+        
         $relations = [
-            'billed_meals' => function($q){
-                $q->business()
-                  ->noALC()
-                  ->select([
-                    'flight_load_id',
-                    DB::raw('ROUND(SUM(qty), 2) as fact_qty'),
-                    'class',
-                    'type',
-                    DB::raw('GROUP_CONCAT(DISTINCT iata_code) as iata_code'),
-                    'total as fact_price'
-                  ])
-                  ->groupBy("flight_id", "flight_date");
-            },
-            'flight_plan_prices'
+          'billed_meals' => function($q){
+              $q->business()
+                ->noALC()
+                ->select([
+                  'flight_load_id',
+                  DB::raw('ROUND(SUM(qty), 2) as fact_qty'),
+                  'class',
+                  'type',
+                  DB::raw('GROUP_CONCAT(DISTINCT iata_code) as iata_code'),
+                  'total as fact_price'
+                ])
+                ->groupBy("flight_id", "flight_date");
+          },
+          'flight_plan_prices'
         ];
         $flight_load_collect = $flight_load
             ->january()

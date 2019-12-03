@@ -9,7 +9,7 @@ class Flight_Load_Collection extends Collection{
 
   public function groupBy($groupBy, $preserveKeys = false)
   {
-    return new Flight_Load_Collection(parent::groupBy($groupBy, $preserveKeys));
+    return new static(parent::groupBy($groupBy, $preserveKeys));
   }
 
   public function sortValues($callback, $ascending = false, $options = SORT_REGULAR)
@@ -22,7 +22,7 @@ class Flight_Load_Collection extends Collection{
 
   public function flatten($depth = INF)
   {
-    return new Flight_Load_Collection(parent::flatten($depth));
+    return new static(parent::flatten($depth));
   }
   
   public function formatByDate(){
@@ -63,7 +63,7 @@ class Flight_Load_Collection extends Collection{
           ]);
         });
     });
-    return new Flight_Load_Collection($values);
+    return new static($values);
   }
 }
 ?>

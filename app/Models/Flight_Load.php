@@ -57,29 +57,6 @@ class Flight_Load extends Model
         return $this->hasMany(Billed_Meals::class, 'flight_load_id', 'id');
     }
 
-    public function new_matrix()
-    {
-        return $this->hasManyThrough(
-          New_Matrix::class,
-          Billed_Meals::class,
-          'flight_load_id',
-          'iata_code',
-          'id',
-          'iata_code'
-        )
-        ->with('business_meal_prices');
-    }
-    
-    public function new_matrix_prices(){
-      return $this->hasManyThrough(
-          New_Matrix_Prices::class,
-          Billed_Meals::class,
-          'flight_load_id',
-          'iata_code',
-          'id',
-          'iata_code');
-    }
-
     public function flight_plan_prices(){
       return $this->hasOneThrough(
         Flight_Plan_Prices::class,

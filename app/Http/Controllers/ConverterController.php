@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Flight_Load;
+use \App\Models\Flight_Load;
 use PDF;
 
 class ConverterController extends Controller
 {
     /**
-     * @param App\Models\Flight_Load $fl
-     * @param Illuminate\Http\Request $request
+     * @param \App\Models\Flight_Load $fl
+     * @param \Illuminate\Http\Request $request
      * @return array
      */
     protected function getTable(Flight_Load $fl, Request $request){

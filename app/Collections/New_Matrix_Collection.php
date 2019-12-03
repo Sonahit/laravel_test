@@ -26,7 +26,7 @@ class New_Matrix_Collection extends Collection{
         "qty" => $qty,
         "price" => $overall_price
       ];
-      return $new_matrix;
+      return new static($new_matrix);
   }
   
 }

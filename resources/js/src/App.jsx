@@ -181,8 +181,7 @@ export default class App extends Component {
               };
             }
             const { table } = data;
-            // const fetch_table = this.group(prevState.fetch_table, table);
-            const fetch_table = prevState.fetch_table.concat(table);
+            const fetch_table = prevState.fetch_table ? prevState.fetch_table.concat(table) : table;
             if (localStorage.getItem('table')) {
               localStorage.setItem('table', JSON.stringify(fetch_table));
               localStorage.setItem('page', nextPage.toString());
@@ -200,6 +199,12 @@ export default class App extends Component {
     }
   }
 
+  /**
+   *
+   * @param {*} prevTable
+   * @param {*} table
+   * @deprecated
+   */
   group(prevTable, table) {
     if (!prevTable || !table) return prevTable;
     const concatLast = (minus, prevTable, table) =>

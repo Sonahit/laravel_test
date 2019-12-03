@@ -68,20 +68,6 @@ function filterByDate(table, startDate, endDate, index, subIndex) {
 }
 
 export default function filterTable(table, filters) {
-  // const preFiltered = quickFilter.startValue
-  //   ? table.filter(td => {
-  //       const toArray = obj =>
-  //         Object.keys(obj).map(key => {
-  //           if (obj[key] instanceof Object) {
-  //             return toArray(obj[key]);
-  //           }
-  //           return obj[key];
-  //         });
-  //       return JSON.stringify(toArray(td))
-  //         .toLowerCase()
-  //         .includes(quickFilter.startValue.toLowerCase());
-  //     })
-  //   : table;
   return Object.keys(filters).reduce((filteredTable, key) => {
     const filter = filters[key];
     if (filter) {
