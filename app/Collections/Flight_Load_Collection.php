@@ -25,7 +25,8 @@ class Flight_Load_Collection extends Collection{
     return new static(parent::flatten($depth));
   }
   
-  public function formatByDate(){
+  public function formatByDate()
+  {
     return new static(
         $this->map(function($items)
         {
@@ -36,7 +37,6 @@ class Flight_Load_Collection extends Collection{
                 {
                   $billed_meals = $value->billed_meals->first();
                   $flight_plan = $value->flight_plan_prices;
-                  // $flight_plan = $value->flight_plan->first();
                   $accum["id"] = $value->flight_id;
                   $accum["date"] = $value->flight_date;
                   $accum["class"] = $billed_meals->class;
