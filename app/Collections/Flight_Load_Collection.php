@@ -58,10 +58,10 @@ class Flight_Load_Collection extends Collection{
                 "class" => null,
                 "type" => null,
                 "fact_qty" => 0,
-                "fact_codes" => ["NO_DATA"],
+                "fact_codes" => [],
                 "fact_price" => 0,
                 "plan_qty" => 0,
-                "plan_codes" => ["NO_DATA"],
+                "plan_codes" => [],
                 "plan_price" => 0,
                 "delta" => 0
             ]);
