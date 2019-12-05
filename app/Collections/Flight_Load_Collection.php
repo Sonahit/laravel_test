@@ -15,7 +15,7 @@ class Flight_Load_Collection extends Collection{
   public function sortValues($column, $ascending = false, $options = SORT_REGULAR)
   {
     if($column === DatabaseHelper::COLUMN_DOESNT_EXIST || is_null($column)) return $this;
-    return $this->sortBy($column, $options, $ascending)
+    return $this->sortBy($column, $options, !$ascending)
             ->values()
             ->all();
   }
