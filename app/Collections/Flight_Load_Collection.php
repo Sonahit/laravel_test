@@ -4,6 +4,7 @@ namespace App\Collections;
 
 use App\Utils\Helpers\DatabaseHelper;
 use Illuminate\Database\Eloquent\Collection;
+use const Illuminate\Database\Eloquent\INF;
 
 class FlightLoadCollection extends Collection
 {
@@ -46,7 +47,7 @@ class FlightLoadCollection extends Collection
      *
      * @return static
      */
-    public function flatten(int $depth = INF)
+    public function flatten($depth = INF)
     {
         return new static(parent::flatten($depth));
     }

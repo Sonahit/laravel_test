@@ -6,6 +6,7 @@ use App\Collections\FlightLoadCollection;
 use App\Utils\Helpers\DatabaseHelper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\Builder;
 
 class FlightLoad extends Model
 {
@@ -77,21 +78,21 @@ class FlightLoad extends Model
         return $q;
     }
 
-    public function scopeJanuary($q)
+    public function scopeJanuary(Builder $q)
     {
         return $q->whereBetween('flight_load.flight_date', ['20170101', '20170131']);
     }
 
     public function billedMeals()
     {
-        return $this->hasMany(Billed_Meals::class, 'flight_load_id', 'id');
+        return $this->hasMany(BilledMeals::class, 'flight_load_id', 'id');
     }
 
     public function flightPlanPrices()
     {
         return $this->hasOneThrough(
-            Flight_Plan_Prices::class,
-            Billed_Meals::class,
+            FlightPlanPrices::class,
+            BilledMeals::class,
             'flight_load_id',
             'billed_meals_id',
             'id',

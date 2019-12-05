@@ -24,7 +24,7 @@ class ReportsController extends Controller
         $query = RequestHelper::getParamsAsArray($request, RequestHelper::PARAMS);
         $paginate = $query['paginate'];
         $page = $query['page'];
-        $desc = !$this->strToBool(is_null($query['asc']) ? 'true' : $query['asc']);
+        $asc = $this->strToBool(is_null($query['asc']) ? 'true' : $query['asc']);
         if (0 === $paginate || is_null($paginate) || is_null($page)) {
             $page = 1;
         }
@@ -38,7 +38,7 @@ class ReportsController extends Controller
             ->groupBy(['flight_id', 'flight_date'])
             ->formatByDate()
             ->flatten(1)
-            ->sortValues($query['sortParam'], $desc)
+            ->sortValues($query['sortParam'], $asc)
         ;
         $end = now();
 
@@ -67,12 +67,12 @@ class ReportsController extends Controller
 
         $searchParam = $this->resolveSearchParam($query['searchParam']);
 
-        $desc = is_null($query['asc'])
-            ? false
-            : !$this->strToBool($query['asc']);
+        $asc = is_null($query['asc'])
+            ? true
+            : $this->strToBool($query['asc']);
 
         $sortParam = is_null($query['sortParam'])
-            ? ['flightload.flight_id', 'flightload.flight_date']
+            ? ['flight_load.flight_id', 'flight_load.flight_date']
             : [DatabaseHelper::paramToColumn($query['sortParam'])];
 
         /**
@@ -81,7 +81,7 @@ class ReportsController extends Controller
         $relations = [
             'billedMeals' => function ($q) {
                 $q->select([
-                    'flightload_id',
+                    'flight_load_id',
                     DB::raw('ROUND(SUM(qty), 2) as fact_qty'),
                     'class',
                     'type',
@@ -98,11 +98,11 @@ class ReportsController extends Controller
         $flightLoadCollector = $flightLoad
             ->january()
             ->business()
-            ->whereHas('billed_meals', function ($q) use ($searchParam) {
+            ->whereHas('billedMeals', function ($q) use ($searchParam) {
                 $q->orWhereLike(BilledMeals::SEARCHABLE_ROWS, $searchParam);
             })
             ->when(is_int($searchParam) && !$this->isDate($searchParam), function ($sub) use ($searchParam) {
-                $sub->orWhereHas('flight_plan_prices', function ($query) use ($searchParam) {
+                $sub->orWhereHas('flightPlanPrices', function ($query) use ($searchParam) {
                     $query
                     ->january()
                     ->orWhereLike([
@@ -118,7 +118,7 @@ class ReportsController extends Controller
                 });
             })
             ->with($relations)
-            ->sortBy($sortParam, $desc);
+            ->sortBy($sortParam, $asc);
         if ($page > 1 && $paginate < 1) {
             return new FlightLoadCollection();
         }

@@ -32,6 +32,6 @@ class BilledMeals extends Model
 
     public function flightLoad()
     {
-        return $this->belongsTo(Flight_Load::class, 'flight_load_id', 'id');
+        return $this->belongsTo(FlightLoad::class, 'flight_load_id', 'id');
     }
 }
