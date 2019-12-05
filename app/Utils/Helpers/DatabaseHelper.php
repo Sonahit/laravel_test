@@ -22,9 +22,9 @@ class DatabaseHelper
 
     public static function paramToColumn(string $param)
     {
-        $params = DatabaseHelper::COLUMNS;
+        $params = static::COLUMNS;
 
-        return array_key_exists($param, $params) ? $params[$param] : DatabaseHelper::COLUMN_DOESNT_EXIST;
+        return array_key_exists($param, $params) ? $params[$param] : static::COLUMN_DOESNT_EXIST;
     }
 
     /**
