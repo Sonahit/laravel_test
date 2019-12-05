@@ -24,19 +24,18 @@ class ReportsController extends Controller
     $query = RequestHelper::get_params_as_array($request, RequestHelper::params);
     $paginate = $query["paginate"];
     $page = $query["page"];
-    $sortParam = $query['sortParam'];
+    $sortParam = $this->resolveSearchParam($query['sortParam']);
     $desc = !$this->strToBool(is_null($query['asc']) ? 'true' : $query['asc']);
     if($paginate === 0 || is_null($paginate) || is_null($page)) $page = 1;
     if(is_null($paginate)) $paginate = 40;
 
     $start = now();
-
     $table = $this->getData($flight_load, $query);
     $flight_load_transformed = $table
         ->groupBy(["flight_id", "flight_date"])
         ->formatByDate()
         ->flatten(1)
-        ->sortValues($sortParam, $desc);
+        ->sortValues($query['sortParam'], $desc);
     $end = now();
 
     $computeTime = abs($end->millisecond - $start->millisecond);

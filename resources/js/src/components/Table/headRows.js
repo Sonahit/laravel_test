@@ -51,13 +51,13 @@ const rows = [
     {
       sortable: true,
       type: 'string',
-      dataSort: 'plan_code',
+      dataSort: 'plan_codes',
       text: 'План'
     },
     {
       sortable: true,
       type: 'string',
-      dataSort: 'fact_code',
+      dataSort: 'fact_codes',
       text: 'Факт'
     },
     {

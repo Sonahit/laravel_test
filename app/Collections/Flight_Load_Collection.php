@@ -12,10 +12,10 @@ class Flight_Load_Collection extends Collection{
     return new static(parent::groupBy($groupBy, $preserveKeys));
   }
 
-  public function sortValues($callback, $ascending = false, $options = SORT_REGULAR)
+  public function sortValues($column, $ascending = false, $options = SORT_REGULAR)
   {
-    if($callback === DatabaseHelper::COLUMN_DOESNT_EXIST || is_null($callback)) return $this;
-    return $this->sortBy($callback, $options, $ascending)
+    if($column === DatabaseHelper::COLUMN_DOESNT_EXIST || is_null($column)) return $this;
+    return $this->sortBy($column, $options, $ascending)
             ->values()
             ->all();
   }

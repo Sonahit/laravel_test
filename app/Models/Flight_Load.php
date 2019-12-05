@@ -38,14 +38,24 @@ class Flight_Load extends Model
           $q->orderBy($column, $desc ? 'desc' : 'asc' );
           continue;
         }
-        $q->leftJoin($tableName, function($join) use($tableName, $selfTable){
-          if(Schema::hasColumn($tableName, 'flight_load_id')){
-            $join->on("{$tableName}.flight_load_id", '=', "{$selfTable}.id");
-          } else {
-            $join ->on("{$tableName}.flight_date", '=', "{$selfTable}.flight_date");
-            $join ->on("{$tableName}.flight_id", '=', "{$selfTable}.flight_id");  
-          }
-        })->orderBy("{$tableName}.{$column}", $desc ? 'desc' : 'asc');
+        $q->orderBy(
+          DatabaseHelper::getModelInstance($tableName)
+            ->select($column)
+            ->where(function($q) use ($tableName, $selfTable){
+              if(Schema::hasColumn($tableName, 'flight_load_id'))
+              {
+                return $q->where("{$tableName}.flight_load_id", "{$selfTable}.id");
+              }
+              if(Schema::hasColumns($tableName, ['flight_date', 'flight_id']))
+              {
+                $q->where("{$tableName}.flight_date", "{$selfTable}.flight_date")
+                  ->where("{$tableName}.flight_id", "{$selfTable}.flight_id");
+              }
+              return $q;
+            })
+            ->orderBy("{$tableName}.{$column}", $desc ? 'desc' : 'asc')
+            ->limit(1)
+        );
       }
       return $q;
     }
