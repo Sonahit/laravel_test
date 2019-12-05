@@ -111,7 +111,7 @@ class ReportsController extends Controller
                         'ROUND(flight_plan_prices.delta, 2)',
                     ], $searchParam);
                 })
-                ->orWhereHas('billed_meals', function ($query) use ($searchParam) {
+                ->orWhereHas('billedMeals', function ($query) use ($searchParam) {
                     $query
                     ->orHavingLike(['ROUND(SUM(qty * price_per_one), 2)', 'SUM(qty)'], $searchParam)
                     ->groupBy('flight_id', 'flight_date');
