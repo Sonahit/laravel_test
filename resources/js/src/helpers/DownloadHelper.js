@@ -108,10 +108,10 @@ export default class DownloadHelper {
         Cookie: document.cookie
       }
     })
-      .then(data => data.text())
-      .then(data => {
+      .then(data => data.json())
+      .then(response => {
         button.classList.toggle('processing');
-        this.download(data, 'pdf.pdf', 'data:application/pdf;base64');
+        this.download(response.data, 'pdf.pdf', 'data:application/pdf;base64');
       })
       .catch(err => {
         throw err;

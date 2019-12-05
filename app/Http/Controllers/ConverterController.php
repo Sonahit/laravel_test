@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FlightLoad;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use PDF;
 
 class ConverterController extends Controller
@@ -22,7 +23,7 @@ class ConverterController extends Controller
         $pdf = PDF::loadView('templates.table', ['table_data' => $body]);
         $output = $pdf->output();
 
-        return base64_encode($output);
+        return new Response(['data' => base64_encode($output)], 200, ['Content-Type' => 'application/json']);
     }
 
     /**
@@ -39,7 +40,11 @@ class ConverterController extends Controller
         $pdf = PDF::loadView('templates.table', ['table_data' => $body]);
         $output = $pdf->output();
 
-        return base64_encode($output);
+        return new Response(
+            json_encode(['data' => base64_encode($output)]),
+            200,
+            ['Content-Type' => 'application/json']
+        );
     }
 
     /**
