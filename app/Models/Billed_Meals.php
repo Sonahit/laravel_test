@@ -18,16 +18,20 @@ class Billed_Meals extends Model
       "type"
   ];
 
-  public function scopeBusiness($q){
-      return $q->where('class', 'Бизнес')
-              ->where('type', 'Комплект');
+  public static function boot()
+  {
+    parent::boot();
+    static::addGlobalScope('business', function($q){
+      $q->where('class', 'Бизнес')
+        ->where('type', 'Комплект');
+    });
+    static::addGlobalScope('noALC', function($q){
+      $q->where('iata_code', '<>', "ALC");
+    });
   }
 
-  public function scopeNoALC($q){
-      return $q->where('iata_code', '<>', "ALC");
-  }
-
-  public function flight_load(){
+  public function flight_load()
+  {
     return $this->belongsTo(Flight_Load::class, 'flight_load_id', 'id');
   }
 }

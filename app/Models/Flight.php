@@ -8,5 +8,4 @@ class Flight extends Model
 {
     protected $table = 'flight';
     protected $primaryKey = 'id';
-
 }

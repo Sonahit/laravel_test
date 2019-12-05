@@ -20,14 +20,16 @@ class Flight_Load extends Model
 
     public function newCollection(array $models = [])
     {   
-        return new Flight_Load_Collection($models);
+      return new Flight_Load_Collection($models);
     }
 
-    public function scopeBusiness($q){
-        return $q->select('flight_load.id as id', 'flight_load.flight_id as flight_id', 'flight_load.flight_date as flight_date', 'business');
+    public function scopeBusiness($q)
+    {
+      return $q->select('flight_load.id as id', 'flight_load.flight_id as flight_id', 'flight_load.flight_date as flight_date', 'business');
     }
 
-    public function scopeSortBy($q, array $attributes = null, bool $desc = true){
+    public function scopeSortBy($q, array $attributes = null, bool $desc = true)
+    {
       if(is_null($attributes) || $attributes[0] === DatabaseHelper::COLUMN_DOESNT_EXIST) return $q;
       $selfTable = $this->getTable();
       foreach($attributes as $attribute){
@@ -48,16 +50,18 @@ class Flight_Load extends Model
       return $q;
     }
 
-    public function scopeJanuary($q){
-        return $q->whereBetween('flight_load.flight_date', ['20170101', '20170131']);
+    public function scopeJanuary($q)
+    {
+      return $q->whereBetween('flight_load.flight_date', ['20170101', '20170131']);
     }
 
     public function billed_meals()
     {
-        return $this->hasMany(Billed_Meals::class, 'flight_load_id', 'id');
+      return $this->hasMany(Billed_Meals::class, 'flight_load_id', 'id');
     }
 
-    public function flight_plan_prices(){
+    public function flight_plan_prices()
+    {
       return $this->hasOneThrough(
         Flight_Plan_Prices::class,
         Billed_Meals::class,
@@ -70,6 +74,6 @@ class Flight_Load extends Model
 
     public function flight()
     {
-        return $this->hasOne(Flight::class, 'id', 'flight_id');
+      return $this->hasOne(Flight::class, 'id', 'flight_id');
     }
 }
