@@ -41,19 +41,19 @@ class DatabaseHelper{
 
   public static function getModelInstance(string $tableName)
   {
-    if($tableName === 'flight_load')
-    {
-      return new \App\Models\Flight_Load;
-    } else if ($tableName === 'flight_plan_prices')
-    {
-      return new \App\Models\Flight_Plan_Prices;
-    } else if ($tableName === 'billed_meals')
-    {
-      return new \App\Models\Billed_Meals;
-    } else if ($tableName === 'flight')
-    {
-      return new \App\Models\Flight;
-    }
+    foreach (scandir(app_path('./Models')) as $modelName) {
+      if(!($modelName == "." or $modelName == ".."))
+      {
+        $model = app_path('Models') . '/' . $modelName;
+        require_once $model;
+        $class = "\App\Models\\" . basename($model, '.php');
+        $instance = new $class;
+        if($instance -> getTable() === $tableName)
+        {
+          return $instance;
+        }
+      }
+    } 
     throw new Error("No model found");
   }
 }
