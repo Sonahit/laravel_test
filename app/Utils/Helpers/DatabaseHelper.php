@@ -30,6 +30,9 @@ class DatabaseHelper
     /**
      * Get model istance by its table name.
      *
+     * @param string $tableName
+     *
+     * @throws Error If no model found
      * @return \App\Models\BilledMeals|\App\Models\Flight|\App\Models\FlightLoad|\App\Models\FlightPlanPrices
      */
     public static function getModelInstance(string $tableName)
