@@ -140,6 +140,9 @@ class ReportsController extends Controller
      * Get JSON responce.
      *
      * @param mixed $data
+     * @param int $code
+     *
+     * @return \Illuminate\Http\Response
      */
     protected function getResponse($data, int $code)
     {
@@ -150,6 +153,8 @@ class ReportsController extends Controller
 
     /**
      * Convert string to boolean.
+     *
+     * @param string $str
      *
      * @return bool
      */
@@ -165,6 +170,8 @@ class ReportsController extends Controller
     /**
      * Check if date.
      *
+     * @param string $value
+     *
      * @return bool
      */
     private function isDate(string $value = '')
@@ -174,6 +181,13 @@ class ReportsController extends Controller
         return preg_match($pattern, $value) ? true : false;
     }
 
+    /**
+     * Resolve incoming value to its string representations or numeric
+     *
+     * @param mixed $value
+     *
+     * @return string|int
+     */
     private function resolveSearchParam($value)
     {
         if (is_null($value)) {

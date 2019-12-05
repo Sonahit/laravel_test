@@ -11,6 +11,9 @@ class ConverterController extends Controller
     /**
      * Generate view as PDW by raw data.
      *
+     * @param \App\Models\FlightLoad $flightLoad
+     * @param \Illuminate\Http\Request $request
+     *
      * @return string
      */
     public function index(FlightLoad $flightLoad, Request $request)
@@ -24,6 +27,9 @@ class ConverterController extends Controller
 
     /**
      * Get PDF representation of data.
+     *
+     * @param \App\Models\FlightLoad $flightLoad
+     * @param \Illuminate\Http\Request $request
      *
      * @return string
      */
@@ -39,6 +45,9 @@ class ConverterController extends Controller
     /**
      * Get raw data for CSV converting.
      *
+     * @param \App\Models\FlightLoad $flightLoad
+     * @param \Illuminate\Http\Request $request
+     *
      * @return array
      */
     public function csv(FlightLoad $flightLoad, Request $request)
@@ -50,6 +59,9 @@ class ConverterController extends Controller
 
     /**
      * Get raw data.
+     *
+     * @param \App\Models\FlightLoad $flightLoad
+     * @param \Illuminate\Http\Request $request
      *
      * @return array
      */
