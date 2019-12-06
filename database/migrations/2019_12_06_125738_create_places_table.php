@@ -1,6 +1,5 @@
 <?php
 
-namespace Database\Migrations;
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -20,6 +19,7 @@ class CreatePlacesTable extends Migration
             $table->char('city', 255);
             $table->char('address', 255)->unique();
             $table->char('timezone');
+            $table->timestamps();
         });
     }
 

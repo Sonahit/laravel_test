@@ -1,6 +1,5 @@
 <?php
 
-namespace Database\Migrations;
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -17,10 +16,12 @@ class CreateBookingsTable extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('userId')->unique();
-            $table->integer('placeId');
+            $table->integer('userId')->nullable();
+            $table->integer('placeId')->nullable();
             $table->date('bookingDateStart');
             $table->date('bookingDateEnd');
+            $table->timestamps();
+            $table->index(['userId', 'placeId']);
         });
     }
 

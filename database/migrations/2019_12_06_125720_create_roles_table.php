@@ -1,6 +1,5 @@
 <?php
 
-namespace Database\Migrations;
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -17,8 +16,10 @@ class CreateRolesTable extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('userId');
+            $table->integer('userId')->nullable();
             $table->char('roleName', 255);
+            $table->timestamps();
+            $table->index(['userId']);
         });
     }
 

@@ -1,6 +1,5 @@
 <?php
 
-namespace Database\Migrations;
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -17,8 +16,10 @@ class CreateNotificationsTable extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('userId');
+            $table->integer('userId')->nullable();
             $table->date('notification_date');
+            $table->timestamps();
+            $table->index(['userId']);
         });
     }
 

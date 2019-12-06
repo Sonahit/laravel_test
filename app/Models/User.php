@@ -41,8 +41,13 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class, 'userId', 'id');
     }
 
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'userId', 'id');
+    }
+
     public function roles()
     {
-        return $this->hasMany(Roles::class, 'userId', 'id');
+        return $this->hasMany(Role::class, 'userId', 'id');
     }
 }
