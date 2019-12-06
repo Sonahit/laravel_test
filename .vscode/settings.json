@@ -1,0 +1,5 @@
+{
+    "editor.tabSize": 4,
+    "eslint.enable": true,
+    "phpcs.standard": "PSR2"
+}
