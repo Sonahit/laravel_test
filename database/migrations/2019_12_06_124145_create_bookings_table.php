@@ -18,8 +18,8 @@ class CreateBookingsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('userId')->nullable();
             $table->integer('placeId')->nullable();
-            $table->date('bookingDateStart');
-            $table->date('bookingDateEnd');
+            $table->dateTime('bookingDateStart');
+            $table->dateTime('bookingDateEnd');
             $table->timestamps();
             $table->index(['userId', 'placeId']);
         });
