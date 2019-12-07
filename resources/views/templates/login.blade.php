@@ -31,6 +31,6 @@
                     <input type="submit">
                 </form>
             </fieldset>
+            <a href="auth/register">Create new account</a>
     </section>
-    <a href="/register">Create new account</a>
 @endauth

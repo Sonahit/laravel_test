@@ -14,6 +14,8 @@ const fs = require('fs');
 
 mix.js('resources/js/app.js', 'public/js');
 
+mix.sourceMaps();
+
 fs.readdirSync(`${__dirname}/resources/sass`).forEach(file => {
     mix.sass(`${__dirname}/resources/sass/${file}`, "public/css");
 });

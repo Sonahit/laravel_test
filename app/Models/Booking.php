@@ -8,9 +8,9 @@ use Illuminate\Support\Carbon;
 
 class Booking extends Model
 {
-    public const START = 14;
-    public const END = 20;
-    
+    public const START = 8;
+    public const END = 14;
+
     public function user()
     {
         return $this->hasMany(User::class);
@@ -18,7 +18,7 @@ class Booking extends Model
 
     public function places()
     {
-        return $this->hasMany(Place::class);
+        return $this->hasMany(Place::class, 'id', 'placeId');
     }
 
     public function scopeBookedBetween(Builder $q, Carbon $start, Carbon $end)
