@@ -1,4 +1,5 @@
 const mix = require('laravel-mix');
+const fs = require('fs');
 
 /*
  |--------------------------------------------------------------------------
@@ -11,5 +12,8 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
-    .sass('resources/sass/app.scss', 'public/css');
+mix.js('resources/js/app.js', 'public/js');
+
+fs.readdirSync(`${__dirname}/resources/sass`).forEach(file => {
+    mix.sass(`${__dirname}/resources/sass/${file}`, "public/css");
+});
