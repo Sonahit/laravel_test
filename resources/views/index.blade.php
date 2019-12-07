@@ -7,6 +7,16 @@
     <title>Booking</title>
 </head>
 <body>
-
+    @include('layouts.login')
+    <main>
+        @include('layouts.calendar', [
+            'week' => $week,
+            'booked' => $booked,
+            'bookTime' => $bookTime
+        ])
+    </main>
+    <footer>
+        footer hello
+    </footer>
 </body>
 </html>
