@@ -11,6 +11,13 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', "UserController@show");
+Route::get('/register', "Auth\RegisterController@show");
+
+Route::group(['prefix' => 'auth', 'middleware' => ['web']], function () {
+    Route::post('login', 'Auth\LoginController@login');
+    Route::get('logout', 'Auth\LoginController@logout');
+    Route::post('register', 'Auth\RegisterController@register');
 });
