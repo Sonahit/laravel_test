@@ -2,6 +2,9 @@
 $rows : 7;
 $width : round(percentage(1 / $rows));
 .calendar {
+    display: flex;
+    align-items: center;
+
     &__link{
         &:visited, &:link{
             color: black;
@@ -12,8 +15,11 @@ $width : round(percentage(1 / $rows));
             
         }
     }
-    display: flex;
-    align-items: center;
+    &__content{
+        min-width: 100px;
+        max-width: 200px;
+        user-select: none;
+    }
     &__wrapper{
         display: grid;
         grid-template-columns: repeat($rows, 1fr);
@@ -27,7 +33,9 @@ $width : round(percentage(1 / $rows));
     }
     &__header[disabled] + &__rows,
     &__header[disabled] + &__rows > &__row,
-    &__header[disabled] + &__rows > &__row + &__row{
+    &__header[disabled] + &__rows > &__row + &__row,
+    &__header[disabled] + &__rows:hover > &__row,
+    &__header[disabled] + &__rows:hover > &__row + &__row{
         background-color: gray;
         font-weight: initial;
         cursor: initial;

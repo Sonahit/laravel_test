@@ -7,7 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Place::class, function (Faker $faker) {
     return [
-        'city' => $faker->city(),
+        'city' => str_replace(' ', '', $faker->city()),
         'address' => $faker->address(),
         'timezone' => $faker->timezone()
     ];

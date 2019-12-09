@@ -1,16 +1,16 @@
-@auth('web')
+@auth('web_admin')
+    web_admin
     <section class="login">
-        <form action="auth/logout" method="GET">
-            <input type="submit" value="Logout">
-        </form>
+        <a href="{{ url('users/profile') }}">Profile</a>
+        @include('templates.logout')
     </section>
-@endauth
+@endauth 
 
-@auth('admin')
+@auth('web')
+    web
     <section class="login">
-        <form action="auth/logout" method="GET">
-            <input type="submit" value="Logout">
-        </form>
+        <a href="{{ url('users/profile') }}">Profile</a>
+        @include('templates.logout')
     </section>
 @endauth
 
@@ -26,11 +26,13 @@
                     </div>
                     <div>
                         <label for="check_remember">Remember</label>
-                        <input id="check_remember" type="checkbox">
+                        <input id="check_remember" type="checkbox" name="remember">
                     </div>  
                     <input type="submit">
                 </form>
             </fieldset>
+            @include('templates.error')
             <a href="auth/register">Create new account</a>
     </section>
+    
 @endauth

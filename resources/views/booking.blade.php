@@ -9,18 +9,25 @@
 <body>
     @php
         $email = isset(Auth::user()->email) ? Auth::user()->email : "";
-        $name = isset(Auth::user()->name) ? Auth::user()->name : "";
-        $dateFrom = '';
-        $dateTo = '';
+        $firstName = isset(Auth::user()->firstName) ? Auth::user()->firstName : "";
+        $lastName = isset(Auth::user()->lastName) ? Auth::user()->lastName : "";
+        $time = isset($_GET["time"]) ? $_GET["time"] : 0;
     @endphp
-    <form action='/city/booking' method="POST">
+    <script>
+        function cancelBooking(){
+            location.replace('{{ url('/') }}');
+        }
+    </script>
+    <form action={{ url(Request::path()) }} method="POST">
         @csrf
-        <input type="hidden" name="city" value={{ $city }}>
+        <input type="hidden" name="city" value={{ Request::path()}}>
+        <input type="hidden" name="time" value={{ $time }}>
         <input type="text" name="email" placeholder="Email..." value={{ $email }}>
-        <input type="text" name="name" placeholder="Name..." value={{ $name }}>
-        <input type="text" name="dateFrom" placeholder="Date from..." readonly value={{ $dateFrom }}>
-        <input type="text" name="dateTo" placeholder="Date to..." readonly value={{ $dateTo }}>
-        <input type="submit" value="Book">
+        <input type="text" name="firstName" placeholder="FirstName..." value={{ $firstName }}>
+        <input type="text" name="lastName" placeholder="LastName..." value={{ $lastName }}>
+        <input type="submit" value="Book now">
+        <button type="button" onclick="cancelBooking()">Cancel</button>
     </form>
+    @include('templates.error')
 </body>
 </html>

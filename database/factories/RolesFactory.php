@@ -7,6 +7,6 @@ use Faker\Generator as Faker;
 
 $factory->define(Role::class, function (Faker $faker) {
     return [
-        'roleName' => $faker->randomLetter()
+        'name' => $faker->randomLetter()
     ];
 });

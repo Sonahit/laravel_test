@@ -10,8 +10,13 @@
                     return $time >= 8 and $time <= 12;
                 }
 
-                function formatDateToMS($data){
+                function formatDateToMS($date){
+                    return Carbon\Carbon::parse($date)->timestamp;
+                }
 
+                function htmlSpace($string)
+                {
+                    return str_replace(' ', '%20', $string);
                 }
             @endphp
             @foreach ($week as $day)
@@ -32,14 +37,13 @@
                         <div class="calendar__row">
                             @if (validateDate($day))
                                 @if (validateHours($time))
-                                    <a class="calendar__link" href={{url("{$city}/?time='". formatDateToMS("{$day} {$time}:00:00") ."'") }}>{{ $time }}:00</a>  
+                                    <a class="calendar__link" href={{url(htmlSpace($city)."/?time=".formatDateToMS("{$day} {$time}:00:00")) }}>{{ $time }}:00</a>  
                                 @else 
                                     <span class="calendar__link disabled">{{ $time }}:00</span>
                                 @endif
                             @else
                                 <span>{{ $time }}:00</span>
                             @endif
-                            
                         </div>
                     @endfor
                 </section>

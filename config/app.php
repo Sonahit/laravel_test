@@ -228,4 +228,8 @@ return [
 
     ],
 
+    'startHours' => env('startHours', 8),
+    
+    'endHours' => env('endHours', 14)
+
 ];

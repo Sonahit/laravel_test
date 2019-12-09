@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookRequest;
 use App\Models\Booking;
 use App\Models\Place;
 use Illuminate\Database\Eloquent\Builder;
@@ -34,12 +35,33 @@ class BookingController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\BookRequst  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BookRequest $request)
     {
-        //
+        $query = RequestHelper::queryToArray($request, ['date', 'city', 'name', 'email']);
+        
+        if (is_null($query['city'])){
+            return response()->json(['message' => 'City cannot be empty']);
+        } elseif (is_null($query['name'])){
+            return response()->json(['message' => 'Name cannot be empty']);
+        } elseif (is_null($query['email'])){
+            return response()->json(['message' => 'Email cannot be empty']);
+        } elseif (is_null($query['date'])){
+            return response()->json(['message' => 'Date cannot be empty']);
+        }
+        $city = $query['city'];
+        $week = intval($query['week']);
+        $date = Carbon::createFromTimestamp(intval($query['date']));
+        $name = $query['name'];
+        $email = $query['email'];
+        $user = User::where(function($q){
+            return $q->where('email', $email)
+                    ->where('name', $name);
+        });
+        $place = Place::where('city', $city);
+        Booking::firstOrNew();
     }
 
     /**
@@ -52,10 +74,15 @@ class BookingController extends Controller
     {
         $query = RequestHelper::queryToArray($request, ['date', 'city', 'week']);
         $city = $query['city'];
-        $week = is_null($query['week']) ? 0 : intval($query['week']);
+        $cities = Place::select('city')->get()->map(function($place){
+            return $place->city;
+        });
+        $week = is_null($query['week']) ? -1 : intval($query['week']) - 1;
+        $startHours = config('app.startHours');
+        $endHours = config('app.endHours');
         $date = is_null($query['date']) ? now() : Carbon::createFromFormat('Y-m-d', $query['date']);
-        $startWeek = $date->addWeeks($week)->startOfWeek()->setTime(Booking::START, 0);
-        $endWeek = $date->endOfWeek(6)->setTime(Booking::END, 0);
+        $startWeek = $date->addWeeks($week)->startOfWeek()->setTime($startHours, 0);
+        $endWeek = $date->endOfWeek(6)->setTime($endHours, 0);
         $bookedDates = Booking::select('*')
             ->bookedBetween($startWeek, $endWeek)
             ->when(!is_null($city), function(Builder $q) use($city){
@@ -67,16 +94,14 @@ class BookingController extends Controller
         $week = collect(now()->getDays())->map(function($_, $index) use($date, $startWeek){
             return Carbon::createFromDate($date->year, $date->month, $startWeek->day + $index)->setTime(0, 0)->toDateString();
         });
-        $cities = Place::select('city')->get()->map(function($place){
-            return $place->city;
-        });
+        
         return view('index', [
             'time' => now(), 
             'booked' => $bookedDates, 
             'week' => $week, 
             'bookTime' => [
-                'start' => Booking::START,
-                'end' => Booking::END
+                'start' => $startHours,
+                'end' => $endHours
             ],
             'cities' => $cities
         ]);
@@ -84,10 +109,11 @@ class BookingController extends Controller
 
     public function showBooking(Request $request)
     {
-        $query = RequestHelper::queryToArray($request, ['city', 'dateTime']);
-        $city = $query['city'];
-        $dateTime = $query['dateTime'];
-        if(is_null($city) || is_null($dateTime)) redirect('/');
+        $query = RequestHelper::queryToArray($request, ['time']);
+        $path = str_replace('/', '', $request->getPathInfo());
+        $city = Place::where('city', $path)->first();
+        $dateTime = $query['time'];
+        if(is_null($city) || is_null($dateTime)) return redirect('/');
         return view('booking', ['city' => $city, 'dateTime' => $dateTime]);
     }
 

@@ -15,15 +15,20 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', "BookingController@show");
 Route::get('/{city}', "BookingController@showBooking");
-Route::post('/{city}/booking', "BookingController@store");
+Route::post('/{city}', "BookingController@store");
 
-Route::group(['prefix' => 'auth', 'middleware' => ['web']], function () {
+
+Route::prefix('users')->group(function(){
+    Route::get('profile', "UserController@show");
+});
+
+Route::prefix('auth')->group(function () {
     Route::post('login', 'Auth\LoginController@login');
     Route::get('logout', 'Auth\LoginController@logout');
     Route::post('register', 'Auth\RegisterController@register');
     Route::get('register', "Auth\RegisterController@show");
 });
 
-Route::group(['prefix' => 'templates'], function () {
+Route::prefix('templates')->group(function () {
     Route::get('calendar', 'TemplateController@sendCalendar');
 });

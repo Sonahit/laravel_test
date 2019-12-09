@@ -9,6 +9,8 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    protected $table = 'users';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -46,8 +48,15 @@ class User extends Authenticatable
         return $this->hasMany(Booking::class, 'userId', 'id');
     }
 
-    public function roles()
+    public function roleUser()
     {
-        return $this->hasMany(Role::class, 'userId', 'id');
+        return $this->hasMany(RoleUser::class, 'userId', 'id');
+    }
+
+    public function isAdmin()
+    {
+        return $this->roleUser()->whereHas('roles', function($q){
+            $q->where('name', config('auth.admin_role'));
+        });
     }
 }

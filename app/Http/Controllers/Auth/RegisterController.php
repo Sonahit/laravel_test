@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Auth;
@@ -30,7 +31,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -43,21 +44,6 @@ class RegisterController extends Controller
     }
 
     /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:5', 'confirmed'],
-        ]);
-    }
-
-    /**
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
@@ -65,29 +51,37 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        if(User::where('email', $data['email'])->first() !== null) return false;
-        User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        $user = User::where('email' , $data['email'])->first();
+        if(!is_null($user) && !is_null($user->password)) return false;
+        if(is_null($user)){ 
+            User::create([
+                'firstName' => $data['firstName'],
+                'lastName' => $data['lastName'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password'])
+            ]);
+        } else {
+            $user->password = Hash::make($data['password']);
+            $user->save();
+        }
         return true;
     }
 
     /**
      * Register user.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Http\Requests\RegisterRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $credentials = $request->only('name', 'email', 'password');
+        $credentials = $request->validated();
         $success = $this->create($credentials);
+        $success = false;
         if ($success) {
-            return response()->json('Successfully authenticated', 200);
+            return redirect('/')->withInput(['authMessage' => 'Successfully registred']);
         }
-        return response()->json('Wrong cridentials', 401);
+        return redirect('/')->withErrors(['errMessage' => 'Wrong cridentials']);
     }
 
     public function show()

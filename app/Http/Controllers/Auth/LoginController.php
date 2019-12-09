@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
+use App\Models\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +18,7 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+        $this->middleware('guest:web_admin')->except('logout');
     }
 
     /**
@@ -31,14 +34,22 @@ class LoginController extends Controller
     /**
      * Login user.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Http\Requests\LoginRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        if (Auth::attempt($this->credentials($request))) {
+        $remember = boolval($request->get('remember'));
+        $credentials = $this->credentials($request);
+        $email = $credentials['email'];
+        $password = $credentials['password'];
+        if (Auth::guard('web_admin')->attempt(['email' => $email, 'password' => $password, 'isAdmin' => 1], $remember)) {
             return redirect('/');
         }
+        if (Auth::attempt($credentials, $remember)) {
+            return redirect('/');
+        }
+        return redirect('/')->withErrors(['errors' => 'Wrong credentials']);
     }
 
     /**
@@ -49,6 +60,7 @@ class LoginController extends Controller
     public function logout()
     {
         Auth::logout();
+        Auth::guard('web_admin')->logout();
         return redirect('/');
     }
 }

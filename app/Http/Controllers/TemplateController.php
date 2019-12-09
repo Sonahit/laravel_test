@@ -14,11 +14,13 @@ class TemplateController extends Controller
     public function sendCalendar(Request $request)
     {
         $query = RequestHelper::queryToArray($request, ['date', 'city', 'week']);
-        $week = is_null($query['week']) ? 0 : intval($query['week']);
-        $city = is_null($query['city']) ? Place::select('city')->get()->first() : $query['city'];
+        $week = is_null($query['week']) ? 0 : intval($query['week']) - 1;
+        $city = is_null($query['city']) ? Place::select('city')->get()->first()->city : $query['city'];
         $date = is_null($query['date']) ? now() : Carbon::createFromFormat('Y-m-d', $query['date']);
-        $startWeek = $date->addWeeks($week)->startOfWeek()->setTime(Booking::START, 0);
-        $endWeek = $date->endOfWeek(6)->setTime(Booking::END, 0);
+        $startHours = config('app.startHours');
+        $endHours = config('app.endHours');
+        $startWeek = $date->addWeeks($week)->startOfWeek()->setTime($startHours, 0);
+        $endWeek = $date->endOfWeek(6)->setTime($endHours, 0);
         $bookedDates = Booking::select('*')
             ->bookedBetween($startWeek, $endWeek)
             ->when(!is_null($city), function(Builder $q) use($city){
@@ -34,8 +36,8 @@ class TemplateController extends Controller
             'booked' => $bookedDates, 
             'week' => $week, 
             'bookTime' => [
-                'start' => Booking::START,
-                'end' => Booking::END
+                'start' => $startHours,
+                'end' => $endHours
             ],
             'city' => $city
         ])->render();

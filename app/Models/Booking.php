@@ -8,8 +8,7 @@ use Illuminate\Support\Carbon;
 
 class Booking extends Model
 {
-    public const START = 8;
-    public const END = 14;
+    protected $table = 'bookings';
 
     public function user()
     {
