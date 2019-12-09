@@ -29,5 +29,6 @@
         <button type="button" onclick="cancelBooking()">Cancel</button>
     </form>
     @include('templates.error')
+    @include('templates.success')
 </body>
 </html>

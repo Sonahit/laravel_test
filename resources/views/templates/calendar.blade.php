@@ -3,11 +3,11 @@
     <section class="calendar__wrapper" >
             @php
                 function validateDate($day){
-                    return !Carbon\Carbon::parse($day)->isWeekEnd() && Carbon\Carbon::parse($day) >= Carbon\Carbon::now();
+                    return !Carbon\Carbon::parse($day)->isWeekEnd() && Carbon\Carbon::parse($day) >= Carbon\Carbon::now() && Carbon\Carbon::parse($day)->day > Carbon\Carbon::now()->day;
                 }
 
-                function validateHours($time){
-                    return $time >= 8 and $time <= 12;
+                function validateHours($time, $from, $to){
+                    return intval($time) >= intval($from) and intval($time) <= intval($to);
                 }
 
                 function formatDateToMS($date){
@@ -36,7 +36,7 @@
                     @for ($time = $bookTime['start']; $time <= $bookTime['end']; $time++)
                         <div class="calendar__row">
                             @if (validateDate($day))
-                                @if (validateHours($time))
+                                @if ($time <= $bookTime['end'] - 2 && validateHours($time, $bookTime['start'], $bookTime['end']))
                                     <a class="calendar__link" href={{url(htmlSpace($city)."/?time=".formatDateToMS("{$day} {$time}:00:00")) }}>{{ $time }}:00</a>  
                                 @else 
                                     <span class="calendar__link disabled">{{ $time }}:00</span>

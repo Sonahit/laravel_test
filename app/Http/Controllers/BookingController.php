@@ -5,13 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BookRequest;
 use App\Models\Booking;
 use App\Models\Place;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Utils\Helpers\RequestHelper;
+use App\Utils\Traits\PrepareCalendar;
 
 class BookingController extends Controller
 {
+
+    use PrepareCalendar;
     /**
      * Display a listing of the resource.
      *
@@ -23,13 +26,28 @@ class BookingController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Create \App\Models\Booking instance.
      *
-     * @return \Illuminate\Http\Response
+     * @param string $email
+     * @param string $city
+     * @param \Illuminate\Support\Carbon $from
+     * @param \Illuminate\Support\Carbon $to
+     * 
+     * @return array
      */
-    public function create()
+    public function create(string $email, string $city, Carbon $from, Carbon $to)
     {
-        //
+        $userId = User::where(function($q) use($email){
+            return $q->where('email', $email);
+        })->first()->id;
+        $placeId = Place::where('city', $city)->first()->id;
+        $booking = Booking::updateOrCreate([
+            'userId' => $userId,
+            'placeId' => $placeId,
+            'bookingDateStart' => $from->toDateTimeString(),
+            'bookingDateEnd' => $to->toDateTimeString()
+        ])->first();
+        return [$booking, $booking->exists];
     }
 
     /**
@@ -40,28 +58,21 @@ class BookingController extends Controller
      */
     public function store(BookRequest $request)
     {
-        $query = RequestHelper::queryToArray($request, ['date', 'city', 'name', 'email']);
-        
+        $query = $request->only('time', 'city', 'firstName', 'lastName', 'email');
         if (is_null($query['city'])){
             return response()->json(['message' => 'City cannot be empty']);
-        } elseif (is_null($query['name'])){
-            return response()->json(['message' => 'Name cannot be empty']);
         } elseif (is_null($query['email'])){
             return response()->json(['message' => 'Email cannot be empty']);
-        } elseif (is_null($query['date'])){
+        } elseif (is_null($query['time'])){
             return response()->json(['message' => 'Date cannot be empty']);
         }
-        $city = $query['city'];
-        $week = intval($query['week']);
-        $date = Carbon::createFromTimestamp(intval($query['date']));
-        $name = $query['name'];
         $email = $query['email'];
-        $user = User::where(function($q){
-            return $q->where('email', $email)
-                    ->where('name', $name);
-        });
-        $place = Place::where('city', $city);
-        Booking::firstOrNew();
+        $city = $query['city'];
+        $start = Carbon::createFromTimestamp(intval($query['time']));
+        $end = Carbon::createFromTimestamp(intval($query['time']))->addHours(2);
+        [$booking, $exists] = $this->create($email, $city, $start, $end);
+        $booking->save();
+        return redirect("/");
     }
 
     /**
@@ -72,38 +83,16 @@ class BookingController extends Controller
      */
     public function show(Request $request)
     {
-        $query = RequestHelper::queryToArray($request, ['date', 'city', 'week']);
-        $city = $query['city'];
-        $cities = Place::select('city')->get()->map(function($place){
-            return $place->city;
-        });
-        $week = is_null($query['week']) ? -1 : intval($query['week']) - 1;
-        $startHours = config('app.startHours');
-        $endHours = config('app.endHours');
-        $date = is_null($query['date']) ? now() : Carbon::createFromFormat('Y-m-d', $query['date']);
-        $startWeek = $date->addWeeks($week)->startOfWeek()->setTime($startHours, 0);
-        $endWeek = $date->endOfWeek(6)->setTime($endHours, 0);
-        $bookedDates = Booking::select('*')
-            ->bookedBetween($startWeek, $endWeek)
-            ->when(!is_null($city), function(Builder $q) use($city){
-                $q->whereHas('places', function(Builder $sub) use($city){
-                    $sub->where('city', $city);
-                });
-            })
-            ->get();
-        $week = collect(now()->getDays())->map(function($_, $index) use($date, $startWeek){
-            return Carbon::createFromDate($date->year, $date->month, $startWeek->day + $index)->setTime(0, 0)->toDateString();
-        });
-        
+        $values = $this->getCalendarValues($request);
         return view('index', [
             'time' => now(), 
-            'booked' => $bookedDates, 
-            'week' => $week, 
+            'booked' => $values['bookedDates'], 
+            'week' => $values['week'], 
             'bookTime' => [
-                'start' => $startHours,
-                'end' => $endHours
+                'start' => $values['startHours'],
+                'end' => $values['endHours']
             ],
-            'cities' => $cities
+            'cities' => $values['cities']->pluck('city')
         ]);
     }
 

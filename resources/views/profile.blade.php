@@ -12,11 +12,11 @@
 <body>
     @include('templates.login')
     <a href="/">Home</a>
-    @auth('web_admin')
+    @component('guards.admin')
         @include('profiles.admin')
-    @endauth 
-    @auth('web')
+    @endcomponent
+    @component('guards.web')
         @include('profiles.user')
-    @endauth
+    @endcomponent
 </body>
 </html>

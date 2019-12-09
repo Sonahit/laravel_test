@@ -77,9 +77,8 @@ class RegisterController extends Controller
     {
         $credentials = $request->validated();
         $success = $this->create($credentials);
-        $success = false;
         if ($success) {
-            return redirect('/')->withInput(['authMessage' => 'Successfully registred']);
+            return redirect('/')->with('success', 'Successfully registered');
         }
         return redirect('/')->withErrors(['errMessage' => 'Wrong cridentials']);
     }

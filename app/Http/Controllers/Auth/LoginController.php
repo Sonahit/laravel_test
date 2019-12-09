@@ -17,8 +17,7 @@ class LoginController extends Controller
 
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
-        $this->middleware('guest:web_admin')->except('logout');
+        $this->middleware('guest:web')->except('logout');
     }
 
     /**
@@ -40,13 +39,7 @@ class LoginController extends Controller
     public function login(LoginRequest $request)
     {
         $remember = boolval($request->get('remember'));
-        $credentials = $this->credentials($request);
-        $email = $credentials['email'];
-        $password = $credentials['password'];
-        if (Auth::guard('web_admin')->attempt(['email' => $email, 'password' => $password, 'isAdmin' => 1], $remember)) {
-            return redirect('/');
-        }
-        if (Auth::attempt($credentials, $remember)) {
+        if (Auth::attempt($this->credentials($request), $remember)) {
             return redirect('/');
         }
         return redirect('/')->withErrors(['errors' => 'Wrong credentials']);
@@ -60,7 +53,6 @@ class LoginController extends Controller
     public function logout()
     {
         Auth::logout();
-        Auth::guard('web_admin')->logout();
         return redirect('/');
     }
 }

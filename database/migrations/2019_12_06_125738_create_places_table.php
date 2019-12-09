@@ -19,6 +19,8 @@ class CreatePlacesTable extends Migration
             $table->char('city', 255);
             $table->char('address', 255)->unique();
             $table->char('timezone');
+            $table->integer('startHours')->default(8);
+            $table->integer('endHours')->default(14);
             $table->timestamps();
         });
     }

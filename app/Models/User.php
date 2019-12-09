@@ -9,6 +9,7 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    protected $guard = 'web';
     protected $table = 'users';
 
     /**
@@ -51,12 +52,5 @@ class User extends Authenticatable
     public function roleUser()
     {
         return $this->hasMany(RoleUser::class, 'userId', 'id');
-    }
-
-    public function isAdmin()
-    {
-        return $this->roleUser()->whereHas('roles', function($q){
-            $q->where('name', config('auth.admin_role'));
-        });
     }
 }

@@ -25,13 +25,14 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@admin.com',
             'email_verified_at' => now(),
             'password' => Hash::make('admin'), // password
-            'remember_token' => Str::random(10)
+            'remember_token' => Str::random(10),
+            'isAdmin' => 1
         ]);
         factory(Place::class, 3)->create();
         factory(User::class, 10)->create()
             ->each(function ($user) use($roles) {
                 $place = Place::all()->random(1)->first();
-                $booking = factory(Booking::class, 5)->make(['placeId' => $place->id]);
+                $booking = factory(Booking::class, 1)->make(['placeId' => $place->id]);
                 $user->bookings()->saveMany($booking);
                 $userRoles = factory(RoleUser::class, 2)->make([
                     'roleId' => $roles->random(1)->first()->id,
