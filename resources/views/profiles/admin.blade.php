@@ -23,8 +23,6 @@
                     <input type="submit" value="Change">
                 </form>
             @endforeach
-            @include('templates.error')
-            @include('templates.success')
         </section>
     @endcomponent
 @endcomponent

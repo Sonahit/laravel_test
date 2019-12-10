@@ -29,8 +29,10 @@
                 <input type="submit">
             </form>
         </fieldset>
-            @include('templates.error')
-            @include('templates.success')
-        <a href="auth/register">Create new account</a>
+        @include('templates.error')
+        @include('templates.success')
+        @if (config('auth.REGISTRATION_IS_OPEN'))
+            <a href="auth/register">Create new account</a>  
+        @endif
     </section>
 @endcomponent

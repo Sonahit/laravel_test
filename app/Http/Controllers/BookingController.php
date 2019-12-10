@@ -80,28 +80,7 @@ class BookingController extends Controller
         return redirect("/");
     }
 
-    /**
-     * Show booking calendar.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Request $request)
-    {
-        $values = $this->getCalendarValues($request);
-        return view('index', [
-            'time' => now(),
-            'booked' => $values['bookedDates'],
-            'week' => $values['week'],
-            'bookTime' => [
-                'start' => $values['startHours'],
-                'end' => $values['endHours'],
-            ],
-            'cities' => $values['cities']->pluck('city'),
-        ]);
-    }
-
-    public function showBooking(Request $request, $city)
+    public function show(Request $request, $city)
     {
         $query = RequestHelper::queryToArray($request, ['time']);
         $place = Place::where('city', $city)->first();

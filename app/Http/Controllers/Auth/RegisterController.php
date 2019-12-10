@@ -86,6 +86,9 @@ class RegisterController extends Controller
 
     public function show()
     {
-        return view('register');
+        if (config('auth.REGISTRATION_IS_OPEN')){
+            return view('register');
+        }
+        return redirect('/')->withErrors(['message' => 'Registration is disabled']);
     }
 }

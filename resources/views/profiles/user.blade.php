@@ -1,6 +1,8 @@
 <?php $user = Auth::user(); ?>
 @if ($user)
     <section class="profile">
+        @include('templates.error')
+        @include('templates.success')
         <section class="profile__information">
                 <div class="profile__element">
                     <fieldset>
@@ -22,7 +24,8 @@
                 </div>
             </section>
             <section class="profile__form">
-                <form action="{{ url('users') }}" method="PUT">
+                <form action="{{ url('/users/user') }}" method="POST">
+                    @csrf
                     <div class="profile__form_element">
                         <label>
                             First name

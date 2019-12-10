@@ -1,5 +1,6 @@
 @php
-    $email = isset(Auth::user()->email) ? Auth::user()->email : "User";
+    $user = Auth::user();
+    $email = isset($user->email) ? $user->email : "User";
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -15,13 +16,15 @@
             @include('templates.login')
             <a href="/">Home</a>
         </aside>
-        @component('guards.admin')
-            @include('profiles.admin', [
-                'cities' => $cities,
-                'bookings' => $bookings,
-                'appointments' => $appointments
-            ])
-        @endcomponent
+        @if($user->isAdmin)
+            @component('guards.admin')
+                @include('profiles.admin', [
+                    'cities' => $cities,
+                    'bookings' => $bookings,
+                    'appointments' => $appointments
+                ])
+            @endcomponent
+        @endif
         @component('guards.web')
             @include('profiles.user', ['appointments' => $appointments])
         @endcomponent

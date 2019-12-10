@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Place;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -12,6 +13,16 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    public function update(Request $request)
+    {
+        $attr = $request->only('firstName', 'lastName');
+        $user = Auth::user();
+        $user->firstName = $attr['firstName'];
+        $user->lastName = $attr['lastName'];
+        $user->save();
+        return redirect()->back()->with('success', 'Successfully updated your data');
     }
 
     public function show()
