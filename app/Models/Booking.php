@@ -11,24 +11,25 @@ class Booking extends Model
 {
     protected $table = 'bookings';
 
+    public const ROWS = ['id', 'userId', 'placeId', 'bookingDateStart', 'bookingDateEnd'];
     protected $fillable = [
-        'userId', 'placeId', 'bookingDateStart', 'bookingDateEnd'
+        'userId', 'placeId', 'bookingDateStart', 'bookingDateEnd',
     ];
 
     public function user()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsTo(User::class, 'userId', 'id');
     }
 
-    public function places()
+    public function place()
     {
-        return $this->hasMany(Place::class, 'id', 'placeId');
+        return $this->belongsTo(Place::class, 'placeId', 'id');
     }
 
     public function scopeBookedBetween(Builder $q, Carbon $start, Carbon $end)
     {
         return $q->whereBetween('bookingDateStart', [$start, $end])
-                ->whereTime('bookingDateStart', '>=', DB::raw("'{$start->toTimeString()}'"))
-                ->whereTime('bookingDateEnd', '<=',  DB::raw("'{$end->toTimeString()}'"));
+            ->whereTime('bookingDateStart', '>=', DB::raw("'{$start->toTimeString()}'"))
+            ->whereTime('bookingDateEnd', '<=', DB::raw("'{$end->toTimeString()}'"));
     }
 }

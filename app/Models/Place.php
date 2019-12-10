@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Place extends Model
 {
+    public const ROWS = ['id', 'city', 'address', 'timezone', 'startHours', 'endHours'];
     protected $table = 'places';
 }

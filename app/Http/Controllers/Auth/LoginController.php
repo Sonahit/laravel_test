@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-
     use AuthenticatesUsers;
     protected $redirectTo = '/';
 

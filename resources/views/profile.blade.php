@@ -10,13 +10,21 @@
     <title>Profile | {{ $email }}</title>
 </head>
 <body>
-    @include('templates.login')
-    <a href="/">Home</a>
-    @component('guards.admin')
-        @include('profiles.admin')
-    @endcomponent
-    @component('guards.web')
-        @include('profiles.user')
-    @endcomponent
+    <main>
+        <aside>
+            @include('templates.login')
+            <a href="/">Home</a>
+        </aside>
+        @component('guards.admin')
+            @include('profiles.admin', [
+                'cities' => $cities,
+                'bookings' => $bookings,
+                'appointments' => $appointments
+            ])
+        @endcomponent
+        @component('guards.web')
+            @include('profiles.user', ['appointments' => $appointments])
+        @endcomponent
+    </main>
 </body>
 </html>

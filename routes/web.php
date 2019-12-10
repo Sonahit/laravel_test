@@ -14,12 +14,16 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', "BookingController@show");
-Route::get('/{city}', "BookingController@showBooking");
-Route::post('/{city}', "BookingController@store");
+Route::get('/city/{city}', "BookingController@showBooking");
+Route::post('/city/{city}', "BookingController@store");
+Route::delete('/city/{city}', "BookingController@destroy");
 
-
-Route::prefix('users')->group(function(){
+Route::prefix('users')->group(function () {
     Route::get('profile', "UserController@show");
+});
+
+Route::prefix('company')->group(function () {
+    Route::post('{city}', "PlaceController@update");
 });
 
 Route::prefix('auth')->group(function () {

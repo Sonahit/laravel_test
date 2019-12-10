@@ -12,6 +12,7 @@ class User extends Authenticatable
     protected $guard = 'web';
     protected $table = 'users';
 
+    public const ROWS = ['id', 'firstName', 'lastName', 'email'];
     /**
      * The attributes that are mass assignable.
      *

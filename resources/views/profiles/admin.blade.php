@@ -1,43 +1,30 @@
 <?php $user = Auth::user(); ?>
 
 @component('guards.admin')
-    <section class="profile">
-        <section class="profile__information">
-            <div class="profile__element">
-                <fieldset>
-                    <legend>Email</legend>
-                    <label>{{ $user->email }}</label>
-                </fieldset>
-            </div>
-            <div class="profile__element">
-                <fieldset>
-                    <legend>First name</legend>
-                    <label>{{ $user->firstName }}</label>
-                </fieldset>
-            </div>
-            <div class="profile__element">
-                <fieldset>
-                    <legend>Last name</legend>
-                    <label>{{ $user->lastName }}</label>
-                </fieldset>
-            </div>
+    @component('profiles.user', ['appointments' => $appointments])
+        @include('templates.grid', ['models' => $bookings->toArray(), 'title' => 'All Bookings'])
+        <section class="company">
+            @foreach ($cities as $attr)
+                <span>Company available hours in city {{ $attr->city }}</span>
+                <form class="company__form" action={{ url("/company/{$attr->city}") }} method="POST">
+                    @csrf
+                    <div class="company__input">
+                        <span>Address</span>
+                        <input type="text" name="address" value='{{ $attr->address }}' >
+                    </div>
+                    <div class="company__input">
+                        <span>From</span>
+                        <input type="text" name="startHours" value={{ $attr->startHours }} >
+                    </div>
+                    <div class="company__input">
+                        <span>To</span>
+                        <input type="text" name="endHours" value={{ $attr->endHours }} >
+                    </div>
+                    <input type="submit" value="Change">
+                </form>
+            @endforeach
+            @include('templates.error')
+            @include('templates.success')
         </section>
-        <form action="{{ url('users') }}" method="PUT">
-            <label>
-                First name
-            </label>
-            <input type="text"name="firstName" value={{ $user->firstName }}>
-            <label>
-                Last name
-            </label>
-        <input type="text" name="lastName" value={{ $user->lastName }}>
-            <input type="submit" value="Apply">
-        </form>
-        <div>
-            Companies start hours is {{ config('app.startHours') }} hours
-        </div>
-        <div>
-            Companies end hours is {{ config('app.endHours') }} hours
-        </div>
-</section>
+    @endcomponent
 @endcomponent

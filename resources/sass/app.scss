@@ -12,7 +12,6 @@ $width : round(percentage(1 / $rows));
         }
         &.disabled {
             cursor: initial;
-            
         }
     }
     &__content{
@@ -36,9 +35,9 @@ $width : round(percentage(1 / $rows));
     &__header[disabled] + &__rows > &__row + &__row,
     &__header[disabled] + &__rows:hover > &__row,
     &__header[disabled] + &__rows:hover > &__row + &__row{
-        background-color: gray;
-        font-weight: initial;
-        cursor: initial;
+        background-color: gray !important;
+        font-weight: initial !important;
+        cursor: initial !important;
     }
 
     &__rows{
@@ -50,20 +49,42 @@ $width : round(percentage(1 / $rows));
         padding: 10px; 
         margin-bottom: 10px;  
         cursor: pointer;
-        background-color: lightblue;
+
+        $bookedColor: rgb(67, 69, 192);
+        $activeColor : azure;
+
+        background-color: $bookedColor;
+
         &:hover, &:hover + &, &:hover + & + &{
             font-weight: 700;
-            background-color: azure;
+            background-color: $activeColor;
         }
-        &:nth-last-child(-n + 2){
-            $disabledColor : lightgreen;
-            cursor: initial;
-            background-color: $disabledColor;
-            &:hover, &:hover + &{
-                font-weight: initial;
+        
+        &:not(.booked){
+            background-color: lightblue;
+            &:hover, &:hover + &, &:hover + & + &{
+                font-weight: 700;
+                background-color: $activeColor;
+            }
+            &:nth-last-child(-n + 2){
+                $disabledColor : lightgreen;
+                cursor: initial;
                 background-color: $disabledColor;
+                &:hover, &:hover + & {
+                    font-weight: initial;
+                    background-color: $disabledColor;
+                }
             }
         }
+        &:nth-last-child(-n + 2){
+            cursor: initial;
+            background-color: $bookedColor;
+            &:hover, &:hover + & {
+                font-weight: initial;
+                background-color: $bookedColor;
+            }
+        }
+        
     }
 }
 
