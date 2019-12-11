@@ -4,7 +4,7 @@
     @endphp
     
     <section class="grid-wrapper">
-        <div class='grid_title'>{{ $title }}</div>
+        <h3 class='grid_title'>{{ $title }}</h3>
         <section style="display: grid; grid-template-columns: repeat({{ count($headers) }}, 1fr)" class="grid__content"> 
             @foreach ($headers as $header)
                 <div class="grid__rows">

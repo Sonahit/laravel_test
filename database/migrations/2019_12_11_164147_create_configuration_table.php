@@ -1,11 +1,10 @@
 <?php
 
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePlacesTable extends Migration
+class CreateConfigurationTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,14 +13,13 @@ class CreatePlacesTable extends Migration
      */
     public function up()
     {
-        Schema::create('places', function (Blueprint $table) {
+        Schema::create('configurations', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->char('city', 255);
-            $table->char('address', 255);
-            $table->char('timezone');
-            $table->integer('startHours')->default(8);
-            $table->integer('endHours')->default(14);
-            $table->integer('bookingInterval')->default(3);
+            $table->char('name')->unique();
+            $table->integer('INT_VAL')->nullable();
+            $table->date('DATE_VAL')->nullable();
+            $table->boolean('BOOL_VAL')->nullable();
+            $table->char('STRING_VAL', 255)->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +31,6 @@ class CreatePlacesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('places');
+        Schema::dropIfExists('configurations');
     }
 }

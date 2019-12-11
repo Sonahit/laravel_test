@@ -109,6 +109,4 @@ return [
 
     'password_timeout' => 10800,
 
-    'REGISTRATION_IS_OPEN' => env('REGISTRATION_IS_OPEN', 0)
-
 ];

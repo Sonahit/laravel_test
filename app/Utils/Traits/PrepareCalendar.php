@@ -35,6 +35,7 @@ trait PrepareCalendar
         $week = collect(now()->getDays())->map(function ($_, $index) use ($startWeek) {
             return Carbon::createFromDate($startWeek->year, $startWeek->month, $startWeek->day + $index)->setTime(0, 0)->toDateString();
         });
+        $bookingInterval = $place->bookingInterval;
         if (is_null($user)) {
             return [
                 'bookedDates' => [],
@@ -43,6 +44,7 @@ trait PrepareCalendar
                 'endHours' => $endHours,
                 'cities' => $places,
                 'city' => $place,
+                'bookingInterval' => $bookingInterval
             ];
         }
         $bookedDates = Booking::select('bookingDateStart', 'bookingDateEnd')
@@ -60,6 +62,7 @@ trait PrepareCalendar
             'endHours' => $endHours,
             'cities' => $places,
             'city' => $place,
+            'bookingInterval' => $bookingInterval
         ];
     }
 }

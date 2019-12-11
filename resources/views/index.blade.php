@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" type="text/css" href="css/app.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>Booking</title>
-</head>
-<body>   
+@php
+    $stylesUrl = ["css/app.css", "css/calendar.css"];
+    $title = 'Booking';
+@endphp
+
+@component('templates.body', ['stylesUrl' => $stylesUrl, 'title' => $title])
     <main>
-        @include('templates.login')
+        @include('templates.login', ['IS_REGISTRATION_OPEN' => $IS_REGISTRATION_OPEN])
         <select class="select_cities">
             @foreach ($cities as $city)
                 <option value={{ $city }}>{{ $city }}</option>
@@ -20,12 +15,10 @@
             'week' => $week,
             'booked' => $booked,
             'bookTime' => $bookTime,
-            'city' => $cities[0]
+            'city' => $cities[0],
+            'bookingInterval' => $bookingInterval
         ])
     </main>
-    <footer>
-        footer hello
-    </footer>
     <script src="./js/app.js"></script>
-</body>
-</html>
+@endcomponent
+    

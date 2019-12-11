@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Configuration;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -14,7 +15,8 @@ class RegisterRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        if(Configuration::IS_REGISTRATION_OPEN()) return true;
+        return false;
     }
 
     /**

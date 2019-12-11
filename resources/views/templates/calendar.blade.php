@@ -54,7 +54,7 @@
                             <div class="calendar__row">
                         @endif
                             @if (validateDate($day))
-                                @if ($time <= $bookTime['end'] - 2 && validateHours($time, $bookTime['start'], $bookTime['end']))
+                                @if ($time <= $bookTime['end'] - $bookingInterval && validateHours($time, $bookTime['start'], $bookTime['end']))
                                     <a class="calendar__link" href={{url('city/' . htmlSpace($city)."/?time=".formatDateToMS("{$day} {$time}:00:00")) }}>{{ $time }}:00</a>  
                                 @else
                                     <span class="calendar__link disabled">{{ $time }}:00</span>

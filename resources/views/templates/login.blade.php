@@ -31,8 +31,10 @@
         </fieldset>
         @include('templates.error')
         @include('templates.success')
-        @if (config('auth.REGISTRATION_IS_OPEN'))
-            <a href="auth/register">Create new account</a>  
-        @endif
+        @isset($IS_REGISTRATION_OPEN)
+            @if ($IS_REGISTRATION_OPEN)
+                <a href="auth/register">Create new account</a>  
+            @endif  
+        @endisset
     </section>
 @endcomponent

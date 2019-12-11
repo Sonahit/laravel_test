@@ -26,16 +26,17 @@ class CityUpdateRequest extends FormRequest
         return [
             'city' => ['string'],
             'address' => ['string'],
-            'startHours' => ['string', 'required', 'lt:endHours', 'max:24'],
-            'endHours' => ['string', 'required', 'gt:startHours', 'max:24'],
+            'startHours' => ['integer', 'required', 'lt:endHours', 'max:24'],
+            'endHours' => ['integer', 'required', 'gt:startHours', 'max:24'],
+            'bookingInterval'=> ['integer', 'required', 'max:6']
         ];
     }
 
     public function message()
     {
         return [
-            'startHours.require' => 'Company start hours is required',
-            'end.require' => 'Company end hours is required'
+            'startHours.required' => 'Company start hours is required',
+            'end.required' => 'Company end hours is required'
         ];
     }
 }

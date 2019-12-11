@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Configuration;
 use App\Utils\Traits\PrepareCalendar;
 use Illuminate\Http\Request;
 
@@ -35,7 +36,9 @@ class CalendarController extends Controller
                 'start' => $values['startHours'],
                 'end' => $values['endHours'],
             ],
+            'bookingInterval' => $values['bookingInterval'],
             'cities' => $values['cities']->pluck('city'),
+            'IS_REGISTRATION_OPEN' => Configuration::IS_REGISTRATION_OPEN()
         ]);
     }
 }

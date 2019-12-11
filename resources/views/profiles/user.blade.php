@@ -4,23 +4,18 @@
         @include('templates.error')
         @include('templates.success')
         <section class="profile__information">
+            <h2>Information</h2>
                 <div class="profile__element">
-                    <fieldset>
-                        <legend>Email</legend>
+                        <h3>Email</h3>
                         <label>{{ $user->email }}</label>
-                    </fieldset>
                 </div>
                 <div class="profile__element">
-                    <fieldset>
-                        <legend>First name</legend>
+                        <h3>First name</h3>
                         <label>{{ $user->firstName }}</label>
-                    </fieldset>
                 </div>
                 <div class="profile__element">
-                    <fieldset>
-                        <legend>Last name</legend>
+                        <h3>Last name</h3>
                         <label>{{ $user->lastName }}</label>
-                    </fieldset>
                 </div>
             </section>
             <section class="profile__form">

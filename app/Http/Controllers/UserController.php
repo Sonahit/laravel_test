@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Configuration;
 use App\Models\Place;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -60,7 +61,13 @@ class UserController extends Controller
                         'End of appointment' => $booking->bookingDateEnd,
                     ];
                 });
-            return view('profile', ['cities' => $places, 'bookings' => $bookings, 'appointments' => $appointments]);
+            $configs = Configuration::getConfigs();
+            return view('profile', [
+                'cities' => $places,
+                'bookings' => $bookings,
+                'appointments' => $appointments,
+                'configs' => $configs
+            ]);
         }
         return view('profile', ['appointments' => $appointments]);
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
+use App\Models\Configuration;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
@@ -86,7 +87,7 @@ class RegisterController extends Controller
 
     public function show()
     {
-        if (config('auth.REGISTRATION_IS_OPEN')){
+        if (Configuration::IS_REGISTRATION_OPEN()){
             return view('register');
         }
         return redirect('/')->withErrors(['message' => 'Registration is disabled']);

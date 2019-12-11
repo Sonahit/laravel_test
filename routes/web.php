@@ -11,6 +11,7 @@
 |
 */
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', "CalendarController@show");
@@ -30,6 +31,11 @@ Route::prefix('auth')->group(function () {
     Route::get('logout', 'Auth\LoginController@logout');
     Route::post('register', 'Auth\RegisterController@register');
     Route::get('register', "Auth\RegisterController@show");
+    
+});
+
+Route::prefix('config')->group(function(){
+    Route::post('/{config}', "ConfigurationController@update");
 });
 
 Route::prefix('templates')->group(function () {

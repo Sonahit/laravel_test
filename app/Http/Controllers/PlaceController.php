@@ -49,7 +49,7 @@ class PlaceController extends Controller
      */
     public function update(CityUpdateRequest $request, string $city)
     {
-        $attrs = $request->only('startHours', 'endHours', 'address');
+        $attrs = $request->only('startHours', 'endHours', 'address', 'bookingInterval');
         $place = Place::where('city', $city)->first();
         if(is_null($place)) return redirect()->back()->withErrors('Such city doesnt exists');
         foreach ($attrs as $key => $attr) {

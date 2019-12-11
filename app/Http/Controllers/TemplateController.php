@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
-use App\Models\Place;
-use App\Utils\Helpers\RequestHelper;
 use App\Utils\Traits\PrepareCalendar;
 use Illuminate\Http\Request;
 
@@ -22,6 +19,7 @@ class TemplateController extends Controller
                 'start' => $values['startHours'],
                 'end' => $values['endHours'],
             ],
+            'bookingInterval' => $values['bookingInterval'],
             'city' => $values['city'],
         ])->render();
 
