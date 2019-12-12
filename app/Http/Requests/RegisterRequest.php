@@ -15,7 +15,9 @@ class RegisterRequest extends FormRequest
      */
     public function authorize()
     {
-        if(Configuration::IS_REGISTRATION_OPEN()) return true;
+        if (Configuration::isRegistrationOpen()) {
+            return true;
+        }
         return false;
     }
 

@@ -15,7 +15,9 @@ class ConfigRequest extends FormRequest
     public function authorize()
     {
         $user = Auth::user();
-        if($user->isAdmin) return true;
+        if ($user->isAdmin) {
+            return true;
+        }
         return false;
     }
 
