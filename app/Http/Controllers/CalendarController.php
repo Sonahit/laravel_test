@@ -38,7 +38,7 @@ class CalendarController extends Controller
             ],
             'bookingInterval' => $values['bookingInterval'],
             'cities' => $values['cities']->pluck('city'),
-            'IS_REGISTRATION_OPEN' => Configuration::IS_REGISTRATION_OPEN()
+            'IS_REGISTRATION_OPEN' => Configuration::isRegistrationOpen()
         ]);
     }
 }

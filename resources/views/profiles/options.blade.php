@@ -7,26 +7,34 @@
                 @csrf
                 <input type="hidden" name="name" value="{{ $config['name'] }}">
                 <div class="options__inputs">
-                    <div class="options__inputs_el">
-                        <label>Number value</label>
-                        <input type="number" name="INT_VAL" value="{{ isset($config['INT_VAL']) ? $config['INT_VAL'] : ''}}">
-                    </div>
-                    <div class="options__inputs_el">
-                        <label>Boolean value</label>
-                        <select class="options__inputs__bool-val">
-                            <option {{ isset($config['BOOL_VAL']) && intval($config['BOOL_VAL']) ? 'selected' : '' }}>True</option>
-                            <option {{ isset($config['BOOL_VAL']) && !intval($config['BOOL_VAL']) ? 'selected' : '' }}>False</option>
-                        </select>
-                        <input type="hidden" name="BOOL_VAL" value="{{ isset($config['BOOL_VAL']) ? 1 : 0 }}">
-                    </div>
-                    <div class="options__inputs_el">
-                        <label>Date value</label>
-                        <input type="date" name="DATE_VAL" value="{{ isset($config['DATE_VAL']) ? $config['DATE_VAL'] : '' }}">
-                    </div>
-                    <div class="options__inputs_el">
-                        <label>Text value</label>
-                        <input type="text" name="STRING_VAL" value="{{ isset($config['STRING_VAL']) ? $config['STRING_VAL'] : '' }}">
-                    </div>
+                    @isset($config['INT_VAL'])
+                        <div class="options__inputs_el">
+                            <label>Number value</label>
+                            <input type="number" name="INT_VAL" value="{{ is_null($config['INT_VAL']) ? $config['INT_VAL'] : ''}}">
+                        </div>
+                    @endisset
+                    @isset($config['BOOL_VAL'])
+                        <div class="options__inputs_el">
+                            <label>Boolean value</label>
+                            <select class="options__inputs__bool-val">
+                                <option {{ intval($config['BOOL_VAL']) ? 'selected' : '' }}>True</option>
+                                <option {{ !intval($config['BOOL_VAL']) ? 'selected' : '' }}>False</option>
+                            </select>
+                            <input type="hidden" name="BOOL_VAL" value="{{ $config['BOOL_VAL'] ? 1 : 0 }}">
+                        </div>
+                    @endisset
+                    @isset($config['DATE_VAL'])
+                        <div class="options__inputs_el">
+                            <label>Date value</label>
+                            <input type="date" name="DATE_VAL" value="{{ is_null($config['DATE_VAL']) ? $config['DATE_VAL'] : '' }}">
+                        </div>
+                    @endisset
+                    @isset($config['STRING_VAL'])
+                        <div class="options__inputs_el">
+                            <label>Text value</label>
+                            <input type="text" name="STRING_VAL" value="{{ is_null($config['STRING_VAL']) ? $config['STRING_VAL'] : '' }}">
+                        </div>
+                    @endisset
                 </div>
                 <input type="submit" value="Change">
             </form>

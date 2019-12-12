@@ -27,9 +27,8 @@
                         <span>Interval is </span>
                         <select class="company__select">
                             @for ($hour = 1; $hour <= 6; $hour++)
-                                
                                 @if ($attr->bookingInterval === $hour)
-                                    <option class="company__select_option" selected>{{ $hour }} hours</option>  
+                                    <option class="company__select_option" selected>{{ $hour }} hours</option>
                                 @else
                                     <option class="company__select_option">{{ $hour }} hours</option>
                                 @endif
@@ -44,7 +43,7 @@
                 document.querySelectorAll(".company__select").forEach(select => {
                     select.addEventListener('change', e => {
                         const { target } = e;
-                        target.parentNode.children.bookingInterval.value = target.value;
+                        target.parentNode.children.bookingInterval.value = parseInt(target.value);
                     })
                 });
             </script>
