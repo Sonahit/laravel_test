@@ -4,7 +4,6 @@ $width: round(percentage(1 / $rows));
 .calendar {
     display: flex;
     align-items: center;
-
     &__content {
         min-width: 100px;
         max-width: 200px;
@@ -18,7 +17,7 @@ $width: round(percentage(1 / $rows));
         text-align: center;
     }
     &__header {
-        background-color: lavenderblush;
+        background-color: rgb(87, 221, 154);
         padding: 10px;
     }
     &__header[disabled] + &__rows,
@@ -55,11 +54,7 @@ $width: round(percentage(1 / $rows));
         }
 
         &:not(.booked) {
-            background-color: lightblue;
-            &.hovered {
-                font-weight: 700;
-                background-color: $activeColor;
-            }
+            background-color: turquoise;
             &.disabled {
                 $disabledColor: lightgreen;
                 cursor: initial;
@@ -70,15 +65,18 @@ $width: round(percentage(1 / $rows));
                     background-color: $disabledColor;
                 }
             }
+            &.hovered {
+                font-weight: 700;
+                background-color: $activeColor;
+            }
         }
-        &.disabled {
+        &.booked {
             cursor: initial;
             background-color: $bookedColor;
-            &:hover,
-            &:hover + & {
-                font-weight: initial;
-                background-color: $bookedColor;
-            }
+        }
+        &.booked.hovered {
+            font-weight: 700;
+            background-color: $activeColor;
         }
     }
 }
@@ -88,5 +86,33 @@ $width: round(percentage(1 / $rows));
     margin: 10px;
     &::before {
         font-size: 50px;
+    }
+}
+
+.button{
+    width: fit-content;
+    padding: 5px 10px;
+    border: 1px solid black; 
+    margin: 3px;
+    font-size: 16px;
+    background-color: lightgreen;
+    color: black;
+    cursor: pointer;
+    transition: .5s all;
+
+    &:link, &:visited{
+        text-decoration: none;
+        color: black;
+        background-color: lightgreen;
+    }
+    &:hover{
+        transition: .5s all;
+        color: white;
+        background-color: green;
+    }
+}
+.select{
+    &_cities{
+
     }
 }

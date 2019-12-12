@@ -54,4 +54,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(RoleUser::class, 'userId', 'id');
     }
+
+    public function links()
+    {
+        return $this->hasMany(Link::class, 'userId', 'id');
+    }
 }

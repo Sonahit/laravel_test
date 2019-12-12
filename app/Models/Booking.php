@@ -16,6 +16,14 @@ class Booking extends Model
         'userId', 'placeId', 'bookingDateStart', 'bookingDateEnd',
     ];
 
+    public static function boot() {
+        parent::boot();
+
+        static::deleting(function($booking) {
+             $booking->links()->delete();
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'userId', 'id');
@@ -28,8 +36,13 @@ class Booking extends Model
 
     public function scopeBookedBetween(Builder $q, Carbon $start, Carbon $end)
     {
-        return $q->whereBetween('bookingDateStart', [$start, $end])
-            ->whereTime('bookingDateStart', '>=', DB::raw("'{$start->toTimeString()}'"))
-            ->whereTime('bookingDateEnd', '<=', DB::raw("'{$end->toTimeString()}'"));
+        return $q->whereBetween('bookingDateStart', [$start->toDateString(), $end->toDateString()])
+            ->whereTime('bookingDateStart', '>=', $start->toTimeString())
+            ->whereTime('bookingDateEnd', '<=', $end->toTimeString());
+    }
+
+    public function links()
+    {
+        return $this->hasOne(Link::class, 'bookingId', 'id');
     }
 }

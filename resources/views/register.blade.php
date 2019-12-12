@@ -1,7 +1,7 @@
 @php
     $title = 'Register';
 @endphp
-@component('templates.body', compact($title))
+@component('templates.body', ['title' => $title])
     <fieldset>
         <legend>Register</legend>
         <form id="register" action="/auth/register" method="POST">

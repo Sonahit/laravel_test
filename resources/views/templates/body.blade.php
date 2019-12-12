@@ -1,3 +1,11 @@
+@php  
+    $stylesUrl = collect(scandir(public_path('css')))->map(function($file){
+        if(!($file == '.' or $file == '..')){
+            return url("/css/{$file}");
+        }
+        return null;
+    });
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +16,9 @@
     
     @if(isset($stylesUrl))
         @foreach ($stylesUrl as $styleUrl)
-            <link rel="stylesheet" type="text/css" href="{{ asset($styleUrl) }}">
+            @if (!is_null($styleUrl))
+                <link rel="stylesheet" type="text/css" href="{{ asset($styleUrl) }}">
+            @endif 
         @endforeach
     @endif
     

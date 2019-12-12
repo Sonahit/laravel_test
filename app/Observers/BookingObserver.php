@@ -2,11 +2,15 @@
 
 namespace App\Observers;
 
+use App\Mail\BookingCreated;
+use App\Mail\BookingDeleted;
+use App\Mail\BookingUpdated;
 use App\Models\Booking;
 use App\Models\Link;
 use App\Models\Notification;
 use App\Models\NotificationUser;
 use App\Models\UserToNotify;
+use Illuminate\Support\Facades\Mail;
 
 class BookingObserver
 {
@@ -22,20 +26,22 @@ class BookingObserver
         $notif = Notification::firstOrNew([
             'notification_name' => 'booking.created',
         ]);
-        $test = NotificationUser::create([
+        $notif->save();
+        $notification = NotificationUser::firstOrNew([
             'userId' => $booking->user->id,
             'notificationId' => $notif->id
         ]);
+        $notification->save();
         $link = Link::firstOrNew([
             'userId' => $booking->user->id,
             'bookingId' => $booking->id,
-            'deleteLink' => url('/users/link/'.generateToken()),
-            'updateLink' => url('/users/link/'.generateToken()),
+            'deleteLink' => generateToken(),
+            'updateLink' => generateToken(),
             'isActive' => 1,
             'expiresAt' => now()->parse($booking->bookingDateEnd)->timestamp
         ]);
-        $asd = now();
-        // UserToNotify::created($booking);
+        $link->save();
+        Mail::to($booking->user->email)->send(new BookingCreated($booking));
     }
 
     /**
@@ -46,7 +52,8 @@ class BookingObserver
      */
     public function updated(Booking $booking)
     {
-        //
+        $booking->load(['user', 'place']);
+        Mail::to($booking->user->email)->send(new BookingUpdated($booking));
     }
 
     /**
@@ -57,7 +64,8 @@ class BookingObserver
      */
     public function deleted(Booking $booking)
     {
-        //
+        $booking->load(['user', 'place']);
+        Mail::to($booking->user->email)->send(new BookingDeleted($booking));
     }
 
     /**

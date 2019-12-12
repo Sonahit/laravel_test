@@ -11,16 +11,24 @@
 |
 */
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', "CalendarController@show");
-Route::get('/city/{city}', "BookingController@show");
-Route::post('/city/{city}', "BookingController@store");
-Route::delete('/city/{city}', "BookingController@destroy");
+Route::group(['prefix' => 'city'], function(){
+    Route::get('{city}', "BookingController@show");
+    Route::post('{city}', "BookingController@store");
+    Route::delete('{city}', "BookingController@destroy");
+    Route::put('{city}', "BookingController@update");
+});
 
-Route::get('/users/profile', "UserController@show");
-Route::post('/users/user', "UserController@update");
+
+
+Route::group(['prefix' => 'users'], function(){
+    Route::get('profile', "UserController@show");
+    Route::post('user', "UserController@update");
+    Route::get('link/{linkId}', "LinkController@show");
+});
+
 
 Route::prefix('company')->group(function () {
     Route::post('{city}', "PlaceController@update");
@@ -31,7 +39,6 @@ Route::prefix('auth')->group(function () {
     Route::get('logout', 'Auth\LoginController@logout');
     Route::post('register', 'Auth\RegisterController@register');
     Route::get('register', "Auth\RegisterController@show");
-    
 });
 
 Route::prefix('config')->group(function(){

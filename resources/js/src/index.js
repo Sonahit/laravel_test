@@ -13,9 +13,9 @@ function changeWeek(direction) {
         .getTemplate(
             `${templateHelper.publicUrl}/calendar?week=${nextWeek}&city=${currCity}`
         )
-        .then(({ html }) => {
+        .then(({ html, bookingInterval }) => {
             document.querySelector(".calendar").outerHTML = html;
-            initRows(parseInt(sessionStorage.getItem("bookingInterval")));
+            initRows(parseInt(bookingInterval));
         });
 }
 
@@ -29,6 +29,7 @@ function changeCity(city) {
         .then(({ html, bookingInterval }) => {
             if (html) {
                 document.querySelector(".calendar").outerHTML = html;
+                sessionStorage.setItem('bookingInterval', bookingInterval);
                 initRows(bookingInterval);
             }
         });
@@ -73,7 +74,7 @@ function initRows(
                 currentTarget.parentNode.children
             ).find(el => el.classList.contains("calendar__header"));
             if (header.classList.contains("disabled")) return;
-            if (target.classList.contains("calendar__row")) {
+            if (target.classList.contains("calendar__row") && !target.classList.contains("booked")) {
                 highLightRow(target, target.parentNode, bookingInterval);
             }
         });
@@ -83,7 +84,7 @@ function initRows(
                 currentTarget.parentNode.children
             ).find(el => el.classList.contains("calendar__header"));
             if (header.classList.contains("disabled")) return;
-            if (target.classList.contains("calendar__row")) {
+            if (target.classList.contains("calendar__row") && !target.classList.contains("booked")) {
                 highLightRow(target, target.parentNode, bookingInterval);
             }
         });

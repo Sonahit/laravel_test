@@ -1,3 +1,3 @@
 <form action="{{ url('auth/logout') }}" method="GET">
-    <input type="submit" value="Logout">
+    <input class="button" type="submit" value="Logout">
 </form>

@@ -74,8 +74,9 @@ class BookingController extends Controller
             return response()->json(['message' => 'Date cannot be empty']);
         }
         $email = $query['email'];
+        $place = Place::where('city', $city)->first();
         $start = Carbon::createFromTimestamp(intval($query['time']));
-        $end = Carbon::createFromTimestamp(intval($query['time']))->addHours(2);
+        $end = Carbon::createFromTimestamp(intval($query['time']))->addHours($place->bookingInterval);
         $this->create($email, $city, $start, $end);
         return redirect("/");
     }
@@ -86,15 +87,16 @@ class BookingController extends Controller
         $place = Place::where('city', $city)->first();
         $user = Auth::user();
         $isBooked = false;
+        $booking = null;
         if (!is_null($user)) {
             $start = Carbon::createFromTimestamp(intval($query['time']));
             $whereAttr = [
                 'userId' => $user->id,
                 'placeId' => $place->id,
             ];
-            $exists = Booking::where($whereAttr)
-                ->whereDate('bookingDateStart', $start->toDate())->exists();
-            if ($exists) {
+            $booking = Booking::where($whereAttr)
+                ->whereDate('bookingDateStart', $start->toDate())->first();
+            if (!is_null($booking)) {
                 $isBooked = true;
             }
         }
@@ -102,7 +104,7 @@ class BookingController extends Controller
         if (is_null($city) || is_null($dateTime)) {
             return redirect('/');
         }
-        return view('booking', ['city' => $city, 'dateTime' => $dateTime, 'isBooked' => $isBooked]);
+        return view('booking', ['city' => $city, 'dateTime' => $dateTime, 'isBooked' => $isBooked, 'booking' => $booking, 'bookingInterval' => $place->bookingInterval ]);
     }
 
     /**
@@ -120,12 +122,24 @@ class BookingController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Booking  $booking
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Booking $booking)
+    public function update(Request $request, $city)
     {
-        //
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Not allowed'], 401);
+        }
+        $date = now()->timestamp($request->query('time'));
+        $place = Place::where('city', $city)->first();
+        $user = Auth::user();
+        $booking = Booking::where([
+            'userId' => $user->id,
+            'placeId' => $place->id,
+        ])->whereDate('bookingDateStart', $date->toDateString())->first();
+        $booking->bookingDateStart = $date->toDateTimeString();
+        $booking->bookingDateEnd = (clone $date)->addHours($place->bookingInterval)->toDateTimeString();
+        $booking->save();
+        return response()->json(['message' => 'Successfully updated'], 200);
     }
 
     /**
@@ -142,11 +156,12 @@ class BookingController extends Controller
         $time = request()->query('time');
         $user = Auth::user();
         $date = now()->timestamp($time)->toDateTimeString();
-        $booking = Booking::where([
-            'userId' => $user->id,
-            'bookingDateStart' => $date,
-        ])
-            ->whereHas('place')->first();
+        $booking = Booking::where('bookingDateStart', $date)
+            ->whereHas('place')
+            ->whereHas('user', function($q) use ($user){
+                $q->where('id', $user->id);
+            })
+            ->first();
         if (is_null($booking)) {
             return response()->json(['message' => 'Successfully deleted instance'], 200);
         }

@@ -51,12 +51,16 @@
                             @if (validateDate($day))
                                 @if ($time <= $bookTime['end'] - $bookingInterval && validateHours($time, $bookTime['start'], $bookTime['end']))
                                     @if (isBooked($day, $time, $booked))
-                                        <a class="calendar__row booked" href={{url('city/' . htmlSpace($city)."/?time=".formatDateToMS("{$day} {$time}:00:00")) }}>{{ $time }}:00</a>
+                                        <span class="calendar__row booked">{{ $time }}:00</span>
                                     @else
                                         <a class="calendar__row" href={{url('city/' . htmlSpace($city)."/?time=".formatDateToMS("{$day} {$time}:00:00")) }}>{{ $time }}:00</a>
                                     @endif
                                 @else
-                                    <span class="calendar__row disabled">{{ $time }}:00</span>
+                                    @if (isBooked($day, $time, $booked))
+                                        <span class="calendar__row booked">{{ $time }}:00</span>
+                                    @else
+                                        <span class="calendar__row disabled">{{ $time }}:00</span>
+                                    @endif
                                 @endif
                             @else
                                 <span class="calendar__row disabled">{{ $time }}:00</span>
@@ -68,6 +72,6 @@
         </section>
     <i class="arrow fa fa-angle-double-right" onclick="changeWeek('right')"></i>
     @isset($bookingInterval)
-        <script>sessionStorage.setItem('bookingInterval', {{ $bookingInterval }})</script>
+        <script>sessionStorage.setItem('bookingInterval', {{ intval($bookingInterval) }})</script>
     @endisset
 </section>

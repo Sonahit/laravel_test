@@ -9,17 +9,33 @@
         $time = isset($_GET["time"]) ? $_GET["time"] : 0;
     @endphp
     <script>
-    function cancelBooking(url){
-        fetch(url, {
-            headers:{
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            method: 'DELETE',
-        }).then((res) => {
-            if(res.ok) location.replace('/');
-            throw new Error(`${res.statusText} ${res.status}`);
-        })
-    }
+        function cancelBooking(url){
+            fetch(url, {
+                headers:{
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                method: 'DELETE',
+            }).then((res) => {
+                if(res.ok) location.replace('/');
+                throw new Error(`${res.statusText} ${res.status}`);
+            })
+        }
+
+        function rebook(url){
+            const parseUrl = new URL(url);
+            fetch(url, {
+                headers:{
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                method: 'PUT',
+                data:{
+                    'time' : parseUrl.searchParams.get('time')
+                }
+            }).then((res) => {
+                if(res.ok) location.replace('/');
+                throw new Error(`${res.statusText} ${res.status}`);
+            })
+        }
     </script>
     <section class="booking">
     @if (!$isBooked)
@@ -33,16 +49,24 @@
             <input type="submit" value="Book now">
             <button type="button" onclick="location.replace('{{ url('/') }}')">Cancel</button>
         </form>
-        @else
+    @else
         <section class="booking__booked">
             @php
-                $bookedDate =  \Carbon\Carbon::now()->timestamp(intval($time));
+                $bookedDateStart =  \Carbon\Carbon::parse($booking->bookingDateStart);
+                $bookedDateEnd = \Carbon\Carbon::parse($booking->bookingDateEnd);
+                $bookingUpdate = \Carbon\Carbon::now()->timestamp(intval($time));
             @endphp
-            <span>You have booked at {{ $bookedDate->toDateTimeString() }} to {{ $bookedDate->addHours(2)->toDateTimeString() }}</span>
-            <button type="button" onclick="cancelBooking('{{ url(Request::path()). '?' . 'time='. $time }}')">Cancel Booking</button>
-            <button type="button" onclick="location.replace('{{ url('/') }}')">Go back</button>
+            <section class="booking__info">
+                <span>You have an appointment {{ $bookedDateStart->toDateTimeString() }} -- {{ $bookedDateEnd->toDateTimeString() }}</span>
+                <button type="button" class="button" onclick="cancelBooking('{{ url(Request::path()). '?' . 'time='. $bookedDateStart->timestamp }}')">Cancel Appointment</button>
+            </section>
+            <section class="booking__info">
+                <span>Rebook appointment to this time {{ $bookingUpdate->toDateTimeString() }} -- {{ (clone $bookingUpdate)->addHours($bookingInterval)->toDateTimeString() }} ?</span>
+                <button type="button" class="button" onclick="rebook('{{ url(Request::path()). '?' . 'time='. $bookingUpdate->timestamp }}')">Rebook Appointment</button>
+            </section>
+            <button type="button" class="button" onclick="location.replace('{{ url('/') }}')">Go back</button>
         </section>
-        @endif
+    @endif
     </section>
     @include('templates.error')
     @include('templates.success')

@@ -20,6 +20,7 @@ class CreateLinksTable extends Migration
             $table->longText('updateLink')->nullable();
             $table->longText('deleteLink')->nullable();
             $table->boolean('isActive')->default(1);
+            $table->integer('expiresAt');
             $table->timestamps();
             $table->index(['userId', 'bookingId']);
         });

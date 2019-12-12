@@ -5,10 +5,13 @@
 @endphp
 @component('templates.body', ['title' => $title])
     <main>
-        <aside>
-            @include('templates.login')
-            <a href="/">Home</a>
-        </aside>
+        <nav class="profile__links">
+            @component('templates.login')
+                @slot('links')
+                    <a class="button" href="/">Home</a>
+                @endslot
+            @endcomponent
+        </nav>
         @if($user->isAdmin)
             @component('guards.admin')
                 @include('profiles.admin', [

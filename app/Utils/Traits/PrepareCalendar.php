@@ -30,7 +30,7 @@ trait PrepareCalendar
         }
         $date = is_null($query['date']) ? now() : Carbon::createFromFormat('Y-m-d', $query['date']);
         $startWeek = (clone $date)->startOfWeek(6)->addWeeks($week)->setTime($startHours, 0);
-        $endWeek = (clone $startWeek)->addDays(5)->setTime($endHours, 0);
+        $endWeek = (clone $startWeek)->addDays(8)->setTime($endHours, 0);
         $user = Auth::user();
         $week = collect(now()->getDays())->map(function ($_, $index) use ($startWeek) {
             return Carbon::createFromDate($startWeek->year, $startWeek->month, $startWeek->day + $index)->setTime(0, 0)->toDateString();
@@ -49,11 +49,11 @@ trait PrepareCalendar
         }
         $bookedDates = Booking::select('bookingDateStart', 'bookingDateEnd')
             ->bookedBetween($startWeek, $endWeek)
-            ->where('userId', $user->id)
-            ->where(function (Builder $q) use ($place) {
-                $q->whereHas('place', function (Builder $sub) use ($place) {
+            ->whereHas('user', function(Builder $sub) use($user) {
+                $sub->where('id', $user->id);
+            })
+            ->whereHas('place', function (Builder $sub) use ($place) {
                     $sub->where('city', $place->city);
-                });
             })->get()->toArray();
         return [
             'bookedDates' => $bookedDates,
