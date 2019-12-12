@@ -1,7 +1,7 @@
 @php
     $title = 'Booking';
 @endphp
-@component('templates.body', compact($title))
+@component('templates.body', ['title' => $title])
     @php
         $email = isset(Auth::user()->email) ? Auth::user()->email : "";
         $firstName = isset(Auth::user()->firstName) ? Auth::user()->firstName : "";
@@ -33,7 +33,7 @@
             <input type="submit" value="Book now">
             <button type="button" onclick="location.replace('{{ url('/') }}')">Cancel</button>
         </form>
-        @else 
+        @else
         <section class="booking__booked">
             @php
                 $bookedDate =  \Carbon\Carbon::now()->timestamp(intval($time));
