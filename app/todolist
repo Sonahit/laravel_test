@@ -1,8 +1,9 @@
+When user creates booking system should notify stakeHolders
 [IMPORTANT]
 TODO: Email notifications
+TODO: Generating links for removing or changing booking
 TODO: Google calendar integration
+TODO: Calendar styling
 
 [OPTIONAL]
-TODO: Setting minimal interval for each city
 TODO: linking to google account
-TODO: Styling
