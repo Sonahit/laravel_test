@@ -1,85 +1,81 @@
 //
-$rows : 7;
-$width : round(percentage(1 / $rows));
+$rows: 7;
+$width: round(percentage(1 / $rows));
 .calendar {
     display: flex;
     align-items: center;
 
-    &__link{
-        &:visited, &:link{
-            color: black;
-            text-decoration: none;
-        }
-        &.disabled {
-            cursor: initial;
-        }
-    }
-    &__content{
+    &__content {
         min-width: 100px;
         max-width: 200px;
         user-select: none;
     }
-    &__wrapper{
+    &__wrapper {
         display: grid;
         grid-template-columns: repeat($rows, 1fr);
         column-gap: 10px;
         font-size: 16px;
         text-align: center;
     }
-    &__header{
-        background-color: lavenderblush ;
+    &__header {
+        background-color: lavenderblush;
         padding: 10px;
     }
     &__header[disabled] + &__rows,
     &__header[disabled] + &__rows > &__row,
     &__header[disabled] + &__rows > &__row + &__row,
     &__header[disabled] + &__rows:hover > &__row,
-    &__header[disabled] + &__rows:hover > &__row + &__row{
+    &__header[disabled] + &__rows:hover > &__row + &__row {
         background-color: gray !important;
         font-weight: initial !important;
         cursor: initial !important;
     }
 
-    &__rows{
+    &__rows {
         background-color: lavender;
         font-weight: 400;
-        
     }
     &__row {
-        padding: 10px; 
-        margin-bottom: 10px;  
+        display: block;
+        padding: 10px;
+        margin-bottom: 10px;
         cursor: pointer;
-
         $bookedColor: rgb(67, 69, 192);
-        $activeColor : azure;
+        $activeColor: azure;
 
         background-color: $bookedColor;
-
-        &.hovered{
+        &:visited,
+        &:link {
+            color: black;
+            text-decoration: none;
+        }
+        &.hovered {
             font-weight: 700;
             background-color: $activeColor;
         }
-        
-        &:not(.booked){
+
+        &:not(.booked) {
             background-color: lightblue;
-            &.hovered{
+            &.hovered {
                 font-weight: 700;
                 background-color: $activeColor;
             }
-            &.disabled{
-                $disabledColor : lightgreen;
+            &.disabled {
+                $disabledColor: lightgreen;
                 cursor: initial;
                 background-color: $disabledColor;
-                &:hover, &:hover + & {
+                &:hover,
+                &:hover + & {
                     font-weight: initial;
                     background-color: $disabledColor;
                 }
             }
         }
-        &.disabled{
+        &.disabled {
             cursor: initial;
             background-color: $bookedColor;
-            &:hover, &:hover + & {
+            &:hover,
+            &:hover + & {
                 font-weight: initial;
                 background-color: $bookedColor;
             }
@@ -87,7 +83,7 @@ $width : round(percentage(1 / $rows));
     }
 }
 
-.arrow{
+.arrow {
     cursor: pointer;
     margin: 10px;
     &::before {

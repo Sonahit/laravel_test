@@ -3,7 +3,7 @@
     <section class="calendar__wrapper" >
             @php
                 function validateDate($day){
-                    return !Carbon\Carbon::parse($day)->isWeekEnd() 
+                    return !Carbon\Carbon::parse($day)->isWeekEnd()
                     && Carbon\Carbon::parse($day)->timestamp >= Carbon\Carbon::now()->timestamp;
                 }
 
@@ -34,39 +34,40 @@
                 }
             @endphp
             @foreach ($week as $day)
-            <section class="calendar__content">
-                <div 
-                    class={{ validateDate($day)
-                            ? "calendar__header" 
-                            : "calendar__header disabled" 
-                    }} 
-                    day={{ $day }}
-                >
-                    {{ Carbon\Carbon::parse($day)->locale('ru_RU')->isoformat('dd') }}
-                    <br>
-                    {{ Carbon\Carbon::parse($day)->locale('ru_RU')->isoformat('D.M.Y') }}
-                </div>
-                <section class="calendar__rows">
-                    @for ($time = $bookTime['start']; $time <= $bookTime['end']; $time++)
-                        @if(isBooked($day, $time, $booked))
-                            <div class="calendar__row booked">
-                        @else
-                            <div class="calendar__row">
-                        @endif
+                <section class="calendar__content">
+                    <div
+                        class={{ validateDate($day)
+                                ? "calendar__header"
+                                : "calendar__header disabled"
+                        }}
+                        day={{ $day }}
+                    >
+                        {{ Carbon\Carbon::parse($day)->locale('ru_RU')->isoformat('dd') }}
+                        <br>
+                        {{ Carbon\Carbon::parse($day)->locale('ru_RU')->isoformat('D.M.Y') }}
+                    </div>
+                    <section class="calendar__rows">
+                        @for ($time = $bookTime['start']; $time <= $bookTime['end']; $time++)
                             @if (validateDate($day))
                                 @if ($time <= $bookTime['end'] - $bookingInterval && validateHours($time, $bookTime['start'], $bookTime['end']))
-                                    <a class="calendar__link" href={{url('city/' . htmlSpace($city)."/?time=".formatDateToMS("{$day} {$time}:00:00")) }}>{{ $time }}:00</a>  
+                                    @if (isBooked($day, $time, $booked))
+                                        <a class="calendar__row booked" href={{url('city/' . htmlSpace($city)."/?time=".formatDateToMS("{$day} {$time}:00:00")) }}>{{ $time }}:00</a>
+                                    @else
+                                        <a class="calendar__row" href={{url('city/' . htmlSpace($city)."/?time=".formatDateToMS("{$day} {$time}:00:00")) }}>{{ $time }}:00</a>
+                                    @endif
                                 @else
-                                    <span class="calendar__link disabled">{{ $time }}:00</span>
+                                    <span class="calendar__row disabled">{{ $time }}:00</span>
                                 @endif
                             @else
-                                <span>{{ $time }}:00</span>
+                                <span class="calendar__row disabled">{{ $time }}:00</span>
                             @endif
-                        </div>
-                    @endfor
+                        @endfor
+                    </section>
                 </section>
-            </section>
             @endforeach
         </section>
     <i class="arrow fa fa-angle-double-right" onclick="changeWeek('right')"></i>
+    @isset($bookingInterval)
+        <script>sessionStorage.setItem('bookingInterval', {{ $bookingInterval }})</script>
+    @endisset
 </section>
