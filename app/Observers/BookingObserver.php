@@ -3,6 +3,10 @@
 namespace App\Observers;
 
 use App\Models\Booking;
+use App\Models\Link;
+use App\Models\Notification;
+use App\Models\NotificationUser;
+use App\Models\UserToNotify;
 
 class BookingObserver
 {
@@ -14,7 +18,24 @@ class BookingObserver
      */
     public function created(Booking $booking)
     {
-        //
+        $booking->load(['user', 'place']);
+        $notif = Notification::firstOrNew([
+            'notification_name' => 'booking.created',
+        ]);
+        $test = NotificationUser::create([
+            'userId' => $booking->user->id,
+            'notificationId' => $notif->id
+        ]);
+        $link = Link::firstOrNew([
+            'userId' => $booking->user->id,
+            'bookingId' => $booking->id,
+            'deleteLink' => url('/users/link/'.generateToken()),
+            'updateLink' => url('/users/link/'.generateToken()),
+            'isActive' => 1,
+            'expiresAt' => now()->parse($booking->bookingDateEnd)->timestamp
+        ]);
+        $asd = now();
+        // UserToNotify::created($booking);
     }
 
     /**

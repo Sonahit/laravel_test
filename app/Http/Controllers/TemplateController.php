@@ -20,9 +20,9 @@ class TemplateController extends Controller
                 'end' => $values['endHours'],
             ],
             'bookingInterval' => $values['bookingInterval'],
-            'city' => $values['city'],
+            'city' => $values['city']->city,
         ])->render();
 
-        return response()->json(['html' => $html]);
+        return response()->json(['html' => $html, 'bookingInterval' => $values['bookingInterval']]);
     }
 }

@@ -7,6 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Notification::class, function (Faker $faker) {
     return [
+        'notification_name' => 'booking.created',
         'notification_date' => $faker->date()
     ];
 });

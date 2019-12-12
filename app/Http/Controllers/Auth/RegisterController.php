@@ -7,8 +7,6 @@ use App\Http\Requests\RegisterRequest;
 use App\Models\Configuration;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
@@ -87,7 +85,7 @@ class RegisterController extends Controller
 
     public function show()
     {
-        if (Configuration::IS_REGISTRATION_OPEN()){
+        if (Configuration::isRegistrationOpen()) {
             return view('register');
         }
         return redirect('/')->withErrors(['message' => 'Registration is disabled']);

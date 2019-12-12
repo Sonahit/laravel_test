@@ -2,6 +2,7 @@
 
 use App\Models\Booking;
 use App\Models\Notification;
+use App\Models\NotificationUser;
 use App\Models\Place;
 use App\Models\Role;
 use App\Models\RoleUser;
@@ -19,7 +20,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $roles = factory(Role::class, 5)->create();
-        if(!User::where('email', 'admin@admin.com')->exists()){
+        if (!User::where('email', 'admin@admin.com')->exists()) {
             User::create([
                 'firstName' => 'admin',
                 'lastName' => 'admin',
@@ -41,8 +42,6 @@ class DatabaseSeeder extends Seeder
                     'userId' => $user->id
                 ]);
                 $user->roleUser()->saveMany($userRoles);
-                $notifications = factory(Notification::class, 10)->make();
-                $user->notifications()->saveMany($notifications);
             });
     }
 }

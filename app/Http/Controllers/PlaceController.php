@@ -51,9 +51,11 @@ class PlaceController extends Controller
     {
         $attrs = $request->only('startHours', 'endHours', 'address', 'bookingInterval');
         $place = Place::where('city', $city)->first();
-        if(is_null($place)) return redirect()->back()->withErrors('Such city doesnt exists');
+        if (is_null($place)) {
+            return redirect()->back()->withErrors('Such city doesnt exists');
+        }
         foreach ($attrs as $key => $attr) {
-            if(!is_null($attr)){
+            if (!is_null($attr)) {
                 $place[$key] = $attr;
             }
         }
