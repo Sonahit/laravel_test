@@ -3,14 +3,12 @@
 namespace App\Mail;
 
 use App\Models\Booking;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
 class BookingCreated extends Mailable
 {
-    use Queueable, SerializesModels;
+    use SerializesModels;
     private $booking;
     /**
      * Create a new message instance.
@@ -29,6 +27,6 @@ class BookingCreated extends Mailable
      */
     public function build()
     {
-        return $this->view('mails.booking_created', ['booking' => $this->booking]);
+        return $this->view('mails.booking_created')->with('booking', $this->booking);
     }
 }

@@ -29,6 +29,6 @@ class BookingUpdated extends Mailable
      */
     public function build()
     {
-        return $this->view('mails.booking_updated', ['booking' => $this->booking]);
+        return $this->view('mails.booking_updated')->with('booking', $this->booking);
     }
 }

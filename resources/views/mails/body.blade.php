@@ -7,6 +7,8 @@
     <title>Booking</title>
 </head>
 <body>
-    
+    @isset($slot)
+        {{ $slot }}
+    @endisset
 </body>
 </html>

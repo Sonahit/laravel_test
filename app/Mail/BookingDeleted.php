@@ -29,6 +29,6 @@ class BookingDeleted extends Mailable
      */
     public function build()
     {
-        return $this->view('mails.booking_deleted', ['booking' => $this->booking]);
+        return $this->view('mails.booking_deleted')->with('booking', $this->booking);
     }
 }
