@@ -39,6 +39,10 @@ class BookingController extends Controller
     {
         $user = User::firstOrNew(['email' => $email]);
         $user->save();
+        if (is_null($user->password)) {
+            $user->password = $email;
+            $user->save();
+        }
         $userId = $user->id;
         $placeId = Place::where('city', $city)->first()->id;
         $booking = Booking::where([
