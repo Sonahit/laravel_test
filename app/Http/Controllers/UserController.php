@@ -57,7 +57,7 @@ class UserController extends Controller
                     return [
                         'Id' => $booking->id,
                         'City' => $booking->place->city,
-                        'User' => $booking->user->email,
+                        'User' => isset($booking->user) ? $booking->user->email : "NO EMAIL",
                         'Start of appointment' => $booking->bookingDateStart,
                         'End of appointment' => $booking->bookingDateEnd,
                     ];
