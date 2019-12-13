@@ -19,7 +19,7 @@ class CreateConfigurationTable extends Migration
             $table->integer('INT_VAL')->nullable();
             $table->date('DATE_VAL')->nullable();
             $table->boolean('BOOL_VAL')->nullable();
-            $table->char('STRING_VAL', 255)->nullable();
+            $table->string('STRING_VAL')->nullable();
             $table->timestamps();
         });
     }

@@ -11,7 +11,6 @@ use App\Models\Notification;
 use App\Models\NotificationUser;
 use App\Models\UserToNotify;
 use App\Utils\Helpers\EventHelper;
-use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 
@@ -27,7 +26,7 @@ class BookingObserver
     {
         $booking->load(['user', 'place']);
         $notif = Notification::firstOrNew([
-            'notification_name' => 'booking.created',
+            'name' => 'booking.created',
         ]);
         $notif->save();
         $notification = NotificationUser::firstOrNew([

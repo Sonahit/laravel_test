@@ -14,5 +14,5 @@ class Notification extends Model
             'deleted'
         ]
     ];
-    protected $fillable = ['notification_name'];
+    protected $fillable = ['name'];
 }

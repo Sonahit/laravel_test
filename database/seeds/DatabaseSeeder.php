@@ -1,11 +1,7 @@
 <?php
 
-use App\Models\Booking;
-use App\Models\Notification;
-use App\Models\NotificationUser;
+use App\Models\Configuration;
 use App\Models\Place;
-use App\Models\Role;
-use App\Models\RoleUser;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -19,7 +15,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $roles = factory(Role::class, 5)->create();
         if (!User::where('email', 'admin@admin.com')->exists()) {
             User::create([
                 'firstName' => 'admin',
@@ -31,17 +26,10 @@ class DatabaseSeeder extends Seeder
                 'isAdmin' => 1
             ]);
         }
+        Configuration::create([
+            'name' => 'REGISTRATION_IS_OPEN',
+            'BOOL_VAL' => true
+        ]);
         factory(Place::class, 3)->create();
-        factory(User::class, 10)->create()
-            ->each(function ($user) use ($roles) {
-                $place = Place::all()->random(1)->first();
-                $booking = factory(Booking::class, 1)->make(['placeId' => $place->id]);
-                $user->bookings()->saveMany($booking);
-                $userRoles = factory(RoleUser::class, 2)->make([
-                    'roleId' => $roles->random(1)->first()->id,
-                    'userId' => $user->id
-                ]);
-                $user->roleUser()->saveMany($userRoles);
-            });
     }
 }
