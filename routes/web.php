@@ -14,7 +14,13 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', "CalendarController@show");
-Route::group(['prefix' => 'city'], function(){
+
+
+Route::post('/stakeHolders', 'StakeholdersController@store');
+Route::delete('/stakeHolders', 'StakeholdersController@destroy');
+
+
+Route::group(['prefix' => 'city'], function () {
     Route::get('{city}', "BookingController@show");
     Route::post('{city}', "BookingController@store");
     Route::delete('{city}', "BookingController@destroy");
@@ -23,7 +29,7 @@ Route::group(['prefix' => 'city'], function(){
 
 
 
-Route::group(['prefix' => 'users'], function(){
+Route::group(['prefix' => 'users'], function () {
     Route::get('profile', "UserController@show");
     Route::post('user', "UserController@update");
     Route::get('link/{linkId}', "LinkController@show");
@@ -41,7 +47,7 @@ Route::prefix('auth')->group(function () {
     Route::get('register', "Auth\RegisterController@show");
 });
 
-Route::prefix('config')->group(function(){
+Route::prefix('config')->group(function () {
     Route::post('/{config}', "ConfigurationController@update");
 });
 

@@ -59,4 +59,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Link::class, 'userId', 'id');
     }
+    public function usersToNotify()
+    {
+        return $this->hasOne(UserToNotify::class, 'userId', 'id');
+    }
+
+    public function fullName()
+    {
+        return "{$this->firstName} {$this->lastName}";
+    }
 }

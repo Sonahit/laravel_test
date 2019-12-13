@@ -33,25 +33,17 @@ trait PrepareCalendar
         $endWeek = (clone $startWeek)->addDays(8)->setTime($endHours, 0);
         $user = Auth::user();
         $week = collect(now()->getDays())->map(function ($_, $index) use ($startWeek) {
-            return Carbon::createFromDate($startWeek->year, $startWeek->month, $startWeek->day + $index)->setTime(0, 0)->toDateString();
+            return Carbon::createFromDate(
+                $startWeek->year,
+                $startWeek->month,
+                $startWeek->day + $index
+            )
+            ->setTime(0, 0)
+            ->toDateString();
         });
         $bookingInterval = $place->bookingInterval;
-        if (is_null($user)) {
-            return [
-                'bookedDates' => [],
-                'week' => $week,
-                'startHours' => $startHours,
-                'endHours' => $endHours,
-                'cities' => $places,
-                'city' => $place,
-                'bookingInterval' => $bookingInterval
-            ];
-        }
         $bookedDates = Booking::select('bookingDateStart', 'bookingDateEnd')
             ->bookedBetween($startWeek, $endWeek)
-            ->whereHas('user', function(Builder $sub) use($user) {
-                $sub->where('id', $user->id);
-            })
             ->whereHas('place', function (Builder $sub) use ($place) {
                     $sub->where('city', $place->city);
             })->get()->toArray();

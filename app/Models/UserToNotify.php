@@ -12,35 +12,14 @@ class UserToNotify extends Model
 {
     protected $table = 'users_to_notify';
     protected $fillable = ['userId'];
+    public $timestamps = false;
 
-
-    public static function created(Booking $bookingId)
+    public function user()
     {
-        $users = self::all();
-
-        $users->each(function ($user) {
-            Mail::to($user)->send(new BookingCreated($booking));
-        });
-        return self;
+        return $this->hasOne(User::class, 'id', 'userId');
     }
-
-    public static function updated(Booking $booking)
+    public function userInfo()
     {
-        $users = self::all();
-
-        $users->each(function ($user) {
-            Mail::to($user)->send(new BookingUpdated($booking));
-        });
-        return self;
-    }
-
-    public static function deleted(Booking $booking)
-    {
-        $users = self::all();
-
-        $users->each(function ($user) {
-            Mail::to($user)->send(new BookingDeleted($booking));
-        });
-        return self;
+        return $this->user();
     }
 }

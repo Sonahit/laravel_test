@@ -18,7 +18,8 @@
                     'cities' => $cities,
                     'bookings' => $bookings,
                     'appointments' => $appointments,
-                    'conifgs' => $configs
+                    'conifgs' => $configs,
+                    'stakeHolders' => $stakeHolders
                 ])
             @endcomponent
         @endif

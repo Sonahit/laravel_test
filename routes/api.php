@@ -16,6 +16,15 @@ use \Illuminate\Support\Facades\Route;
 
 
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:api')->group(function () {
+//     Route::get('calendar', 'GoogleController@index');
+// });
+
+Route::middleware('api')->group(function () {
+    Route::get('calendar', 'GoogleController@index');
+    Route::get('calendar/token', 'GoogleController@updateToken');
+});
+
+Route::middleware('api')->group(function () {
+    Route::get('token', 'ApiController@index');
 });

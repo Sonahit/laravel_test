@@ -37,9 +37,9 @@ class BookingController extends Controller
      */
     public function create(string $email, string $city, Carbon $from, Carbon $to)
     {
-        $userId = User::where(function ($q) use ($email) {
-            return $q->where('email', $email);
-        })->first()->id;
+        $user = User::firstOrNew(['email' => $email]);
+        $user->save();
+        $userId = $user->id;
         $placeId = Place::where('city', $city)->first()->id;
         $booking = Booking::where([
             'userId' => $userId,
@@ -158,7 +158,7 @@ class BookingController extends Controller
         $date = now()->timestamp($time)->toDateTimeString();
         $booking = Booking::where('bookingDateStart', $date)
             ->whereHas('place')
-            ->whereHas('user', function($q) use ($user){
+            ->whereHas('user', function ($q) use ($user) {
                 $q->where('id', $user->id);
             })
             ->first();

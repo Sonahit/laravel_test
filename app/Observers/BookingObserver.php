@@ -10,6 +10,9 @@ use App\Models\Link;
 use App\Models\Notification;
 use App\Models\NotificationUser;
 use App\Models\UserToNotify;
+use App\Utils\Helpers\EventHelper;
+use Exception;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 
 class BookingObserver
@@ -41,7 +44,16 @@ class BookingObserver
             'expiresAt' => now()->parse($booking->bookingDateEnd)->timestamp
         ]);
         $link->save();
-        Mail::to($booking->user->email)->send(new BookingCreated($booking));
+        $stockHolders = UserToNotify::with('user')->get();
+        foreach ($stockHolders as $index => $stockHolder) {
+            Mail::to($stockHolder->user->email)->later(now()->addMinutes($index), new BookingCreated($booking));
+        }
+        $startTime = Carbon::parse($booking->bookingDateStart);
+        $endTime = Carbon::parse($booking->bookingDateEnd);
+        $timezone = now()->setTimeZone($booking->place->timezone)->timezone;
+        $event = EventHelper::createEvent($booking, collect([$booking->user]), $startTime, $endTime, $timezone);
+        EventHelper::sendEvent($event);
+        Mail::to($booking->user->email)->later(now()->addMinute(), new BookingCreated($booking));
     }
 
     /**
@@ -53,7 +65,11 @@ class BookingObserver
     public function updated(Booking $booking)
     {
         $booking->load(['user', 'place']);
-        Mail::to($booking->user->email)->send(new BookingUpdated($booking));
+        $stockHolders = UserToNotify::with('user')->get();
+        foreach ($stockHolders as $index => $stockHolder) {
+            Mail::to($stockHolder->user->email)->later(now()->addMinutes($index), new BookingUpdated($booking));
+        }
+        Mail::to($booking->user->email)->later(now()->addMinute(), new BookingUpdated($booking));
     }
 
     /**
@@ -65,7 +81,11 @@ class BookingObserver
     public function deleted(Booking $booking)
     {
         $booking->load(['user', 'place']);
-        Mail::to($booking->user->email)->send(new BookingDeleted($booking));
+        $stockHolders = UserToNotify::with('user')->get();
+        foreach ($stockHolders as $index => $stockHolder) {
+            Mail::to($stockHolder->user->email)->later(now()->addMinutes($index), new BookingDeleted($booking));
+        }
+        Mail::to($booking->user->email)->later(now()->addMinute(), new BookingDeleted($booking));
     }
 
     /**

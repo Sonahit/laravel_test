@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Configuration;
 use App\Models\Place;
+use App\Models\UserToNotify;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -62,11 +63,13 @@ class UserController extends Controller
                     ];
                 });
             $configs = Configuration::getConfigs();
+            $stakeHolders = UserToNotify::with('userInfo')->get();
             return view('profile', [
                 'cities' => $places,
                 'bookings' => $bookings,
                 'appointments' => $appointments,
-                'configs' => $configs
+                'configs' => $configs,
+                'stakeHolders' => $stakeHolders
             ]);
         }
         return view('profile', ['appointments' => $appointments]);
