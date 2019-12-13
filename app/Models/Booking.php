@@ -16,11 +16,12 @@ class Booking extends Model
         'userId', 'placeId', 'bookingDateStart', 'bookingDateEnd',
     ];
 
-    public static function boot() {
+    public static function boot()
+    {
         parent::boot();
 
-        static::deleting(function($booking) {
-             $booking->links()->delete();
+        static::deleting(function ($booking) {
+            $booking->links()->delete();
         });
     }
 

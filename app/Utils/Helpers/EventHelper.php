@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Log;
 
 class EventHelper
 {
-
     public static function createEvent(
         Booking $booking,
         Collection $attendees,

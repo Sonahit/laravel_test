@@ -45,7 +45,7 @@ trait PrepareCalendar
         $bookedDates = Booking::select('bookingDateStart', 'bookingDateEnd')
             ->bookedBetween($startWeek, $endWeek)
             ->whereHas('place', function (Builder $sub) use ($place) {
-                    $sub->where('city', $place->city);
+                $sub->where('city', $place->city);
             })->get()->toArray();
         return [
             'bookedDates' => $bookedDates,
