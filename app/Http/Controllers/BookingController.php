@@ -11,6 +11,7 @@ use App\Utils\Traits\PrepareCalendar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class BookingController extends Controller
 {
@@ -40,7 +41,7 @@ class BookingController extends Controller
         $user = User::firstOrNew(['email' => $email]);
         $user->save();
         if (is_null($user->password)) {
-            $user->password = $email;
+            $user->password = Hash::make($email);
             $user->save();
         }
         $userId = $user->id;
